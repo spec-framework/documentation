@@ -1,0 +1,160 @@
+\include{amsymb}
+\include{marvosym}
+
+\usepackage[francais]{babel}
+\usepackage[cyr]{aeguill}
+\usepackage[applemac]{inputenc}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage[a4paper]{geometry}
+\usepackage{latexsym,amsmath,amssymb,textcomp}
+\usepackage{moreverb}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{titling}
+\usepackage{mathabx}
+
+\usepackage{pdfpages}
+
+\usepackage{hyperref}
+
+
+\newlength{\indentationnota}
+\newlength{\largeurlignenota}
+\newlength{\paddingnota}
+\newlength{\largeurnota}
+\setlength{\paddingnota}{5pt}
+\setlength{\largeurnota}{0.9cm}
+
+\definecolor{pink}{rgb}{1,0.5,1}
+\makeatletter
+
+\newenvironment{pictonote}[1]{% on passe le nom du Þchier en argument
+\begin{list}{}{%
+\setlength{\labelsep}{0pt}%
+\setlength{\rightmargin}{15pt}%
+\setlength{\paddingnota}{5pt}}
+\item%
+\setlength{\indentationnota}{%
+\@totalleftmargin+\largeurnota+\paddingnota}%
+\setlength{\largeurlignenota}{%
+\linewidth-\largeurnota-\paddingnota}%
+\parshape=3%
+\indentationnota\largeurlignenota%
+\indentationnota\largeurlignenota%
+\@totalleftmargin\linewidth%
+\raisebox{-\largeurnota+2.2ex}[0pt][0pt]{%
+\makebox[0pt][r]{%
+\includegraphics[width=\largeurnota]{#1}%
+\hspace{\paddingnota}}}%
+\ignorespaces}{%
+\end{list}}
+
+\makeatother
+
+\newcommand\unicornbox[1]{\colorbox{pink}{\color{white}{#1}}}
+
+\newcommand\cf{\emph{c.f}}
+
+\newcommand\spec{\bsc{Spec} }
+
+\newboolean{showcomments}
+\setboolean{showcomments}{true}
+\ifthenelse{\boolean{showcomments}}
+  {\newcommand{\bnote}[2]{
+	\fbox{\bfseries\sffamily\scriptsize#1}
+    {\sf\small$\blacktriangleright$\textit{#2}$\blacktriangleleft$}
+    % \marginpar{\fbox{\bfseries\sffamily#1}}
+   }
+   \newcommand{\cvsversion}{\emph{\scriptsize$-$Id: macros.tex,v 1.1.1.1 2007/02/28 13:43:36 bergel Exp $-$}}
+  }
+  {\newcommand{\bnote}[2]{}
+   \newcommand{\cvsversion}{}
+  } 
+
+\newcommand{\here}{\bnote{***}{CONTINUE HERE}}
+\newcommand{\nb}[1]{\bnote{NB}{#1}}
+
+\newcommand{\fix}[1]{\bnote{FIX}{#1}}
+\newcommand{\todo}[1]{\colorbox{yellow}{\color{red}{TO DO}}{\  \sf\small$\blacktriangleright$\textit{ #1 }$\blacktriangleleft$}}
+\newcommand{\done}[1]{\colorbox{yellow}{\color{red}{DONE}}{\  \sf\small$
+\blacktriangleright$\textit{ #1 }$\blacktriangleleft$}}
+%%%% add your own macros 
+
+\newcommand{\ab}[1]{\bnote{Alex}{#1}}
+\newcommand{\sd}[1]{\bnote{Stef}{#1}}
+\newcommand{\ja}[1]{\bnote{Jannik}{#1}}
+\newcommand{\md}[1]{\bnote{MD}{#1}}
+\newcommand{\ben}[1]{\bnote{Ben}{#1}}
+\newcommand{\jr}[1]{\bnote{JRe}{#1}}
+\newcommand{\lf}[1]{\bnote{Luc}{#1}}
+\newcommand{\jf}[1]{\bnote{Johan}{#1}}
+\graphicspath{{figures/}}
+%%% 
+
+
+\newcommand{\figref}[1]{Figure~\ref{fig:#1}}
+\newcommand{\figlabel}[1]{\label{fig:#1}}
+\newcommand{\tabref}[1]{Table~\ref{tab:#1}}
+\newcommand{\layout}[1]{#1}
+\newcommand{\commented}[1]{}
+\newcommand{\secref}[1]{Section \ref{sec:#1}}
+\newcommand{\seclabel}[1]{\label{sec:#1}}
+
+%\newcommand{\ct}[1]{\textsf{#1}}
+\newcommand{\stCode}[1]{\textsf{#1}}
+\newcommand{\stMethod}[1]{\textsf{#1}}
+%\newcommand{\sep}{\texttt{>>}\xspace}
+\newcommand{\stAssoc}{\texttt{->}\xspace}
+
+\newcommand{\stBar}{$\mid$}
+\newcommand{\stSelector}{$\gg$}
+\newcommand{\ret}{\^{}}
+\newcommand{\msup}{$>$}
+\newcommand{\minf}{$<$}
+%\newcommand{\ret}{$\uparrow$\xspace}
+
+\newcommand{\myparagraph}[1]{\noindent\textbf{#1.}}
+\newcommand{\eg}{\emph{e.g.,}\xspace}
+\newcommand{\ie}{\emph{i.e.,}\xspace}
+\newcommand{\ct}[1]{{\textsf{#1}}\xspace}
+
+
+\newenvironment{code}
+    {\begin{alltt}\sffamily}
+    {\end{alltt}\normalsize}
+
+\newcommand{\defaultScale}{0.55}
+\newcommand{\pic}[3]{
+   \begin{figure}[h]
+   \begin{center}
+   \includegraphics[scale=\defaultScale]{#1}
+   \caption{#2}
+   \label{#3}
+   \end{center}
+   \end{figure}
+}
+
+\newcommand{\twocolumnpic}[3]{
+   \begin{figure*}[!ht]
+   \begin{center}
+   \includegraphics[scale=\defaultScale]{#1}
+   \caption{#2}
+   \label{#3}
+   \end{center}
+   \end{figure*}}
+
+\newcommand{\infe}{$<$}
+\newcommand{\supe}{$\rightarrow$\xspace}
+\newcommand{\di}{$\gg$\xspace}
+\newcommand{\adhoc}{\textit{ad-hoc}\xspace}
+
+\usepackage{url}            
+\makeatletter
+\def\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\sffamily}}}
+\makeatother
+% Now actually use the newly defined style.
+\urlstyle{leo}
+
+\newcommand\danger{\raisebox{-0.4ex}{\LARGE $\triangle$ \normalsize} \hspace{-4.1ex}! \hspace{1ex}}
