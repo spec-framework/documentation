@@ -194,7 +194,7 @@ To include a picture, use the syntax `+caption>file://filename|parameters+`:
 
 
 generates Figure [pierLogo](#pierLogo) \(this reference has been generated using `*pierLogo*`\)\.
-<a name="pierLogo"></a>![pierLogo](pier-logo.png"This is the label of the picture")
+<a name="pierLogo"></a>![pierLogo](pier-logo.png "This is the label of the picture")
 
 
 ##Scripts
