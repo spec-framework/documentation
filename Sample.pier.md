@@ -17,24 +17,28 @@ An empty line starts a new paragraph\.
 An annotated paragraph starts a line with `@@` followed by either `todo` or `note`\. For example,
 
 
-
+```
     @@note this is a note annotation.
+```
 
 
 generates
 
-this is a note annotation\.
+
+
+    Note: this is a note annotation.
+
+
 
 And,
 
 
-
+```
     @@todo this is a todo annotation
+```
 
 
 generates a todo annotation that is not visible in the output\.
-
-this is a todo annotation
 
 
 
@@ -46,10 +50,11 @@ this is a todo annotation
 
 
 
-
+```
     -A block of lines,
     -where each line starts with ==-==
     -is transformed to a bulleted list, where each line is an entry.
+```
 
 
 generates
@@ -65,10 +70,11 @@ generates
 
 
 
-
+```
     #A block of lines,
     #where each line starts with ==#==
     #is transformed to an ordered list, where each line is an entry.
+```
 
 
 generates
@@ -85,11 +91,12 @@ generates
 Description lists are lists with labels:
 
 
-
+```
     ;blue
     :color of the sky
     ;red
     :color of the fire
+```
 
 
 generates
@@ -102,10 +109,11 @@ generates
 
 
 
-
+```
     - Lists can also be nested.
     -#Thus, a line starting with ==-#==
     -#is an element of a bulleted list that is part of an ordered list.
+```
 
 
 generates
@@ -125,10 +133,10 @@ There is some sugar for font formatting:
 - To make something **bold**, write `""bold""`
 - To make something *italic*, write `''italic''`
 - To make something `monospaced`, write `==monospaced==`
-- To make something <del>strikethrough</del>, write `--strikethrough--`
+- To make something ~~<del>strikethrough</del>~~, write `--strikethrough--`
 - To make something <sub>subscript</sub>, write `@@subscript@@`
 - To make something <sup>superscript</sup>, write `^^superscript^^`
-- To make something <u>underlined</u>, write `__underlined__`
+- To make something underlined, write `__underlined__`
 
 
 
@@ -136,10 +144,11 @@ There is some sugar for font formatting:
 To create a table, start off the lines with `|` and separate the elements with `|`s\. Each new line represents a new row of the table\. Add a single `!` to let the cell become a table heading\.
 
 
-
+```
     |!Language |!Coolness
     |Smalltalk | Hypra cool
     |Java | baaad
+```
 
 
 
@@ -154,9 +163,10 @@ To create a table, start off the lines with `|` and separate the elements with `
 The contents of cells can be aligned left, centered or aligned right by using `|{`, `||` or `|}` respectively\.
 
 
-
+```
     ||centered||centered||centered
     |{ left |} right || centered
+```
 
 
 generates
@@ -189,8 +199,9 @@ To create links to externals resources, use the `*Pharo>http://pharo-project.org
 To include a picture, use the syntax `+caption>file://filename|parameters+`:
 
 
-
+```
     +Label of the picture>file://pier-logo.png|width=50|label=pierLogo+
+```
 
 
 generates Figure [pierLogo](#pierLogo) \(this reference has been generated using `*pierLogo*`\)\.
@@ -201,26 +212,29 @@ generates Figure [pierLogo](#pierLogo) \(this reference has been generated using
 
 
 
-
+```
     \[[[
     foo bar
     \]]]
+```
 
 
 generates
 
 
-
+```
     foo bar
+```
 
 
 If you want either a label \(to reference the script later\) or a caption \(to give a nice title to the script\), write the following:
 
 
-
-    \[[[label=script1|caption=My script that works
-    foo bar
+```
+    \[[[label=script1|caption=My script that works|language=Smalltalk
+    self foo bar
     \]]]
+```
 
 
 which produces
@@ -228,8 +242,9 @@ which produces
 
 <a name="script1"></a>**My script that works**
 
-
-    foo bar
+```Smalltalk
+    self foo bar
+```
 
 
 This script can then be referenced with `*script1*` \(produces [script1](#script1)\)\.
@@ -238,8 +253,9 @@ This is another script \(referenced as [script2](#script2)\), with no caption th
 
 <a name="script2"></a>
 
-
+```
     foo bar
+```
 
 
 
@@ -250,7 +266,7 @@ If you want to include verbatim text into a page you must enclose it in `{{{` an
 A good practice is to always specify for which kind of export the verbatim text must be outputted by starting the block with `{{{latex:` or `{{{html:` \(for now only LaTeX and HTML are supported\)\. For example, the following shows a formula, either using LaTeX or an image depending on the kind of export\.
 
 
-
+```
     {{{latex:
     \begin{equation}
       \label{eq:1}
@@ -260,24 +276,12 @@ A good practice is to always specify for which kind of export the verbatim text 
     {{{html:
     <img src="equation1.png" title="Equation 1" />
     }}}
+```
 
 
 This results in
 
-
-
-    \begin{equation}
-      \label{eq:1}
-      \frac{1+\sqrt{2}}{2}
-    \end{equation}
-
-
-
-
-    <img src="equation1.png" title="Equation 1" />
-
-
-**Take care:** avoid terminating the verbatim text with a `}` asthis will confuse the parser\. So, don't write <del>`{{{``begin{scriptsize}``}}}`</del> but `{{{``begin{scriptsize} ``}}}` instead\.
+**Take care:** avoid terminating the verbatim text with a `}` asthis will confuse the parser\. So, don't write ~~<del>`{{{``begin{scriptsize}``}}}`</del>~~ but `{{{``begin{scriptsize} ``}}}` instead\.
 
 
 ##Preformatted \(less used\)
@@ -285,9 +289,10 @@ This results in
 To create a preformatted block, begin each line with ``=\. A preformatted block uses equally spaced text so that spacing is preserved\.
 
 
-
+```
     = this is preformatted text
     = this line as well
+```
 
 
 
@@ -295,4 +300,3 @@ To create a preformatted block, begin each line with ``=\. A preformatted block 
 ##Commented lines
 
 Lines that start with a `%` are considered comments and will be rendered as such in the output document \(e\.g\., in HTML, such a line would be surrounded by `<!--` and `-->`\)\.
-<!--- Local Variables:--><!--- ispell\-local\-dictionary: "english"--><!--- End:-->
