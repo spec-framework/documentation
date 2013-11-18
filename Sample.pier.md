@@ -18,7 +18,7 @@ An annotated paragraph starts a line with `@@` followed by either `todo` or `not
 
 
 ```
-    @@note this is a note annotation.
+@@note this is a note annotation.
 ```
 
 
@@ -29,12 +29,11 @@ generates
     Note: this is a note annotation.
 
 
-
 And,
 
 
 ```
-    @@todo this is a todo annotation
+@@todo this is a todo annotation
 ```
 
 
@@ -51,9 +50,9 @@ generates a todo annotation that is not visible in the output\.
 
 
 ```
-    -A block of lines,
-    -where each line starts with ==-==
-    -is transformed to a bulleted list, where each line is an entry.
+-A block of lines,
+-where each line starts with ==-==
+-is transformed to a bulleted list, where each line is an entry.
 ```
 
 
@@ -71,9 +70,9 @@ generates
 
 
 ```
-    #A block of lines,
-    #where each line starts with ==#==
-    #is transformed to an ordered list, where each line is an entry.
+#A block of lines,
+#where each line starts with ==#==
+#is transformed to an ordered list, where each line is an entry.
 ```
 
 
@@ -92,10 +91,10 @@ Description lists are lists with labels:
 
 
 ```
-    ;blue
-    :color of the sky
-    ;red
-    :color of the fire
+;blue
+:color of the sky
+;red
+:color of the fire
 ```
 
 
@@ -110,9 +109,9 @@ generates
 
 
 ```
-    - Lists can also be nested.
-    -#Thus, a line starting with ==-#==
-    -#is an element of a bulleted list that is part of an ordered list.
+- Lists can also be nested.
+-#Thus, a line starting with ==-#==
+-#is an element of a bulleted list that is part of an ordered list.
 ```
 
 
@@ -145,9 +144,9 @@ To create a table, start off the lines with `|` and separate the elements with `
 
 
 ```
-    |!Language |!Coolness
-    |Smalltalk | Hypra cool
-    |Java | baaad
+|!Language |!Coolness
+|Smalltalk | Hypra cool
+|Java | baaad
 ```
 
 
@@ -164,8 +163,8 @@ The contents of cells can be aligned left, centered or aligned right by using `|
 
 
 ```
-    ||centered||centered||centered
-    |{ left |} right || centered
+||centered||centered||centered
+|{ left |} right || centered
 ```
 
 
@@ -200,7 +199,7 @@ To include a picture, use the syntax `+caption>file://filename|parameters+`:
 
 
 ```
-    +Label of the picture>file://pier-logo.png|width=50|label=pierLogo+
++Label of the picture>file://pier-logo.png|width=50|label=pierLogo+
 ```
 
 
@@ -213,9 +212,9 @@ generates Figure [pierLogo](#pierLogo) \(this reference has been generated using
 
 
 ```
-    \[[[
-    foo bar
-    \]]]
+\[[[
+foo bar
+\]]]
 ```
 
 
@@ -223,7 +222,7 @@ generates
 
 
 ```
-    foo bar
+foo bar
 ```
 
 
@@ -231,9 +230,9 @@ If you want either a label \(to reference the script later\) or a caption \(to g
 
 
 ```
-    \[[[label=script1|caption=My script that works|language=Smalltalk
-    self foo bar
-    \]]]
+\[[[label=script1|caption=My script that works|language=Smalltalk
+self foo bar
+\]]]
 ```
 
 
@@ -242,8 +241,8 @@ which produces
 
 <a name="script1"></a>**My script that works**
 
-```Smalltalk
-    self foo bar
+```smalltalk
+self foo bar
 ```
 
 
@@ -254,7 +253,7 @@ This is another script \(referenced as [script2](#script2)\), with no caption th
 <a name="script2"></a>
 
 ```
-    foo bar
+foo bar
 ```
 
 
@@ -267,15 +266,15 @@ A good practice is to always specify for which kind of export the verbatim text 
 
 
 ```
-    {{{latex:
-    \begin{equation}
-      \label{eq:1}
-      \frac{1+\sqrt{2}}{2}
-    \end{equation}
-    }}}
-    {{{html:
-    <img src="equation1.png" title="Equation 1" />
-    }}}
+{{{latex:
+\begin{equation}
+  \label{eq:1}
+  \frac{1+\sqrt{2}}{2}
+\end{equation}
+}}}
+{{{html:
+<img src="equation1.png" title="Equation 1" />
+}}}
 ```
 
 
@@ -290,8 +289,8 @@ To create a preformatted block, begin each line with ``=\. A preformatted block 
 
 
 ```
-    = this is preformatted text
-    = this line as well
+= this is preformatted text
+= this line as well
 ```
 
 
