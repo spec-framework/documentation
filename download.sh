@@ -3,7 +3,7 @@
 # CLEAN
 git clean -f -x
 rm -rf pharo-vm
-find . -name "*md' | xargs rm
+find . -name "*md" | xargs rm
 
 VM_INSTALL_URL="http://get.pharo.org/vm"
 IMAGE_URL="https://ci.inria.fr/pharo-contribution/job/Pillar/PHARO=20,VERSION=bleedingEdge,VM=vm/lastSuccessfulBuild/artifact/Pillar.zip"
