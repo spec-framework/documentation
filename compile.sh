@@ -64,7 +64,7 @@ function compile() {
 }
 
 function compile_chapters() {
-    chapters=$(cat PFTE.tex  | grep '^\\input' | grep -v common.tex | sed -e 's/^\\input{\([^}]*\)}.*$/\1/')
+    chapters=$(cat SpecDocumentation.tex  | grep '^\\input' | grep -v common.tex | sed -e 's/^\\input{\([^}]*\)}.*$/\1/')
 
     for chapter in $chapters; do
         echo =========================================================
