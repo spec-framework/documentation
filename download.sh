@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# CLEAN
+git clean -f -x
+
 VM_INSTALL_URL="http://get.pharo.org/vm"
 IMAGE_URL="https://ci.inria.fr/pharo-contribution/job/Pillar/PHARO=20,VERSION=bleedingEdge,VM=vm/lastSuccessfulBuild/artifact/Pillar.zip"
 
