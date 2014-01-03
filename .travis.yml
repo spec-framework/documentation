@@ -1,13 +1,6 @@
 language: c
-compiler:
-  - gcc
-  - clanglanguage: c
-compiler:
-  - gcc
-  - clang
 
-
-before_script: ./download
+before_script: ./download.sh
 
 script: ./pharo Pharo.image export --to=markdown --configurationFile="chapters.conf"
 
