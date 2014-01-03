@@ -6,6 +6,7 @@ install:
 before_script: ./download.sh
 script: ./compile.sh book
 after_success:
+- git checkout master
 - git remote rm origin
 - git remote add origin https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git
 - git config user.email "${GIT_EMAIL}"
