@@ -1,8 +1,3 @@
-env:
-  global:
-  - secure: Un489ybGOoGRbTgdas5MP7eVfhtnhi8YwAvwItNhb08UnN63ePJ2L0hkGiBLs74K7MlbCtd1xHRGKyxCEOx81ywWZ2ZihBYD1u/ThBxcTH0iTJcqqUQZbwXY5XXPe5YRO3dvffq2DKwlQ/MFLIKlHxseMJL/y6sxU5zM+LMRAqA=
-  - secure: EnlMZIDqDWWtXM4euWsEb+4HH68oQAzP12LAALJezyLapo/xXDrenZiiLjTh6gRZGM3EOtwgsR4ylwAdlmE3yLsw4De2XinrmHIMsXiNcpL3XiJlFmpGsmoEr/Oav18rz9tnWeUgUYRB6r/EskNCYxKA5/9HSiPAjcXdywUot5s=
-  - secure: mH57rp5PDn5Zq96w419Qmo0BieEYdZb+za6OPCvGIsD8Z0dpeHdReKLzKlSLJ48oGi8/cg/XP9bxMAu77sXi8/DYutNXQKoTtopHqB8xvWFUeKlq12qcU8mToknCiWr32OHcYapKOVqfL2aEe3Juz+lvJD4xomrZdXMlPDWFsIg=
 language: c
 install:
 - sudo FORCE_ADD_APT_REPOSITORY=1 add-apt-repository ppa:pharo/stable
@@ -14,3 +9,8 @@ after_script:
 - git add *.md
 - git commit -m "Generate Markdown output"
 - git push
+env:
+  global:
+  - secure: qw0hVz52XkJD3k4stUZqWEKlaOgamxX6wHTCbHhVfpbdAaxB1qkPcERkVLqIvGnKCEHQfOzS9/AinM2TVEZQQq4dzvDAih6Izf8VbeNaEToCuMs2EIVMOP9UTIpgy8GG77oEv5hgUyPaWCAsEuD1HSJniu/YYlc/99KhbRq0UQI=
+  - secure: P+2+HmEbSxiaJYbpCSx6JHnpahZpPISghSDHvKROLsW/8oATHGRwa7yYivELvnDOcUbcE8zSQtRb6SULl+haZ4XvfxNvsbBYDVOnJPA2+eZBsWrPyz7jF4zVTZHc2lcoZD+op5DEvUGw9jz+GQzuFbtsbZNVS4F2Vh7Mkl+Oa/4=
+  - secure: PFO7eYKPvxwxdjjLyFPoxKtq9PpMSAcujnwrspAX3Ox/Ls3hg10Rt5W5DMxxqDuyTbg9N70uFex/8OR4jG4SVcUaO+gdB7pdksXNNXnHIRpk451qO9/r5YFqiXeH36Nz2Vs1ZIPw4ez9WZJIgHeupszCazSfwLq00ZEmvAyDM/g=
