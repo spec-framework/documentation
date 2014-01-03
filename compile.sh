@@ -7,26 +7,20 @@ VM_EXECUTABLE=./pharo
 
 function generate_html() {
     pier_source="$1"
-    $VM_EXECUTABLE Pharo.image eval <<EOF
-PRExporter generateStandaloneHTMLFromPier: '${pier_source}'.
-WorldState addDeferredUIMessage: [ SmalltalkImage current snapshot: false andQuit: true ].
-EOF
+	filename="${pier_source%.*}"
+    $VM_EXECUTABLE Pharo.image export --to=html --outputFile=$filename.html $pier_source
 }
 
 function generate_md() {
     pier_source="$1"
-    $VM_EXECUTABLE Pharo.image eval <<EOF
-PRExporter generateGitHubMarkdownFromPier: '${pier_source}'.
-WorldState addDeferredUIMessage: [ SmalltalkImage current snapshot: false andQuit: true ].
-EOF
+	filename="${pier_source%.*}"
+    $VM_EXECUTABLE Pharo.image export --to=markdown --outputFile=$filename.md $pier_source
 }
 
 function generate_latex() {
     pier_source="$1"
-    $VM_EXECUTABLE Pharo.image eval <<EOF
-PRExporter generateSBALaTeXChapterFromPier: '${pier_source}'.
-WorldState addDeferredUIMessage: [ SmalltalkImage current snapshot: false andQuit: true ].
-EOF
+	filename="${pier_source%.*}"
+    $VM_EXECUTABLE Pharo.image export --to=latex --outputFile=$filename.tex $pier_source
 }
 
 function mypdflatex() {
@@ -64,26 +58,19 @@ function compile() {
 }
 
 function compile_chapters() {
-    chapters=$(cat SpecDocumentation.tex  | grep '^\\input' | grep -v common.tex | sed -e 's/^\\input{\([^}]*\)}.*$/\1/')
-
-    for chapter in $chapters; do
-        echo =========================================================
-        echo COMPILING $chapter
-        echo =========================================================
-
-        # e.g., chapter = Zinc/Zinc.pier.tex
-
-        pier_file=$(basename $chapter .tex) # e.g., Zinc.pier
-        dir=$(dirname $chapter) # e.g., Zinc
-
-        compile "${dir}" "${pier_file}"
-    done
+    $VM_EXECUTABLE Pharo.image export --to=markdown --outputFile=book.md --configurationFile="$1"
+    $VM_EXECUTABLE Pharo.image export --to=latex --outputFile=book.tex --configurationFile="$1"
+    $VM_EXECUTABLE Pharo.image export --to=html --outputFile=book.html --configurationFile="$1"
 }
 
 if [[ $# -eq 1 ]]; then
-    dir=$(dirname "$1") # e.g., Zinc
-    pier_file=$(basename "$1") # e.g., Zinc.pier
-    compile "${dir}" "${pier_file}"
+	if [[ "$1" == "book" ]]; then
+		compile_chapters "book.conf"
+	else
+    	dir=$(dirname "$1") # e.g., Zinc
+    	pier_file=$(basename "$1") # e.g., Zinc.pier
+    	compile "${dir}" "${pier_file}"
+	fi
 else
-    compile_chapters
+	compile_chapters "chapters.conf"
 fi
