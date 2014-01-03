@@ -12,7 +12,7 @@ after_success:
 - git config user.name "${GIT_NAME}"
 - git add *.md
 - git commit -m "Generate Markdown output"
-- git push https://github.com/SpecForPharo/documentation.git
+- git push
 env:
   global:
   - secure: hrlMJ2D+F5pth+ZRq6frLZdSyW2ZFpPJLlJzj7Ox7zQqloJLGdPvKCDG6EvVIrHxXmnV4MBWjaO3f632lPtjnAg0vzMnU8Q38Md83QaMqvxss+OrLqq2GkpRhY5aodY64wxwxbdVoIf725sXQqujXspqKxUh5nerWRXdTaHAghY=
