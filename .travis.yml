@@ -5,12 +5,16 @@ install:
 - sudo apt-get install pharo-launcher:i386
 before_script: ./download.sh
 script: ./pharo Pharo.image export --to=markdown --configurationFile="chapters.conf"
-after_script:
+after_success:
+- git config credential.helper "store --file=.git/credentials"
+- echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+- git config user.email ${GIT_EMAIL}
+- git config --global user.name ${GIT_NAME}
 - git add *.md
 - git commit -m "Generate Markdown output"
 - git push
 env:
   global:
-  - secure: qw0hVz52XkJD3k4stUZqWEKlaOgamxX6wHTCbHhVfpbdAaxB1qkPcERkVLqIvGnKCEHQfOzS9/AinM2TVEZQQq4dzvDAih6Izf8VbeNaEToCuMs2EIVMOP9UTIpgy8GG77oEv5hgUyPaWCAsEuD1HSJniu/YYlc/99KhbRq0UQI=
-  - secure: P+2+HmEbSxiaJYbpCSx6JHnpahZpPISghSDHvKROLsW/8oATHGRwa7yYivELvnDOcUbcE8zSQtRb6SULl+haZ4XvfxNvsbBYDVOnJPA2+eZBsWrPyz7jF4zVTZHc2lcoZD+op5DEvUGw9jz+GQzuFbtsbZNVS4F2Vh7Mkl+Oa/4=
-  - secure: PFO7eYKPvxwxdjjLyFPoxKtq9PpMSAcujnwrspAX3Ox/Ls3hg10Rt5W5DMxxqDuyTbg9N70uFex/8OR4jG4SVcUaO+gdB7pdksXNNXnHIRpk451qO9/r5YFqiXeH36Nz2Vs1ZIPw4ez9WZJIgHeupszCazSfwLq00ZEmvAyDM/g=
+  - secure: hrlMJ2D+F5pth+ZRq6frLZdSyW2ZFpPJLlJzj7Ox7zQqloJLGdPvKCDG6EvVIrHxXmnV4MBWjaO3f632lPtjnAg0vzMnU8Q38Md83QaMqvxss+OrLqq2GkpRhY5aodY64wxwxbdVoIf725sXQqujXspqKxUh5nerWRXdTaHAghY=
+  - secure: NsKYNrB+qfz8pyIpsPL4w9pFsJog5+5wTMKe1HT47MoHTDrV1cIgVWJQJq2wkui0bTqScRNOjqXZPLP7J7CHBan60VQn+MYkZ8FHBuVzaxDD30nMFYt1Jz7SApvUR1k5nOftIhq00XTU+T211eCRGPyHdEICj8HxtZUHD3s8Mxo=
+  - secure: q4dOauqVnxTHDRLeugSBBuYdizQsIjYeu24frl/qDiZurEg7peg/LP+rUbkuwozRLRzta7t7KVcqcEkcLtIsaZMp2xv3JDFPnJ68fLaKmOmSmOHQ5T9oqSiWGo20uYf5hluCF541hIq8izGG8sDYsjCuj8HmiUb0X367jmr+iCs=
