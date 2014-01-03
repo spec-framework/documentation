@@ -8,11 +8,11 @@ script: ./pharo Pharo.image export --to=markdown --configurationFile="chapters.c
 after_success:
 - git config credential.helper "store --file=.git/credentials"
 - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
-- git config user.email ${GIT_EMAIL}
-- git config --global user.name ${GIT_NAME}
+- git config user.email "${GIT_EMAIL}"
+- git config user.name "${GIT_NAME}"
 - git add *.md
 - git commit -m "Generate Markdown output"
-- git push
+- git push https://github.com/SpecForPharo/documentation.git
 env:
   global:
   - secure: hrlMJ2D+F5pth+ZRq6frLZdSyW2ZFpPJLlJzj7Ox7zQqloJLGdPvKCDG6EvVIrHxXmnV4MBWjaO3f632lPtjnAg0vzMnU8Q38Md83QaMqvxss+OrLqq2GkpRhY5aodY64wxwxbdVoIf725sXQqujXspqKxUh5nerWRXdTaHAghY=
