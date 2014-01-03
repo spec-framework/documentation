@@ -8,7 +8,7 @@ compiler:
 
 
 before_script: ./download
-	
+
 script: ./pharo Pharo.image export --to=markdown --configurationFile="chapters.conf"
 
 after_script:
