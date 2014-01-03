@@ -2,7 +2,7 @@ env:
   global:
   - secure: Un489ybGOoGRbTgdas5MP7eVfhtnhi8YwAvwItNhb08UnN63ePJ2L0hkGiBLs74K7MlbCtd1xHRGKyxCEOx81ywWZ2ZihBYD1u/ThBxcTH0iTJcqqUQZbwXY5XXPe5YRO3dvffq2DKwlQ/MFLIKlHxseMJL/y6sxU5zM+LMRAqA=
   - secure: EnlMZIDqDWWtXM4euWsEb+4HH68oQAzP12LAALJezyLapo/xXDrenZiiLjTh6gRZGM3EOtwgsR4ylwAdlmE3yLsw4De2XinrmHIMsXiNcpL3XiJlFmpGsmoEr/Oav18rz9tnWeUgUYRB6r/EskNCYxKA5/9HSiPAjcXdywUot5s=
-  - secure: NRazCr8THTJx/eKf5LmfzGyBjfD3G4FVISnlfSlWJvjsqtHkrIoGZNMZC7kmxkxdMwj8Gw6ck8V4/Zv43LNhyRjtVo35mY3m0P3VEhI2c8H/UtSZtO1SVL5IlqhHmdTKVgjaVIzcIEeONMN8asXW7rvfzHFvy8WAR8JP5KglUdE=
+  - secure: mH57rp5PDn5Zq96w419Qmo0BieEYdZb+za6OPCvGIsD8Z0dpeHdReKLzKlSLJ48oGi8/cg/XP9bxMAu77sXi8/DYutNXQKoTtopHqB8xvWFUeKlq12qcU8mToknCiWr32OHcYapKOVqfL2aEe3Juz+lvJD4xomrZdXMlPDWFsIg=
 language: c
 install:
 - sudo FORCE_ADD_APT_REPOSITORY=1 add-apt-repository ppa:pharo/stable
