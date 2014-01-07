@@ -1,4 +1,4 @@
-Spec Documentation
+Spec Documentation [![Build Status](https://travis-ci.org/SpecForPharo/documentation.png?branch=master)](https://travis-ci.org/SpecForPharo/documentation)
 ==================
 
 All the documentation for Spec will be stored here
