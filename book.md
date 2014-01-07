@@ -3,60 +3,60 @@
 #Spec: a new framework for describing user intefaces
 
 
-##1\. Introduction
+##Introduction
 
 
-Writing user interfaces is notoriously a tedious tasks\.It often requires time and a clear understanding of the separation of concerns\.Indeed most of the frameworks mix domain applicative models with widget models\.
+Writing user interfaces is notoriously a tedious tasks\. It often requires time and a clear understanding of the separation of concerns\. Indeed most of the frameworks mix domain applicative models with widget models\.
 
-*Spec* is a framework for describing user interfaces\. It allows the separation of concerns between the different part of the user interface as expressed in the MVP pattern\.
+*Spec* is a framework for describing user interfaces\. It allows the separation of concerns between the different part of the user interface as expressed in the MVP pattern\.*Spec* emphasis the reuse of the widgets as well as there customization\.
 
-This article goal is to provide an overview of the *Spec* functionalities\.The general purpose of *Spec* will be explained through several examples among multiple sections\.
+This article goal is to provide an overview of the *Spec* functionalities\. The general purpose of *Spec* will be explained through several examples among multiple sections\.
 
-First the 3 pillars of *Spec* will be explained\.Second the API of the *Spec* basic models is detailled as well as how to understand the meta information attached to this API\.The third section covers the two dynamic aspects of *Spec*\.The final section is dedicated to the creation of your own *Spec* model\.
+First the 3 pillars of *Spec* will be explained\. Second we explose how *Spec* reuse subwidgets and how to customize widgets to make them fit the user needs\.Third the API of the *Spec* basic models is detailled as well as how to understand the meta information attached to this API\. The fourth section covers the two dynamic aspects of *Spec*\. The final section is dedicated to the creation of your own *Spec* model
 
-##2\.  The heart of Spec
-
-
-Spec is build around three axes borrowed form the MVP pattern\.Those axes are materialize as three methods: `initializeWidgets`, `initializePresenter` , and `defaultSpec`\.
+## The heart of Spec
 
 
-###2\.1\.  `initializeWidgets` the Presenter
+Spec is build around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
 
 
-
-
-###2\.2\.  `initializePresenter` the Interactor	
+### `initializeWidgets` the Presenter
 
 
 
 
-###2\.3\.  `defaultSpec` the View
-
-
-##3\.  Where to find what I want
-
-
-##4\.  Spec the Dynamic
+### `initializePresenter` the Interactor	
 
 
 
-###4\.1\.  Dynamic add and removal of subwidgets
+
+### `defaultSpec` the View
+
+
+## Where to find what I want
+
+
+## Spec the Dynamic
 
 
 
-###4\.2\.  Dynamic modification of the layout
-
-
-##5\.  Writing my own Spec
+### Dynamic add and removal of subwidgets
 
 
 
-###5\.1\.  The Model
+### Dynamic modification of the layout
+
+
+## Writing my own Spec
 
 
 
-###5\.2\.  The Adapter
+### The Model
 
 
 
-###5\.3\.  The Bindings
+### The Adapter
+
+
+
+### The Bindings
