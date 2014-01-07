@@ -64,13 +64,13 @@ function compile_chapters() {
 }
 
 if [[ $# -eq 1 ]]; then
-	if [[ "$1" == "book" ]]; then
-		compile_chapters "book.conf"
+	if [[ "$1" == "chapters" ]]; then
+		compile_chapters "chapters.conf"
 	else
     	dir=$(dirname "$1") # e.g., Zinc
     	pier_file=$(basename "$1") # e.g., Zinc.pier
     	compile "${dir}" "${pier_file}"
 	fi
 else
-	compile_chapters "chapters.conf"
+	compile_chapters "book.conf"
 fi
