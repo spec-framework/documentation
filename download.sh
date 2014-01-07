@@ -3,7 +3,6 @@
 # CLEAN
 git clean -f -x
 rm -rf pharo-vm
-find . -name "*md" | xargs rm
 
 VM_INSTALL_URL="http://get.pharo.org/vm"
 IMAGE_URL="https://ci.inria.fr/pharo-contribution/job/Pillar/PHARO=30,VERSION=bleedingEdge,VM=vm/lastSuccessfulBuild/artifact/Pillar.zip"
@@ -48,7 +47,7 @@ wget --help | grep -- "$CERTCHECK" 2>&1 > /dev/null || CERTCHECK=''
 if [ $# -eq 0 ]; then
     get_image
     get_vm
-	./pharo Pillar.image config http://smalltalkhub.com/mc/Pier/Pillar/main/ ConfigurationOfPillar --install=bleedingEdge
+	./pharo Pharo.image config "http://smalltalkhub.com/mc/Pier/Pillar/main/" ConfigurationOfPillar --install=bleedingEdge
     exit 0
 else
     while [ $# -gt 0 ]; do
