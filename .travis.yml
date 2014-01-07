@@ -8,6 +8,7 @@ script: ./compile.sh
 after_success:
 - export BRANCH=`git rev-parse --abbrev-ref HEAD`
 - echo "${BRANCH}"
+- echo `git branch -l`
 - git checkout "${BRANCH}"
 - git remote rm origin
 - git remote add origin https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git
