@@ -1,6 +1,6 @@
 !! The heart of Spec
 
-Spec is build around three axes borrowed from the MVP pattern.
+Spec is built around three axes borrowed from the MVP pattern.
 Those axes are materialized as three methods: ==initializeWidgets==, ==initializePresenter==, and ==defaultSpec==.
 
 !!! ==initializeWidgets== the Presenter
