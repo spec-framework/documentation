@@ -4,7 +4,7 @@ install:
 - sudo apt-get update
 - sudo apt-get install pharo-launcher:i386
 before_script: ./download.sh
-script: ./compile.sh book
+script: ./compile.sh
 after_success:
 - git checkout master
 - git remote rm origin
