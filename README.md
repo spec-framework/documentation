@@ -7,3 +7,10 @@ where a pier file stands for a chapter.
 The documentation is written using [`Pillar`](http://smalltalkhub.com/#!/~Pier/Pillar) by **Damien Cassou**.
 
 <sub>The licence of the files in this repository is [Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)](http://creativecommons.org/licenses/by-sa/3.0/deed.en_US)</sub>
+
+## Guidelines
+
+Few tips to ease the collaboration using git.
+
+1. One sentence per line: it helps the diff tools to provide more accurate output
+2. While working on a chapter, do not hesitate branching: it provides a more accurate view of what is under construction.
