@@ -17,7 +17,7 @@ First the 3 pillars of *Spec* will be explained\. Second we explose how *Spec* r
 ## The heart of Spec
 
 
-Spec is build around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
+Spec is built around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
 
 
 ### `initializeWidgets` the Presenter
