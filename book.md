@@ -12,7 +12,7 @@ The following article will introduce you how to use `Spec` through several examp
 ## The heart of Spec
 
 
-Spec is build around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
+Spec is built around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
 
 
 ### `initializeWidgets` the Presenter
