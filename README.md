@@ -14,3 +14,4 @@ Few tips to ease the collaboration using git.
 
 1. One sentence per line: it helps the diff tools to provide more accurate output
 2. While working on a chapter, do not hesitate branching: it provides a more accurate view of what is under construction.
+3. Create a Pull Request for each branch: it will not be accepted until the original author says it's ready, but it will provide a support for review and feedback
