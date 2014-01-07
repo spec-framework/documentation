@@ -6,9 +6,10 @@
 *.toc
 *.url
 *.synctex.gz
-*.pier.pdf
-*.pier.tex
-*.pier.html
+*.pdf
+*.tex
+*.html
+*.md
 /PFTE.pdf
 /Zinc/Zinc.tex
 /Pharo.changes
@@ -23,3 +24,4 @@ files/
 /crash.dmp
 .DS_Store
 /package-cache
+!book.md
