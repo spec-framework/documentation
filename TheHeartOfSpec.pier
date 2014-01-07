@@ -1,0 +1,12 @@
+!! The heart of Spec
+
+Spec is build around three axes borrowed form the MVP pattern.
+Those axes are materialize as three methods: ==initializeWidgets==, ==initializePresenter== , and ==defaultSpec==.
+
+!!! ==initializeWidgets== the Presenter
+
+
+!!! ==initializePresenter== the Interactor	
+
+
+!!! ==defaultSpec== the View
