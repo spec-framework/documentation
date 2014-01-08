@@ -59,6 +59,8 @@ rebuildWithNewLayout
 
 
 
+One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.
+
 
 ### Dynamic add and removal of subwidgets
 
