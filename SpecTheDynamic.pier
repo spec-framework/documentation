@@ -1,5 +1,25 @@
 !! Spec the Dynamic
 
-!!! Dynamic add and removal of subwidgets
+Having an user interface with a well known number of sub widgets and a static layout should now sounds easy. 
+But an user interface is often more than just that. 
+There are two situations where you need more. 
+First it happens that the layout of the user interface need to be changed at runtime to match the execution context.
+Second if sub widgets are added or removed at runtime. Then the programmer need to be able to parametrize those new sub widgets on the fly.
 
 !!! Dynamic modification of the layout
+
+Changing a widget layout at runtime is quite easy.
+It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout.
+
+The snippet *rebuildDynamically* shows how to simply rebuild a widget with a new layout.
+
+[[[label=rebuildDynamically|caption=Rebuild a widget at run time|language=Smalltalk 
+rebuildWithNewLayout
+	| newLayout |
+
+	newLayout := self newLayoutCreatedDynamically.
+	self needRebuild: false. "tells the interpreter to keep my current ui element"
+	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
+]]]
+
+!!! Dynamic add and removal of subwidgets
