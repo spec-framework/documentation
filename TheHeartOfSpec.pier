@@ -12,7 +12,7 @@ To avoid possible misundertandings due to terminology issues because of overload
 - ''UI Model:'' an object that contains the state and behavior of one or several UI elements.
 - ''Widget:'' the union of a UI Element and its UI model.
 
-!!! ==initializeWidgets== the widgets @@the MVP View@@
+!!! ''initializeWidgets'' the widgets @@the MVP View@@
 
 This takes care of the configuration of the different widgets themselves, without the interaction.
 It is used to instantiate the subwidgets and to specify their default values and general behavior.
@@ -48,17 +48,17 @@ The complete list of available widget creation methods can be found in the class
 Second if one wants to reuse any subclass of ''ComposableModel'' the widget needs to be initialized using the ==instantiate:== method.
 The example *use_of_instantiate* shows how to instantiate a ''MessageBrowser''.
 
-[[[label=label|caption=caption|language=Smalltalk 
+[[[label=use_of_instantiate|caption=How to reuse a MessageBrowser widget|language=Smalltalk 
 	widget := self instantiate: MessageBrowser.
 ]]]
 
-!!! ==initializePresenter== the Presenter @@the MVP Interactor@@
+!!! ''initializePresenter'' the Presenter @@the MVP Interactor@@
 
 This takes care of the interactions between the different widgets.
 This method specifies the flow of exectution linking the sub widgets all together.
 All the interaction between one widget and another is specified here.
 
-!!! ==defaultSpec== the View @@the MVP Presenter@@
+!!! ''defaultSpec'' the View @@the MVP Presenter@@
 
 This takes care of the layout of the different widgets.
 This class side method is used to specify the position of each sub widgets.
