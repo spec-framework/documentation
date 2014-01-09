@@ -24,19 +24,23 @@ To avoid possible misundertandings due to terminology issues because of overload
 
 
 
-####  `initializeWidgets` the widgets 
+###  *initializeWidgets* the widgets  <sub>the MVP View</sub>
 
 
-This takes care of the configuration of the different widgets themselves, without the interaction\. 
+This takes care of the configuration of the different widgets themselves, without the interaction\. It is used to instantiate the subwidgets and to specify their default values and general behavior\. This focus in this method is to specify how the widgets will look like\. 
+
+In general  `initializeWidgets` should follow the pattern: 
 
 
+-  widgets instantiation 
+-  widgets specification 
+-  set the order of focus 
 
-    Note: Ben I think you might want to have a look at the mvp paper please.
+&nbsp;
+
+The code  [1\.1\. ](#pattern) is an example of an  `initializeWidgets` method\. 
 
 
-
-
-####  `initializePresenter` the Presenter 
 
 <a name="pattern"></a>**Example of initializeWidgets**
 
@@ -112,12 +116,14 @@ The pragma can be  `<spec: default>` for the view to use by default, or  `<spec>
 
 #### Examples 
 
-<a name="layout_basic_example@"></a>
-The simpliest example is to just render one widget\. The example  [1\.3\. ](#ex:layout1) presents such a layout\. 
+
+This section provides a list of examples about the constructions of layouts\. 
+<a name="layout_basic_example"></a>
+The simpliest example is to just render one widget\. The example  [1\.3\. ](#ex_layout1) presents such a layout\. 
 
 
 
-<a name="ex:layout1"></a>**Layout with only one widget**
+<a name="ex_layout1"></a>**Layout with only one widget**
 
 
     ^ SpecLayout composed
@@ -130,12 +136,12 @@ The symbol  `myWidget` refers to an instance side method returning a widget\. No
 
 ---
 
-<a name="layout_rows_and_column_layout@"></a>
-Often user interfaces can be describes in rows and columns\. The example  [1\.4\. ](#ex:layout_rows) sows how to build a row of widgets\. 
+<a name="layout_rows_and_column_layout"></a>
+Often user interfaces can be describes in rows and columns\. The example  [1\.4\. ](#ex_layout_row) sows how to build a row of widgets\. 
 
 
 
-<a name="ex:layout_rows"></a>**Row of widgets**
+<a name="ex_layout_row"></a>**Row of widgets**
 
 
     ^ SpecLayout composed
@@ -147,6 +153,60 @@ Often user interfaces can be describes in rows and columns\. The example  [1\.4\
     	yourself
 
 
+
+Now having the widgets rendered as a column is very similar as show in the example  [1\.5\. ](#ex_layout_column)
+
+
+
+<a name="ex_layout_column"></a>**Column of widgets**
+
+
+    ^ SpecLayout composed
+    	newColumn: [ :column |
+    		column
+    			add: #myFirstWidget;
+    			add: #mySecondWidget
+    	];
+    	yourself
+
+
+
+
+---
+<a name="layout_set_size_pixels"></a>
+The height of row, as well as the width of a column, can be specified to prevent it to take all the space available\. The example  [1\.6\. ](#ex_row_height) shows how to specify the height of a row in pixels while the example  [1\.7\. ](#ex_column_width) how to specify the column width\. 
+
+
+
+<a name="ex_row_height"></a>**Row of 30px**
+
+
+    ^ SpecLayout composed
+    	newRow: [ :row |
+    		row
+    			add: #myFirstWidget;
+    			add: #mySecondWidget
+    	] height: 30;
+    	yourself
+
+
+
+
+
+<a name="ex_column_width"></a>**Column of 30px**
+
+
+    ^ SpecLayout composed
+    	newColumn: [ :column |
+    		column
+    			add: #myFirstWidget;
+    			add: #mySecondWidget
+    	] width: 30;
+    	yourself
+
+
+
+Note that it is a bad habit to hardcode the size of the widgets\. Methods are available on  *ComposableModel* providing some default size like the width of a button\. If one wants to use his or her own widget size, he or she should not forget to take in account the current font size\. 
 
 ## Where to find what I want 
 
