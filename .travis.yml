@@ -12,7 +12,7 @@ after_success:
 - git remote add origin https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git
 - git config user.email "${GIT_EMAIL}"
 - git config user.name "${GIT_NAME}"
-- git add *.md
+- git add -f book.md
 - git commit -m "Generate Markdown output"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
 env:
