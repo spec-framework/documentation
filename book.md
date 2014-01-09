@@ -10,7 +10,7 @@
 The following article will introduce you how to use  `Spec` through several examples\.  The general purpose of  `Spec` will be explained then will follow a presentation of every  `Spec` widgets and how to use them\. This paper will be concluded by  `n` examples about how to compose basic widgets in order to build complete user interfaces\. 
 
 ## The heart of Spec 
-<a name="sec:heart_of_spec"></a>
+<a name="sec_heart_of_spec"></a>
 
 Spec is built around three axes borrowed from the MVP pattern\. Those axes are materialized as three methods:  `initializeWidgets`,  `initializePresenter`, and  `defaultSpec`\. We first detail some necessary terminology before discussing each of these in detail\. 
 
@@ -83,7 +83,7 @@ This takes care of the interactions between the different widgets\. This method 
 
 Usually this method is composed of actions to perform when a specific event is received\. Based on value holders,  **Spec** event mechanism rely on the value holder announcements\. Value holders provide a single method  `whenChangedDo:` to register a block to perform on change\. The propagation of those events build the whole interaction flow\. 
 
-Moreover the basic widgets provide a full set of registration methods\. The whole API is described in the section  [¿?\. ](#sec:where_to_find_what_I_want)\. 
+Moreover the basic widgets provide a full set of registration methods\. The whole API is described in the section  [¿?\. ](#sec_where_to_find_what_I_want)\. 
 
 
 
@@ -93,7 +93,7 @@ Moreover the basic widgets provide a full set of registration methods\. The whol
 
 
 
-Not that this method is optional\. 
+Note that this method is optional\. 
 
 
 ###  *defaultSpec* the View  <sub>the MVP Presenter</sub>
@@ -117,7 +117,9 @@ The pragma can be  `<spec: default>` for the view to use by default, or  `<spec>
 #### Examples 
 
 
-This section provides a list of examples about the constructions of layouts\. 
+This section provides a list of examples about the constructions of layouts\. It starts with a  [basic ](#layout_basic_example) example\. Then two examples are given about the creation of  [rows and columns ](#layout_rows_and_column_layout)\. Now that rows and columns do not have any mystery, two other examples explain how to set a  [fix size ](#layout_set_size_pixels) for rows and columns\. Another example explains how to specify a widget  [proportions ](#layout_percentage)\. The last example presents the  [expert ](#layout_expert) mode in case everything else failed\. 
+
+
 <a name="layout_basic_example"></a>
 The simpliest example is to just render one widget\. The example  [1\.3\. ](#ex_layout1) presents such a layout\. 
 
@@ -207,6 +209,48 @@ The height of row, as well as the width of a column, can be specified to prevent
 
 
 Note that it is a bad habit to hardcode the size of the widgets\. Methods are available on  *ComposableModel* providing some default size like the width of a button\. If one wants to use his or her own widget size, he or she should not forget to take in account the current font size\. 
+
+
+---
+
+<a name="layout_percentage"></a>
+It is also possible to specify the percentage of the container a widget should occupy\. This way the widget size will change accordingly when the window is resized by example\. To do so, the four sides of a widget can be specified as shown in the example  [1\.8\. ](#ex_layout_proportional)\. 
+
+
+
+<a name="ex_layout_proportional"></a>**Square centered and half the size of its container**
+
+
+    ^ SpecLayout composed
+    	add: #square top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
+    	yourself
+
+
+
+Note that the value provided as argument moves the corresponding side toward the center of the widget\. Note also that the argument can be an integer if the offset has to be a fixed number of pixels\. 
+
+
+---
+
+<a name="layout_expert"></a>
+The previous examples should cover most of the cases\. In case it does not, there is a last way to specify a widget position\. 
+
+The method  `add: aWidget origin: originPoint corner: cornerPoint offsetOrigin: ooPoint offsetCorner: ocPoint` allows one to add a widget from origin point to cornerPoint\. Those two points represents respectively the top left corner and the bottom right corner of the widget\. The points represent a percentage of the container \(so the coordinates  <u>must</u> be between  *0* and  *1* \)\. 
+
+In addition to those points, two offsets can be specified\. They represent the number of pixels the origin, respectively the corner, should be moved\. This approach is similar to the ProportionalLayout of  **Morphic**\. 
+
+The exemple  [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\. The widget should take all the window width, but should be only 30px height\. 
+
+
+
+<a name="ex_layout_expert"></a>**Expert Mode: toolbar**
+
+
+    ^ SpecLayout composed
+    	add: #toolbar origin: 0@0 corner: 1@0 offsetOrigin: 0@0 offsetCorner: 0@30;
+    	yourself
+
+
 
 ## Where to find what I want 
 
