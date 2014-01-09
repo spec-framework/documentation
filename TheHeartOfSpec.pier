@@ -1,16 +1,22 @@
 !! The heart of Spec
-@heart_of_spec
+@sec:heart_of_spec
 
 Spec is built around three axes borrowed from the MVP pattern.
 Those axes are materialized as three methods: ==initializeWidgets==, ==initializePresenter==, and ==defaultSpec==.
 We first detail some necessary terminology before discussing each of these in detail.
 
 
-To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define three terms:
+To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define four terms:
 
-- ''UI Element:'' an interactive graphical element displayed as part of the Graphical User Interface.
-- ''UI Model:'' an object that contains the state and behavior of one or several UI elements.
-- ''Widget:'' the union of a UI Element and its UI model.
+;UI Element
+:an interactive graphical element displayed as part of the Graphical User Interface.
+;UI Model
+:an object that contains the state and behavior of one or several UI elements.
+;Widget
+:the union of a UI Element and its UI model.
+;Basic widgets
+:low level widgets like a list, a button, etc. They are not composed of other widgets.
+
 
 !!! ''initializeWidgets'' the widgets @@the MVP View@@
 
@@ -37,6 +43,9 @@ initializeWidgets
 		add: button
 ]]]
 
+Note that this method is mandatory.
+Each subclass need to override it.
+
 !!!! Widget instantiation
 
 The instantiation of a widget can be done in two ways.
@@ -49,7 +58,7 @@ Second if one wants to reuse any subclass of ''ComposableModel'' the widget need
 The example *use_of_instantiate* shows how to instantiate a ''MessageBrowser''.
 
 [[[label=use_of_instantiate|caption=How to reuse a MessageBrowser widget|language=Smalltalk 
-	widget := self instantiate: MessageBrowser.
+widget := self instantiate: MessageBrowser.
 ]]]
 
 !!! ''initializePresenter'' the Presenter @@the MVP Interactor@@
@@ -57,6 +66,21 @@ The example *use_of_instantiate* shows how to instantiate a ''MessageBrowser''.
 This takes care of the interactions between the different widgets.
 This method specifies the flow of exectution linking the sub widgets all together.
 All the interaction between one widget and another is specified here.
+
+Usually this method is composed of actions to perform when a specific event is received.
+Based on value holders, ""Spec"" event mechanism rely on the value holder announcements.
+Value holders provide a single method ==whenChangedDo:== to register a block to perform on change.
+The propagation of those events build the whole interaction flow.
+
+Moreover the basic widgets provide a full set of registration methods.
+The whole API is described in the section *sec:where_to_find_what_I_want*.
+
+[[[caption:Hint|
+If a programmer wants his or her widgets to be reused,
+they should provide a comprehensive API.
+]]]
+
+Not that this method is optional.
 
 !!! ''defaultSpec'' the View @@the MVP Presenter@@
 
@@ -70,3 +94,40 @@ Then when the widget is built a specific layout can be specified.
 This method is on class side because usually all the instances of a same user interface have the same layout.
 But the lookup for the spec method to use starts on instace side.
 This way a class can have a more specific layout depending of the instance state.
+
+!!!! Pragmas
+
+As previously said, multiple views can be described for the same user interface.
+In order to retrieve the correct method to apply, the spec methods are flagged with a pragma.
+
+The pragma can be ==<spec: default>== for the view to use by default, or ==<spec>== for the other views.
+
+!!!! Examples
+
+@layout_basic_example@
+The simpliest example is to just render one widget.
+The example *ex:layout1* presents such a layout.
+
+[[[label=ex:layout1|caption=Layout with only one widget|language=Smalltalk 
+^ SpecLayout composed
+	add: #myWidget;
+	yourself
+]]]
+
+The symbol ==myWidget== refers to an instance side method returning a widget.
+Note that by default, a widget will take all the space available.
+_
+
+@layout_rows_and_column_layout@
+Often user interfaces can be describes in rows and columns.
+The example *ex:layout_rows* sows how to build a row of widgets.
+
+[[[label=ex:layout_rows|caption=Row of widgets|language=Smalltalk 
+^ SpecLayout composed
+	newRow: [ :row |
+		row
+			add: #myFirstWidget;
+			add: #mySecondWidget
+	];
+	yourself
+]]]
