@@ -18,9 +18,9 @@ Spec is built around three axes borrowed from the MVP pattern\. Those axes are m
 To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define three terms: 
 
 
--   *UI Element:* an interactive graphical element displayed as part of the Graphical User Interface\. 
--   *UI Model:* an object that contains the state and behavior of one or several UI elements\. 
--   *Widget:* the union of a UI Element and its UI model\. 
+-   *UI Element: * an interactive graphical element displayed as part of the Graphical User Interface\. 
+-   *UI Model: * an object that contains the state and behavior of one or several UI elements\. 
+-   *Widget: * the union of a UI Element and its UI model\. 
 
 &nbsp;
 
@@ -56,7 +56,6 @@ This is a class side method, because it actually is just an accessor for data th
 ## Spec the Dynamic 
 
 
-Having an user interface with a well known number of sub widgets and a static layout should now sounds easy\. But an user interface is often more than just that\. There are two situations where you need more\. First it happens that the layout of the user interface need to be changed at runtime to match the execution context\.Second if sub widgets are added or removed at runtime\. Then the programmer need to be able to parametrize those new sub widgets on the fly\.
 
 ### Dynamic add and removal of subwidgets 
 
