@@ -104,11 +104,13 @@ The pragma can be ==<spec: default>== for the view to use by default, or ==<spec
 
 !!!! Examples
 
-@layout_basic_example@
-The simpliest example is to just render one widget.
-The example *ex:layout1* presents such a layout.
+This section provides a list of examples about the constructions of layouts.
 
-[[[label=ex:layout1|caption=Layout with only one widget|language=Smalltalk 
+@layout_basic_example
+The simpliest example is to just render one widget.
+The example *ex_layout1* presents such a layout.
+
+[[[label=ex_layout1|caption=Layout with only one widget|language=Smalltalk 
 ^ SpecLayout composed
 	add: #myWidget;
 	yourself
@@ -118,11 +120,11 @@ The symbol ==myWidget== refers to an instance side method returning a widget.
 Note that by default, a widget will take all the space available.
 _
 
-@layout_rows_and_column_layout@
+@layout_rows_and_column_layout
 Often user interfaces can be describes in rows and columns.
-The example *ex:layout_rows* sows how to build a row of widgets.
+The example *ex_layout_row* sows how to build a row of widgets.
 
-[[[label=ex:layout_rows|caption=Row of widgets|language=Smalltalk 
+[[[label=ex_layout_row|caption=Row of widgets|language=Smalltalk 
 ^ SpecLayout composed
 	newRow: [ :row |
 		row
@@ -131,3 +133,44 @@ The example *ex:layout_rows* sows how to build a row of widgets.
 	];
 	yourself
 ]]]
+
+Now having the widgets rendered as a column is very similar as show in the example *ex_layout_column*
+
+[[[label=ex_layout_column|caption=Column of widgets|language=Smalltalk 
+^ SpecLayout composed
+	newColumn: [ :column |
+		column
+			add: #myFirstWidget;
+			add: #mySecondWidget
+	];
+	yourself
+]]]
+
+_
+@layout_set_size_pixels
+The height of row, as well as the width of a column, can be specified to prevent it to take all the space available.
+The example *ex_row_height* shows how to specify the height of a row in pixels while the example *ex_column_width* how to specify the column width.
+
+[[[label=ex_row_height|caption=Row of 30px|language=Smalltalk 
+^ SpecLayout composed
+	newRow: [ :row |
+		row
+			add: #myFirstWidget;
+			add: #mySecondWidget
+	] height: 30;
+	yourself
+]]]
+
+[[[label=ex_column_width|caption=Column of 30px|language=Smalltalk 
+^ SpecLayout composed
+	newColumn: [ :column |
+		column
+			add: #myFirstWidget;
+			add: #mySecondWidget
+	] width: 30;
+	yourself
+]]]
+
+Note that it is a bad habit to hardcode the size of the widgets.
+Methods are available on ''ComposableModel'' providing some default size like the width of a button.
+If one wants to use his or her own widget size, he or she should not forget to take in account the current font size.
