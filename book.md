@@ -1,34 +1,34 @@
 
 
-#Spec: a new framework for describing user intefaces
+#Spec: a new framework for describing user intefaces 
 
 
-##Introduction
+##Introduction 
 
 
 
-The following article will introduce you how to use `Spec` through several examples\. The general purpose of `Spec` will be explained then will follow a presentation of every `Spec` widgets and how to use them\.This paper will be concluded by `n` examples about how to compose basic widgets in order to build complete user interfaces\.
+The following article will introduce you how to use  `Spec` through several examples\.  The general purpose of  `Spec` will be explained then will follow a presentation of every  `Spec` widgets and how to use them\. This paper will be concluded by  `n` examples about how to compose basic widgets in order to build complete user interfaces\. 
 
-## The heart of Spec
-
-
-Spec is built around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\. We first detail some necessary terminology before discussing each of these in detail\.
+## The heart of Spec 
 
 
-To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define three terms:
+Spec is built around three axes borrowed from the MVP pattern\. Those axes are materialized as three methods:  `initializeWidgets`,  `initializePresenter`, and  `defaultSpec`\. We first detail some necessary terminology before discussing each of these in detail\. 
 
 
--  *UI Element:* an interactive graphical element displayed as part of the Graphical User Interface\.
--  *UI Model:* an object that contains the state and behavior of one or several UI elements\.
--  *Widget:* the union of a UI Element and its UI model\.
+To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define three terms: 
+
+
+-   *UI Element: * an interactive graphical element displayed as part of the Graphical User Interface\. 
+-   *UI Model: * an object that contains the state and behavior of one or several UI elements\. 
+-   *Widget: * the union of a UI Element and its UI model\. 
 
 &nbsp;
 
 
-#### `initializeWidgets` the widgets
+####  `initializeWidgets` the widgets 
 
 
-This takes care of the configuration of the different widgets themselves, without the interaction\.
+This takes care of the configuration of the different widgets themselves, without the interaction\. 
 
 
 
@@ -37,66 +37,44 @@ This takes care of the configuration of the different widgets themselves, withou
 
 
 
-#### `initializePresenter` the Presenter
+####  `initializePresenter` the Presenter 
 
 
-This takes care of the interactions between the different widgets\.
+This takes care of the interactions between the different widgets\. 
 
 
-#### `defaultSpec` the View
+####  `defaultSpec` the View 
 
 
-This takes care of the layout of the different widgets\.
+This takes care of the layout of the different widgets\. 
 
-This is a class side method, because it actually is just an accessor for data that is shared by all the instances\.
+This is a class side method, because it actually is just an accessor for data that is shared by all the instances\. 
 
-## Where to find what I want
+## Where to find what I want 
 
 
-## Spec the Dynamic
+## Spec the Dynamic 
 
 
 Having an user interface with a well known number of sub widgets and a static layout should now sounds easy\. But an user interface is often more than just that\. There are two situations where you need more\. First it happens that the layout of the user interface need to be changed at runtime to match the execution context\.Second if sub widgets are added or removed at runtime\. Then the programmer need to be able to parametrize those new sub widgets on the fly\.
 
-
-### Dynamic modification of the layout
-
-
-Changing a widget layout at runtime is quite easy\.It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout\.
-
-The snippet [1\.1\. ](#rebuildDynamically) shows how to simply rebuild a widget with a new layout\.
+### Dynamic add and removal of subwidgets 
 
 
 
-<a name="rebuildDynamically"></a>**Rebuild a widget at run time**
+### Dynamic modification of the layout 
 
-```smalltalk 
-rebuildWithNewLayout
-	| newLayout |
 
-	newLayout := self newLayoutCreatedDynamically.
-	self needRebuild: false. "tells the interpreter to keep my current ui element"
-	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
-```
+## Writing my own Spec 
 
 
 
-One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.
-
-
-### Dynamic add and removal of subwidgets
-
-
-## Writing my own Spec
+### The Model 
 
 
 
-### The Model
+### The Adapter 
 
 
 
-### The Adapter
-
-
-
-### The Bindings
+### The Bindings 
