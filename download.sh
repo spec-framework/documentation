@@ -47,7 +47,7 @@ wget --help | grep -- "$CERTCHECK" 2>&1 > /dev/null || CERTCHECK=''
 if [ $# -eq 0 ]; then
     get_image
     get_vm
-	./pharo Pharo.image config "http://smalltalkhub.com/mc/Pier/Pillar/main/" ConfigurationOfPillar --install=bleedingEdge
+    ./pharo Pharo.image config "http://smalltalkhub.com/mc/Pier/Pillar/main/" ConfigurationOfPillar --install=bleedingEdge
     exit 0
 else
     while [ $# -gt 0 ]; do
