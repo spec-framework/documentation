@@ -1,6 +1,6 @@
 !!Introduction
 
-Writing user interfaces is notoriously a tedious tasks. 
+Writing user interfaces is notoriously a tedious task.
 It often requires time and a clear understanding of the separation of concerns. 
 Indeed most of the frameworks mix domain applicative models with widget models.
 
