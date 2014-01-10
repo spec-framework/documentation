@@ -1,5 +1,53 @@
 !! Spec the Dynamic
+@sec_spec_the_dynamic
+
+Having an user interface with a well known number of sub widgets and a static layout should now sounds easy. 
+But an user interface is often more than just that. 
+There are two situations where you need more. 
+First it happens that the layout of the user interface need to be changed at runtime to match the execution context.
+Second if sub widgets are added or removed at runtime. Then the programmer need to be able to parametrize those new sub widgets on the fly.
+
+!!! Dynamic modification of the layout
+
+Changing a widget layout at runtime is quite easy.
+It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout.
+
+The snippet *rebuildDynamically* shows how to simply rebuild a widget with a new layout.
+
+[[[label=rebuildDynamically|caption=Rebuild a widget at run time|language=Smalltalk 
+rebuildWithNewLayout
+	| newLayout |
+
+	newLayout := self newLayoutCreatedDynamically.
+	self needRebuild: false. "tells the interpreter to keep my current ui element"
+	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
+]]]
+
+One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt.
+The message ==needRebuild: false== need to be sent to any of those sub widgets.
 
 !!! Dynamic add and removal of subwidgets
 
-!!! Dynamic modification of the layout
+If an user interface needs a various number of sub widgets that can not be predicted at compilation time, another approach is needed.
+When one faces this scenario, he or she should subclass ==DynamicComposableModel== for his or her application.
+
+Then the instantion of the sub widgets is a bit different.
+The method ==instantiateModels:== should be used.
+It takes as argument an array of pairs.
+Each pair is composed of the unique name of the widget as key, and the name of the widget class as value.
+Then a widget can be accessed by sending a message whose selector is the widget name.
+
+By example, if a widget named ==button== is created, the this widget can be accessed by calling ==self button== as shown in the example *ex_dynamic_creation*.
+
+[[[label=ex_dynamic_creation|caption=Dynamic creation of a widget|language=Smalltalk 
+	self instantiateModels: { 'button' -> 'ButtonModel' }.
+	self button label: 'Click me'.
+]]]
+
+
+Note that the instantiation array can also be an array of pairs. The previous example could be written
+
+[[[label=ex_dynamic_creation2|caption=Dynamic creation of a widget|language=Smalltalk 
+	self instantiateModels: #( button ButtonModel ).
+	self button label: 'Click me'.
+]]]
