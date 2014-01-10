@@ -1,4 +1,5 @@
 !! Spec the Dynamic
+@sec_spec_the_dynamic
 
 Having an user interface with a well known number of sub widgets and a static layout should now sounds easy. 
 But an user interface is often more than just that. 
@@ -26,3 +27,27 @@ One widget can also keep the ui elements of its sub widgets which did not need t
 The message ==needRebuild: false== need to be sent to any of those sub widgets.
 
 !!! Dynamic add and removal of subwidgets
+
+If an user interface needs a various number of sub widgets that can not be predicted at compilation time, another approach is needed.
+When one faces this scenario, he or she should subclass ==DynamicComposableModel== for his or her application.
+
+Then the instantion of the sub widgets is a bit different.
+The method ==instantiateModels:== should be used.
+It takes as argument an array of pairs.
+Each pair is composed of the unique name of the widget as key, and the name of the widget class as value.
+Then a widget can be accessed by sending a message whose selector is the widget name.
+
+By example, if a widget named ==button== is created, the this widget can be accessed by calling ==self button== as shown in the example *ex_dynamic_creation*.
+
+[[[label=ex_dynamic_creation|caption=Dynamic creation of a widget|language=Smalltalk 
+	self instantiateModels: { 'button' -> 'ButtonModel' }.
+	self button label: 'Click me'.
+]]]
+
+
+Note that the instantiation array can also be an array of pairs. The previous example could be written
+
+[[[label=ex_dynamic_creation2|caption=Dynamic creation of a widget|language=Smalltalk 
+	self instantiateModels: #( button ButtonModel ).
+	self button label: 'Click me'.
+]]]
