@@ -17,7 +17,8 @@ after_success:
 - git add output
 - git commit -m "Generate Markdown output"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
-- git rm --cached boo.md
+- git rm --cached book.md
+- git add --all book.md
 - git commit -m "Untrack book.md"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
 env:
