@@ -24,5 +24,6 @@ files/
 /crash.dmp
 .DS_Store
 /package-cache
-!output/book.md
 *.orig
+!output/book.md
+
