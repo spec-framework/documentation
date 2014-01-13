@@ -107,7 +107,7 @@ This method is on class side because usually all the instances of a same user in
 
 
 ####2\.3\.1\.  Pragmas
-
+<a name="subsec_pragma"></a>
 
 As previously said, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, the spec methods are flagged with a pragma\.
 
@@ -117,8 +117,7 @@ The pragma can be `<spec: default>` for the view to use by default, or `<spec>` 
 ####2\.3\.2\.  Examples
 
 
-This section provides a list of examples about the constructions of layouts\.It starts with a [basic](#layout_basic_example) example\.Then two examples are given about the creation of [rows and columns](#layout_rows_and_column_layout)\.Now that rows and columns do not have any mystery, two other examples explain how to set a [fix size](#layout_set_size_pixels) for rows and columns\.Another example explains how to specify a widget [proportions](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else failed\.
-
+This section provides a list of examples about the constructions of layouts\.It starts with a [basic](#layout_basic_example) example\.Then two examples are given about the creation of [rows and columns](#layout_rows_and_column_layout)\.Now that rows and columns do not have any mystery, two other examples explain how to set a [fix size](#layout_set_size_pixels) for rows and columns\.Another example explains how to specify a widget [proportions](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else failed\.This section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
 
 <a name="layout_basic_example"></a>
 The simpliest example is to just render one widget\.The example [1\.3\. ](#ex_layout1) presents such a layout\.
@@ -251,6 +250,15 @@ The exemple [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\.
     	yourself
 
 
+
+
+---
+
+<a name="layout_specify_layout"></a>
+
+As explained in the section [1\.2\.3\.1\. ](#subsec_pragma), a widget can have multiple views\.So when a sub widget layout is specified, the view to use for this sub widget can e specified\.
+
+All the methods seen in the previous examples come with a variant used to specidy the view selector to use\.By example, for `add:` there is `add:withSpec:`\.All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
 
 ##3\.  Where to find what I want
 
