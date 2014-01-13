@@ -14,7 +14,7 @@ after_success:
 - if [[ ! -d output ]]; then mkdir output; fi
 - mv book.md output/book.md
 - cp -r figures output/
-- git add output/book.md
+- git add output
 - git commit -m "Generate Markdown output"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
 env:
