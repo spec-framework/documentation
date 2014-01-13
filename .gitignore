@@ -25,3 +25,4 @@ files/
 .DS_Store
 /package-cache
 !output/book.md
+*.orig
