@@ -372,49 +372,6 @@ The result can be seen in Figure [1\.1\. ](#fig_popup)\.
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
 
-##5\.  Writing my own Spec
-
-####4\.2\.1\.  Example
-
-
-Thanks to the *Spec* capability to dynamically instantiate widgets, it is also possible to prototype an user interface\.From within any workspace a new user interface can be easily defined\.
-
-The example [1\.13\. ](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
-
-
-
-<a name="ex_prototyping"></a>**Popup requiring a simple input**
-
-
-    view := DynamicComposableModel new
-    	instantiateModels: #(label LabelModel text TextInputFieldModel);
-    	extent: 300@90;
-    	title: 'Choose your project'
-    	yourself.
-    	
-    toolbar := OkToolbar new
-    	okAction: [ regex := view text text ];
-    	yourself.
-    	view focusOrder add: view text.
-    view text bindKeyCombination: Character cr asKeyCombination  toAction: [ toolbar triggerOkAction ].
-    view label text: 'Packages:'.
-    view text
-    	autoAccept: true;
-    		entryCompletion: nil;
-    	ghostText: '.*'.
-    view openDialogWithSpecLayout: (SpecLayout composed
-    		newRow: [ :r | r add: #label width: 75; add: #text ];
-    yourself))
-    	toolbar: toolbar;
-    	centered;
-    	modalRelativeTo: World.
-
-
-
-The result can be seen in Figure [1\.1\. ](#fig_popup)\.
-
-<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
-
 ##5\.  Writing my own basic widget
 
 
