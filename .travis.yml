@@ -17,10 +17,6 @@ after_success:
 - git add output
 - git commit -m "Generate Markdown output"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
-- git rm --cached book.md
-- git add --all book.md
-- git commit -m "Untrack book.md"
-- git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
 env:
   global:
   - secure: hrlMJ2D+F5pth+ZRq6frLZdSyW2ZFpPJLlJzj7Ox7zQqloJLGdPvKCDG6EvVIrHxXmnV4MBWjaO3f632lPtjnAg0vzMnU8Q38Md83QaMqvxss+OrLqq2GkpRhY5aodY64wxwxbdVoIf725sXQqujXspqKxUh5nerWRXdTaHAghY=
