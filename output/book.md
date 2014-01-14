@@ -343,15 +343,29 @@ All the methods seen in the previous examples come with a variant used to specif
 ##4\.  Spec the Dynamic
 <a name="sec_spec_the_dynamic"></a>
 
-Having an user interface with a well known number of sub widgets and a static layout should now sounds easy\. But an user interface is often more than just that\. There are two situations where you need more\. First it happens that the layout of the user interface need to be changed at runtime to match the execution context\.Second if sub widgets are added or removed at runtime\. Then the programmer need to be able to parametrize those new sub widgets on the fly\.
+Having an user interface with a well known number of sub widgets and a static layout is not always sufficient\. A user interface is often more than just that, for example here are two situations where more is needed: First, it happens that the layout of the user interface needs to be changed at runtime to match the execution context of the software\.Second, sub widgets are added or removed at runtime and therefore the programmer need to be able to parametrize those new sub widgets on the fly\.
+
+*Spec* also provides support for such dynamic user interfaces\.In this section we show how to use *Spec* in these situations\.First, we talk about making dynamic modifications of the layout of widgets, and second discuss the dynamic adding and removing of subwidgets\.Third and last we show how the dynamic features can be used to quickly prototype a user interface\.
 
 
 ###4\.1\.  Dynamic modification of the layout
 
 
-Changing a widget layout at runtime is quite easy\.It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout\.
+Changing the layout of widgets at runtime is straightforward, as we will see here\.Such changes basically consist of three steps:
 
-The snippet [4\.1](#rebuildDynamically) shows how to simply rebuild a widget with a new layout\.
+1.  creating the new layout,
+2.  setting the required flag to prohibit WHAT
+3.  building the UI again with the newly created layout\.
+
+&nbsp;
+
+
+
+    Note: For Ben: fill in the WHAT above and below please.
+
+
+
+The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit WHAT\.Third, the rebuilding of the user interface is performed\.
 
 
 
@@ -370,14 +384,20 @@ The snippet [4\.1](#rebuildDynamically) shows how to simply rebuild a widget wit
 One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.
 
 
-###4\.2\.  Dynamic add and removal of subwidgets
+
+    Note: For Ben: The above paragraph is not clear. Please expand with a simple example.
 
 
-If an user interface needs a various number of sub widgets that can not be predicted at compilation time, another approach is needed\.When one faces this scenario, he or she should subclass `DynamicComposableModel` for his or her application\.
 
-Then the instantion of the sub widgets is a bit different\.The method `instantiateModels:` should be used\.It takes as argument an array of pairs\.Each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.Then a widget can be accessed by sending a message whose selector is the widget name\.
 
-By example, if a widget named `button` is created, the this widget can be accessed by calling `self button` as shown in the example [4\.2](#ex_dynamic_creation)\.
+###4\.2\.  Dynamic adding and removal of subwidgets
+
+
+If an user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.In this scenario, `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+
+When using `DynamicComposableModel` the instantiation of the sub widgets is a bit different from normal use\.In the `instantiateWidgets` method, instead of instantiating each widget separately, `instantiateModels:` should be used to instantiate them\.This method takes as argument an array of pairs, where each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.This allows for a widget to be accessed by sending a message whose selector is the widget name to the model\.
+
+By example, if a widget named `button` is created, then this widget can be accessed by calling `self button` as shown in the example [4\.2](#ex_dynamic_creation)\.
 
 
 
@@ -387,6 +407,11 @@ By example, if a widget named `button` is created, the this widget can be access
     self instantiateModels: { 'button' -> 'ButtonModel' }.
     	self button label: 'Click me'.
 
+
+
+
+
+    Note: For Ben: maybe it would be better to remove this alternate form of the argument from the documentation, to avoid confusion. Plus it is ugly :-)
 
 
 
@@ -403,10 +428,10 @@ Note that the instantiation array can also be an array of pairs\. The previous e
 
 
 
-####4\.2\.1\.  Example
+###4\.3\.  Example: Prototyping a UI
 
 
-Thanks to the *Spec* capability to dynamically instantiate widgets, it is also possible to prototype an user interface\.From within any workspace a new user interface can be easily defined\.
+Thanks to the capability of *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 
 The example [4\.4](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
