@@ -1,12 +1,14 @@
 !! The heart of Spec
 @sec_heart_of_spec
 
-Spec is built around three axes borrowed from the MVP pattern.
-Those axes are materialized as three methods: ==initializeWidgets==, ==initializePresenter==, and ==defaultSpec==.
-We first detail some necessary terminology before discussing each of these in detail.
+Spec is built around three axes that are inspired by the MVP pattern.
+These axes materialize themselves as the following three methods: ==initializeWidgets==, ==initializePresenter==, and ==defaultSpec==.
+@@note For JF we need to talk about the name of the class, you need to subclass it to make a new UI
+@@note For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
+We first detail some necessary terminology before discussing each of these methods in more detail.
 
 
-To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define four terms:
+To avoid possible misunderstandings in this text due to confusion in terminology, we define four terms:
 
 ;UI Element
 :an interactive graphical element displayed as part of the Graphical User Interface.
@@ -18,205 +20,225 @@ To avoid possible misundertandings due to terminology issues because of overload
 :low level widgets like a list, a button, etc. They are not composed of other widgets.
 
 
-!!! ''initializeWidgets'' the widgets @@the MVP View@@
+!!! the ''initializeWidgets'' method  @@(the MVP View)@@
 
-This takes care of the configuration of the different widgets themselves, without the interaction.
-It is used to instantiate the subwidgets and to specify their default values and general behavior.
-This focus in this method is to specify how the widgets will look like.
+This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables.
+The configuration and default values of each widget are specified here as well.
+This focus in this method is to specify what the widgets will look like and what their self-contained behavior is.
+It is explicitly ""not"" the responsibility of this method to define the interactions ""between"" the widgets.
 
-In general ==initializeWidgets== should follow the pattern:
+@@note For Ben: what happens with saving to the model ??
+
+In general the ==initializeWidgets== method should follow the pattern:
 
 - widgets instantiation
-- widgets specification
-- set the order of focus
+- widgets configuration specification
+- specification of order of focus
 
-The code *pattern* is an example of an ==initializeWidgets== method.
+@@note For Ben: is the last step mandatory? What happens if there is no focus order? No tab focus or random?
 
-[[[label=pattern|caption=Example of initializeWidgets|
+The code in figure *fig:pattern* shows an example of an ==initializeWidgets== method.
+It first instantiates a button and a list widget, storing each in an instance variable.
+It second configures the button it by setting its label.
+Third it specifies the focus order of all the widgets: first the button and then the list.
+
+@@note For Ben: is the code of this example correct and consistent with the explanation? (I changed it)
+
+[[[label=fig:pattern|caption=Example of initializeWidgets|
 initializeWidgets
 
-	button := self newButton.
+	theButton := self newButton.
+	theList := self newList.
 
-	button label: 'I am a button'.
+	theButton label: 'I am a button'.
 	
 	self focusOrder
-		add: button
+		add: theButton;
+		add:theList.
 ]]]
 
-Note that this method is mandatory.
-Each subclass need to override it.
+[[[caption:Hint|
+Specifying this method is mandatory, as without it the UI would have no widgets.
+]]]
 
 !!!! Widget instantiation
 
-The instantiation of a widget can be done in two ways.
-First if it is a basic widget (like a button or a list) which is instantiated, then the framework provides accesors for them.
-The format of this accessors is ==new[Widget]==.
-By example ==newList==, ==newText==, etc.
+The instantiation of a widget can be done in two ways: through the use of an creation method or through the use of the ==instantiate:== method.
+Considering the first option, the framework provides unary messages for the creation of all basic widgets.
+The format of these messages is ==new[Widget]==, for example ==newButton== creates a button widget, and ==newList== creates a list widget, as we have seen above.
 The complete list of available widget creation methods can be found in the class ''ComposableModel'' in the protocol ''widgets''.
+Considering the second option, to reuse any composite widgets, i.e. a subclass of ''ComposableModel'', the widget needs to be initialized using the ==instantiate:== method.
+For example, to reuse a ''MessageBrowser''  widget, the code is == self instantiate: MessageBrowser.==
 
-Second if one wants to reuse any subclass of ''ComposableModel'' the widget needs to be initialized using the ==instantiate:== method.
-The example *use_of_instantiate* shows how to instantiate a ''MessageBrowser''.
+!!! The ''initializePresenter'' method @@(the MVP Interactor)@@
 
-[[[label=use_of_instantiate|caption=How to reuse a MessageBrowser widget|language=Smalltalk 
-widget := self instantiate: MessageBrowser.
-]]]
+This method takes care of the interactions between the different widgets.
+By linking the behavior of the different widgets it specifies the overall presentation, i.e. how the overall UI responds to interactions by the user.
 
-!!! ''initializePresenter'' the Presenter @@the MVP Interactor@@
+Usually this method consists of specifications of actions to perform when a certain event is received by a widget.
+From the propagation of those events the whole interaction flow of the UI emerges.
+In  ""Spec"", the different widgets are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets.
+Value holders provide a single method ==whenChangedDo:== that is used to register a block to perform on change.
+In addition to this primitive  ==whenChangedDo:== method, the basic widgets provide more specific hooks, e.g. when an item in a list is selected or deselected.
 
-This takes care of the interactions between the different widgets.
-This method specifies the flow of exectution linking the sub widgets all together.
-All the interaction between one widget and another is specified here.
+@@note For Ben: please add an example that makes the button active when a list item is selected and inactive when a list item is deselected
 
-Usually this method is composed of actions to perform when a specific event is received.
-Based on value holders, ""Spec"" event mechanism rely on the value holder announcements.
-Value holders provide a single method ==whenChangedDo:== to register a block to perform on change.
-The propagation of those events build the whole interaction flow.
-
-Moreover the basic widgets provide a full set of registration methods.
-The whole API is described in the section *sec_where_to_find_what_I_want*.
+The whole event API of the basic widgets is described in the section *sec_where_to_find_what_I_want*.
 
 [[[caption:Hint|
 If a programmer wants his or her widgets to be reused,
 they should provide a comprehensive API.
 ]]]
 
-Note that this method is optional.
+[[[caption:Hint|
+This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
+]]]
 
-!!! ''defaultSpec'' the View @@the MVP Presenter@@
+!!! the ''defaultSpec'' method @@(the MVP Presenter)@@
 
-This takes care of the layout of the different widgets.
-This class side method is used to specify the position of each sub widgets.
+This method specifies the layout of the different widgets in the UI.
 It also specifies how a widget reacts when the window is resized.
 
-Multiple layouts can be described.
-Then when the widget is built a specific layout can be specified.
+For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified.
+If no specific layout is given, the layout returned by the ==defaultSpec== method will be used.
+This method is on class side because it returns a value that usually is the same for all the instances.
+Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class-side accessor for a class variable.
+Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance.
 
-This method is on class side because usually all the instances of a same user interface have the same layout.
-But the lookup for the spec method to use starts on instace side.
-This way a class can have a more specific layout depending of the instance state.
+The simpliest example of such a method is laying out just one widget.
+The example *fig:ex_layout1* presents such a layout.
+It returns a layout in which just one widget is added: the widget contained in ==theList== instance variable.
 
-!!!! Pragmas
-@subsec_pragma
-
-As previously said, multiple views can be described for the same user interface.
-In order to retrieve the correct method to apply, the spec methods are flagged with a pragma.
-
-The pragma can be ==<spec: default>== for the view to use by default, or ==<spec>== for the other views.
-
-!!!! Examples
-
-This section provides a list of examples about the constructions of layouts.
-It starts with a *basic>layout_basic_example* example.
-Then two examples are given about the creation of *rows and columns>layout_rows_and_column_layout*.
-Now that rows and columns do not have any mystery, two other examples explain how to set a *fix size>layout_set_size_pixels* for rows and columns.
-Another example explains how to specify a widget *proportions>layout_percentage*.
-The last example presents the *expert>layout_expert* mode in case everything else failed.
-This section ends with a little *explanation>layout_specify_layout* of how to specify which view to use and where to find the complete API.
-
-
-@layout_basic_example
-The simpliest example is to just render one widget.
-The example *ex_layout1* presents such a layout.
-
-[[[label=ex_layout1|caption=Layout with only one widget|language=Smalltalk 
+[[[label=fig:ex_layout1|caption=Layout with only one widget|language=Smalltalk 
 ^ SpecLayout composed
-	add: #myWidget;
+	add: #theList;
 	yourself
 ]]]
 
-The symbol ==myWidget== refers to an instance side method returning a widget.
+The symbol ==theList== refers to an instance side method returning a widget.
+This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI.
 Note that by default, a widget will take all the space available.
-_
+
+As said above, multiple views can be described for the same user interface.
+In order to retrieve the correct method to apply, these methods need to be flagged with a pragma.
+The pragma can be either ==<spec: default>== for the view to use by default, or ==<spec>== for the other views.
+
+@@note For Ben. You need to clarify the name defaultSpec versus the pragmas and give an enumerated list that describes the method lookup for this guy 
+
+
+[[[caption:Hint|
+Specifying this method is mandatory, as without it the UI would show no widgets to the user.
+]]]
+
+
+!!!! Layout Examples
+
+@@note For Ben. I am not sure that this is the right place for this, but I don't know a better place for now.
+
+As layouts can become quite complex, this section provides a list of examples of the construction of layouts.
+First two examples are given of the use of *rows and columns>layout_rows_and_column_layout*.
+This is followed by two examples that explain how to set a *fixed size>layout_set_size_pixels* for rows and columns.
+Next is an example that explains how to specify a widget *proportionally>layout_percentage*.
+The last example presents the *expert>layout_expert* mode in case everything else fails.
+To conclude, this section ends with a little *explanation>layout_specify_layout* of how to specify which view to use and where to find the complete API.
 
 @layout_rows_and_column_layout
-Often user interfaces can be describes in rows and columns.
-The example *ex_layout_row* sows how to build a row of widgets.
+Often the layout of user interfaces can be described in rows and columns, and ""Spec"" provides for an easy way to specify such layouts.
+The example *fig:ex_layout_row* shows how to build a row of widgets.
 
-[[[label=ex_layout_row|caption=Row of widgets|language=Smalltalk 
+[[[label=fig:ex_layout_row|caption=Row of widgets|language=Smalltalk 
 ^ SpecLayout composed
 	newRow: [ :row |
 		row
-			add: #myFirstWidget;
-			add: #mySecondWidget
+			add: #theList;
+			add: #theButton
 	];
 	yourself
 ]]]
 
-Now having the widgets rendered as a column is very similar as show in the example *ex_layout_column*
+Having the widgets rendered as a column is similar, as shown in the example *fig:ex_layout_column*
 
-[[[label=ex_layout_column|caption=Column of widgets|language=Smalltalk 
+[[[label=fig:ex_layout_column|caption=Column of widgets|language=Smalltalk 
 ^ SpecLayout composed
 	newColumn: [ :column |
 		column
-			add: #myFirstWidget;
-			add: #mySecondWidget
+			add: #theList;
+			add: #theButton
 	];
 	yourself
 ]]]
 
-_
-@layout_set_size_pixels
-The height of row, as well as the width of a column, can be specified to prevent it to take all the space available.
-The example *ex_row_height* shows how to specify the height of a row in pixels while the example *ex_column_width* how to specify the column width.
+@@note For Ben: I think this needs an example that nests rows in columns or vice-versa.
 
-[[[label=ex_row_height|caption=Row of 30px|language=Smalltalk 
+_
+
+@layout_set_size_pixels
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space.
+The example *fig:ex_row_height* shows how to specify the height of a row in pixels while the example *fig:ex_column_width* how to specify the column width.
+
+[[[label=fig:ex_row_height|caption=Row of 30 pixels|language=Smalltalk 
 ^ SpecLayout composed
 	newRow: [ :row |
 		row
-			add: #myFirstWidget;
-			add: #mySecondWidget
+			add: #theList;
+			add: #theButton
 	] height: 30;
 	yourself
 ]]]
 
-[[[label=ex_column_width|caption=Column of 30px|language=Smalltalk 
+[[[label=fig:ex_column_width|caption=Column of 30 pixels|language=Smalltalk 
 ^ SpecLayout composed
 	newColumn: [ :column |
 		column
-			add: #myFirstWidget;
-			add: #mySecondWidget
+			add: #theList;
+			add: #theButton
 	] width: 30;
 	yourself
 ]]]
 
-Note that it is a bad habit to hardcode the size of the widgets.
-Methods are available on ''ComposableModel'' providing some default size like the width of a button.
-If one wants to use his or her own widget size, he or she should not forget to take in account the current font size.
+Note that it is generally considered a bad habit to hardcode the size of the widgets.
+Methods are available on ''ComposableModel'' providing sensible default sizes, like the width of a button.
+When specifying custom widget sizes, care should be taken to take in account the current font size.
 
 _
 
 @layout_percentage
-It is also possible to specify the percentage of the container a widget should occupy.
-This way the widget size will change accordingly when the window is resized by example.
-To do so, the four sides of a widget can be specified as shown in the example *ex_layout_proportional*.
+It is also possible to specify the percentage of the container, e.g. the window, that a widget should occupy.
+As a result of this, the widget size will change accordingly when the container is resized.
+To do so, the proportional position of the four sides of a widget can be specified, as shown in the example *ex_layout_proportional*.
 
-[[[label=ex_layout_proportional|caption=Square centered and half the size of its container|language=Smalltalk 
+[[[label=ex_layout_proportional|caption=A Button centered in, and half the size of its container|language=Smalltalk 
 ^ SpecLayout composed
-	add: #square top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
+	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
 	yourself
 ]]]
 
 Note that the value provided as argument moves the corresponding side toward the center of the widget.
-Note also that the argument can be an integer if the offset has to be a fixed number of pixels.
+Also, the argument can be an integer if the offset has to be a fixed number of pixels.
 
+@@note For Ben: negative offsets are possible and have semantics like in morphic? If so, explain (not saying, ''like in Morphic'' )
 _
 
 @layout_expert
-The previous examples should cover most of the cases.
-In case it does not, there is a last way to specify a widget position.
+The previous examples should cover most of the cases of layout of widgets.
+For the remaining cases there is a last way to specify a widget by specifying its position.
 
-The method ==add: aWidget origin: originPoint corner: cornerPoint offsetOrigin: ooPoint offsetCorner: ocPoint== allows one to add a widget from origin point to cornerPoint.
-Those two points represents respectively the top left corner and the bottom right corner of the widget.
-The points represent a percentage of the container (so the coordinates __must__ be between ''0'' and ''1'' ).
+The method ==add: origin: corner: == of ==SpecLayout== specifies the layout of a widget, percentage-wise from the origin point to the corner point.
+These two points represent respectively the top left corner and the bottom right corner of the widget.
+The arguments express a percentage of the container, so these __must__ be between ''0@0'' and ''1@1'' .
 
-In addition to those points, two offsets can be specified.
-They represent the number of pixels the origin, respectively the corner, should be moved.
-This approach is similar to the ProportionalLayout of ""Morphic"".
+In addition to those points, two offsets can be also be specified, using the method. ==add: origin: corner:  offsetOrigin: offsetCorner: ==.
+The offsets specify the number of pixels that the origin and the corner should be moved.
 
-The exemple *ex_layout_expert* show how to add a widget as a toolbar.
-The widget should take all the window width, but should be only 30px height.
+@@note For Ben: negative integer offsets are allowed? If so, say: negative offsets are allowed, similar to the offset example above.
 
-[[[label=ex_layout_expert|caption=Expert Mode: Toolbar|language=Smalltalk 
+Note that this approach is similar to the ProportionalLayout of ""Morphic"".
+
+
+The example *fig:ex_layout_expert* shows how to add a widget as a toolbar.
+It specifies that the widget in the ==toolbar== instance variable should take all the window width, but should be only 30 pixels in height.
+
+[[[label=fig:ex_layout_expert|caption=Using expert mode to specify a toolbar|language=Smalltalk 
 ^ SpecLayout composed
 	add: #toolbar origin: 0@0 corner: 1@0 offsetOrigin: 0@0 offsetCorner: 0@30;
 	yourself
@@ -226,9 +248,11 @@ _
 
 @layout_specify_layout
 
-As explained in the section *subsec_pragma*, a widget can have multiple views.
-So when a sub widget layout is specified, the view to use for this sub widget can e specified.
+As explained in the section *subsec_pragma*, a UI can have multiple views.
+So when a widget layout is specified, the view to use for this sub widget can be specified.
 
-All the methods seen in the previous examples come with a variant used to specidy the view selector to use.
-By example, for ==add:== there is ==add:withSpec:==.
+All the methods seen in the previous examples come with a variant used to specify which view selector to use.
+By example, for the ==add:== methods there is also  ==add:withSpec:==.
 All the methods can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
+
+@@note For Ben. I don't understand the text above. (And I think I have seen it before.) Please expand with an example.
