@@ -17,10 +17,21 @@ First the 3 pillars of *Spec* will be explained\. Second we expose how *Spec* re
 ##2\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
 
-Spec is built around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.We first detail some necessary terminology before discussing each of these in detail\.
+Spec is built around three axes that are inspired by the MVP pattern\.These axes materialize themselves as the following three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
 
 
-To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define four terms:
+    Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
+
+
+
+
+    Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
+
+
+We first detail some necessary terminology before discussing each of these methods in more detail\.
+
+
+To avoid possible misunderstandings in this text due to confusion in terminology, we define four terms:
 <dl><dt>UI Element
 </dt><dd>an interactive graphical element displayed as part of the Graphical User Interface.</dd><dt>UI Model
 </dt><dd>an object that contains the state and behavior of one or several UI elements.</dd><dt>Widget
@@ -29,66 +40,86 @@ To avoid possible misundertandings due to terminology issues because of overload
 
 
 
-###2\.1\.  *initializeWidgets* the widgets <sub>the MVP View</sub>
+###2\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
 
 
-This takes care of the configuration of the different widgets themselves, without the interaction\.It is used to instantiate the subwidgets and to specify their default values and general behavior\.This focus in this method is to specify how the widgets will look like\.
+This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
 
-In general `initializeWidgets` should follow the pattern:
+
+
+    Note: For Ben: what happens with saving to the model ??
+
+
+
+In general the `initializeWidgets` method should follow the pattern:
 
 
 -  widgets instantiation
--  widgets specification
--  set the order of focus
+-  widgets configuration specification
+-  specification of order of focus
 
 &nbsp;
 
-The code [1\.1\. ](#pattern) is an example of an `initializeWidgets` method\.
+
+
+    Note: For Ben: is the last step mandatory? What happens if there is no focus order? No tab focus or random?
 
 
 
-<a name="pattern"></a>**Example of initializeWidgets**
+The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
+
+
+
+    Note: For Ben: is the code of this example correct and consistent with the explanation? (I changed it)
+
+
+
+
+
+<a name="fig:pattern"></a>**Example of initializeWidgets**
 
 
     initializeWidgets
     
-    	button := self newButton.
+    	theButton := self newButton.
+    	theList := self newList.
     
-    	button label: 'I am a button'.
+    	theButton label: 'I am a button'.
     	
     	self focusOrder
-    		add: button
+    		add: theButton;
+    		add:theList.
 
 
 
-Note that this method is mandatory\.Each subclass need to override it\.
+
+
+
+    Specifying this method is mandatory, as without it the UI would have no widgets.
+
+
 
 
 ####2\.1\.1\.  Widget instantiation
 
 
-The instantiation of a widget can be done in two ways\.First if it is a basic widget \(like a button or a list\) which is instantiated, then the framework provides accesors for them\.The format of this accessors is `new[Widget]`\.By example `newList`, `newText`, etc\.The complete list of available widget creation methods can be found in the class *ComposableModel* in the protocol *widgets*\.
-
-Second if one wants to reuse any subclass of *ComposableModel* the widget needs to be initialized using the `instantiate:` method\.The example [1\.2\. ](#use_of_instantiate) shows how to instantiate a *MessageBrowser*\.
+The instantiation of a widget can be done in two ways: through the use of an creation method or through the use of the `instantiate:` method\.Considering the first option, the framework provides unary messages for the creation of all basic widgets\.The format of these messages is `new[Widget]`, for example `newButton` creates a button widget, and `newList` creates a list widget, as we have seen above\.The complete list of available widget creation methods can be found in the class *ComposableModel* in the protocol *widgets*\.Considering the second option, to reuse any composite widgets, i\.e\. a subclass of *ComposableModel*, the widget needs to be initialized using the `instantiate:` method\.For example, to reuse a *MessageBrowser*  widget, the code is ` self instantiate: MessageBrowser.`
 
 
+###2\.2\.  The *initializePresenter* method <sub>\(the MVP Interactor\)</sub>
 
-<a name="use_of_instantiate"></a>**How to reuse a MessageBrowser widget**
 
+This method takes care of the interactions between the different widgets\.By linking the behavior of the different widgets it specifies the overall presentation, i\.e\. how the overall UI responds to interactions by the user\.
 
-    widget := self instantiate: MessageBrowser.
-
+Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different widgets are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
 
 
 
-###2\.2\.  *initializePresenter* the Presenter <sub>the MVP Interactor</sub>
+    Note: For Ben: please add an example that makes the button active when a list item is selected and inactive when a list item is deselected
 
 
-This takes care of the interactions between the different widgets\.This method specifies the flow of exectution linking the sub widgets all together\.All the interaction between one widget and another is specified here\.
 
-Usually this method is composed of actions to perform when a specific event is received\.Based on value holders, **Spec** event mechanism rely on the value holder announcements\.Value holders provide a single method `whenChangedDo:` to register a block to perform on change\.The propagation of those events build the whole interaction flow\.
-
-Moreover the basic widgets provide a full set of registration methods\.The whole API is described in the section [¿?\. ](#sec_where_to_find_what_I_want)\.
+The whole event API of the basic widgets is described in the section [¿?](#sec_where_to_find_what_I_want)\.
 
 
 
@@ -98,100 +129,121 @@ Moreover the basic widgets provide a full set of registration methods\.The whole
 
 
 
-Note that this method is optional\.
-
-
-###2\.3\.  *defaultSpec* the View <sub>the MVP Presenter</sub>
-
-
-This takes care of the layout of the different widgets\.This class side method is used to specify the position of each sub widgets\.It also specifies how a widget reacts when the window is resized\.
-
-Multiple layouts can be described\.Then when the widget is built a specific layout can be specified\.
-
-This method is on class side because usually all the instances of a same user interface have the same layout\.But the lookup for the spec method to use starts on instace side\.This way a class can have a more specific layout depending of the instance state\.
-
-
-####2\.3\.1\.  Pragmas
-<a name="subsec_pragma"></a>
-
-As previously said, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, the spec methods are flagged with a pragma\.
-
-The pragma can be `<spec: default>` for the view to use by default, or `<spec>` for the other views\.
-
-
-####2\.3\.2\.  Examples
-
-
-This section provides a list of examples about the constructions of layouts\.It starts with a [basic](#layout_basic_example) example\.Then two examples are given about the creation of [rows and columns](#layout_rows_and_column_layout)\.Now that rows and columns do not have any mystery, two other examples explain how to set a [fix size](#layout_set_size_pixels) for rows and columns\.Another example explains how to specify a widget [proportions](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else failed\.This section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
-
-<a name="layout_basic_example"></a>
-The simpliest example is to just render one widget\.The example [1\.3\. ](#ex_layout1) presents such a layout\.
 
 
 
-<a name="ex_layout1"></a>**Layout with only one widget**
+    This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
+
+
+
+
+###2\.3\.  the *defaultSpec* method <sub>\(the MVP Presenter\)</sub>
+
+
+This method specifies the layout of the different widgets in the UI\.It also specifies how a widget reacts when the window is resized\.
+
+For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified\.If no specific layout is given, the layout returned by the `defaultSpec` method will be used\.This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
+
+The simpliest example of such a method is laying out just one widget\.The example [2\.2](#fig:ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
+
+
+
+<a name="fig:ex_layout1"></a>**Layout with only one widget**
 
 
     ^ SpecLayout composed
-    	add: #myWidget;
+    	add: #theList;
     	yourself
 
 
 
-The symbol `myWidget` refers to an instance side method returning a widget\.Note that by default, a widget will take all the space available\.
+The symbol `theList` refers to an instance side method returning a widget\.This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.Note that by default, a widget will take all the space available\.
 
----
+As said above, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, these methods need to be flagged with a pragma\.The pragma can be either `<spec: default>` for the view to use by default, or `<spec>` for the other views\.
 
+
+
+    Note: For Ben. You need to clarify the name defaultSpec versus the pragmas and give an enumerated list that describes the method lookup for this guy
+
+
+
+
+
+
+
+    Specifying this method is mandatory, as without it the UI would show no widgets to the user.
+
+
+
+
+
+####2\.3\.1\.  Layout Examples
+
+
+
+
+    Note: For Ben. I am not sure that this is the right place for this, but I don't know a better place for now.
+
+
+
+As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
 <a name="layout_rows_and_column_layout"></a>
-Often user interfaces can be describes in rows and columns\.The example [1\.4\. ](#ex_layout_row) sows how to build a row of widgets\.
+Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.3](#fig:ex_layout_row) shows how to build a row of widgets\.
 
 
 
-<a name="ex_layout_row"></a>**Row of widgets**
+<a name="fig:ex_layout_row"></a>**Row of widgets**
 
 
     ^ SpecLayout composed
     	newRow: [ :row |
     		row
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	];
     	yourself
 
 
 
-Now having the widgets rendered as a column is very similar as show in the example [1\.5\. ](#ex_layout_column)
+Having the widgets rendered as a column is similar, as shown in the example [2\.4](#fig:ex_layout_column)
 
 
 
-<a name="ex_layout_column"></a>**Column of widgets**
+<a name="fig:ex_layout_column"></a>**Column of widgets**
 
 
     ^ SpecLayout composed
     	newColumn: [ :column |
     		column
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	];
     	yourself
 
 
 
 
+
+    Note: For Ben: I think this needs an example that nests rows in columns or vice-versa.
+
+
+
+
 ---
+
 <a name="layout_set_size_pixels"></a>
-The height of row, as well as the width of a column, can be specified to prevent it to take all the space available\.The example [1\.6\. ](#ex_row_height) shows how to specify the height of a row in pixels while the example [1\.7\. ](#ex_column_width) how to specify the column width\.
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.5](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.6](#fig:ex_column_width) how to specify the column width\.
 
 
 
-<a name="ex_row_height"></a>**Row of 30px**
+<a name="fig:ex_row_height"></a>**Row of 30 pixels**
 
 
     ^ SpecLayout composed
     	newRow: [ :row |
     		row
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	] height: 30;
     	yourself
 
@@ -199,55 +251,69 @@ The height of row, as well as the width of a column, can be specified to prevent
 
 
 
-<a name="ex_column_width"></a>**Column of 30px**
+<a name="fig:ex_column_width"></a>**Column of 30 pixels**
 
 
     ^ SpecLayout composed
     	newColumn: [ :column |
     		column
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	] width: 30;
     	yourself
 
 
 
-Note that it is a bad habit to hardcode the size of the widgets\.Methods are available on *ComposableModel* providing some default size like the width of a button\.If one wants to use his or her own widget size, he or she should not forget to take in account the current font size\.
+Note that it is generally considered a bad habit to hardcode the size of the widgets\.Methods are available on *ComposableModel* providing sensible default sizes, like the width of a button\.When specifying custom widget sizes, care should be taken to take in account the current font size\.
 
 
 ---
 
 <a name="layout_percentage"></a>
-It is also possible to specify the percentage of the container a widget should occupy\.This way the widget size will change accordingly when the window is resized by example\.To do so, the four sides of a widget can be specified as shown in the example [1\.8\. ](#ex_layout_proportional)\.
+It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.7](#ex_layout_proportional)\.
 
 
 
-<a name="ex_layout_proportional"></a>**Square centered and half the size of its container**
+<a name="ex_layout_proportional"></a>**A Button centered in, and half the size of its container**
 
 
     ^ SpecLayout composed
-    	add: #square top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
+    	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
     	yourself
 
 
 
-Note that the value provided as argument moves the corresponding side toward the center of the widget\.Note also that the argument can be an integer if the offset has to be a fixed number of pixels\.
+Note that the value provided as argument moves the corresponding side toward the center of the widget\.Also, the argument can be an integer if the offset has to be a fixed number of pixels\.
+
+
+
+    Note: For Ben: negative offsets are possible and have semantics like in morphic? If so, explain (not saying, like in Morphic )
+
 
 
 ---
 
 <a name="layout_expert"></a>
-The previous examples should cover most of the cases\.In case it does not, there is a last way to specify a widget position\.
+The previous examples should cover most of the cases of layout of widgets\.For the remaining cases there is a last way to specify a widget by specifying its position\.
 
-The method `add: aWidget origin: originPoint corner: cornerPoint offsetOrigin: ooPoint offsetCorner: ocPoint` allows one to add a widget from origin point to cornerPoint\.Those two points represents respectively the top left corner and the bottom right corner of the widget\.The points represent a percentage of the container \(so the coordinates <u>must</u> be between *0* and *1* \)\.
+The method `add: origin: corner: ` of `SpecLayout` specifies the layout of a widget, percentage\-wise from the origin point to the corner point\.These two points represent respectively the top left corner and the bottom right corner of the widget\.The arguments express a percentage of the container, so these <u>must</u> be between *0@0* and *1@1* \.
 
-In addition to those points, two offsets can be specified\.They represent the number of pixels the origin, respectively the corner, should be moved\.This approach is similar to the ProportionalLayout of **Morphic**\.
-
-The exemple [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\.The widget should take all the window width, but should be only 30px height\.
+In addition to those points, two offsets can be also be specified, using the method\. `add: origin: corner:  offsetOrigin: offsetCorner: `\.The offsets specify the number of pixels that the origin and the corner should be moved\.
 
 
 
-<a name="ex_layout_expert"></a>**Expert Mode: Toolbar**
+    Note: For Ben: negative integer offsets are allowed? If so, say: negative offsets are allowed, similar to the offset example above.
+
+
+
+Note that this approach is similar to the ProportionalLayout of **Morphic**\.
+
+
+The example [2\.8](#fig:ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
+
+
+
+<a name="fig:ex_layout_expert"></a>**Using expert mode to specify a toolbar**
 
 
     ^ SpecLayout composed
@@ -261,9 +327,15 @@ The exemple [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\.
 
 <a name="layout_specify_layout"></a>
 
-As explained in the section [1\.2\.3\.1\. ](#subsec_pragma), a widget can have multiple views\.So when a sub widget layout is specified, the view to use for this sub widget can e specified\.
+As explained in the section [¿?](#subsec_pragma), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
 
-All the methods seen in the previous examples come with a variant used to specidy the view selector to use\.By example, for `add:` there is `add:withSpec:`\.All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
+All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
+
+
+
+    Note: For Ben. I don't understand the text above. (And I think I have seen it before.) Please expand with an example.
+
+
 
 ##3\.  Where to find what I want
 
@@ -279,7 +351,7 @@ Having an user interface with a well known number of sub widgets and a static la
 
 Changing a widget layout at runtime is quite easy\.It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout\.
 
-The snippet [1\.10\. ](#rebuildDynamically) shows how to simply rebuild a widget with a new layout\.
+The snippet [4\.1](#rebuildDynamically) shows how to simply rebuild a widget with a new layout\.
 
 
 
@@ -305,7 +377,7 @@ If an user interface needs a various number of sub widgets that can not be predi
 
 Then the instantion of the sub widgets is a bit different\.The method `instantiateModels:` should be used\.It takes as argument an array of pairs\.Each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.Then a widget can be accessed by sending a message whose selector is the widget name\.
 
-By example, if a widget named `button` is created, the this widget can be accessed by calling `self button` as shown in the example [1\.11\. ](#ex_dynamic_creation)\.
+By example, if a widget named `button` is created, the this widget can be accessed by calling `self button` as shown in the example [4\.2](#ex_dynamic_creation)\.
 
 
 
@@ -336,7 +408,7 @@ Note that the instantiation array can also be an array of pairs\. The previous e
 
 Thanks to the *Spec* capability to dynamically instantiate widgets, it is also possible to prototype an user interface\.From within any workspace a new user interface can be easily defined\.
 
-The example [1\.13\. ](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
+The example [4\.4](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
 
 
@@ -368,27 +440,42 @@ The example [1\.13\. ](#ex_prototyping) shows how to easily and quickly design a
 
 
 
-The result can be seen in Figure [1\.1\. ](#fig_popup)\.
+The result can be seen in Figure [4\.1](#fig_popup)\.
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
 
-##5\.  Writing my own basic widget
+##5\.  Creating new basic widget
 
 
-In the case of a basic widget missing, the following section will explain how to extend the *Spec* framework\.Creating a new widget is essentially three steps: writing a new model, writing an adapter, and updating or creating a specific binding\.
+*Spec* provides for a large amount and wide variety of basic widgets\. In the rare case that a basic widget is missing, the *Spec* framework will need to be extended to add this new widget\.In this section we will explain how to create such a new basic widget\.
 
-Before explaining the details of how to create a new widget, we will explain how the creation of a widget is done\.It will expose the different actor and provide a clearer understanding of who is doing what\.
-
-
-
-###5\.1\.  Overall view of the build of a widget
+We will first explain the applicable part of how the widget build process is performed\.This will reveal the different actors in the process and provide a clearer understanding of their responsibilities\.We then present the three steps of widget creation: writing a new model, writing an adapter, and updating or creating an individual UI framework binding\.
 
 
-When a basic widget is built, like the others widget, the model default spec method is called\.But in this case, instead of providing a layout, it builds an adapter\.Depending of the bindings set currently used, it can provide different kind of adapter \(an adapter for Morphic, one for Seaside, etc\.\)\.
+###5\.1\.  One step in the building process of a widget
 
-This adapter when created will instantiate a UI framework specific widget \(a PluggableListMorph for a MorphicListAdapter\)\.This is this framework specific widget which will be returned by the model and rendered\.
 
-The figure [1\.2\. ](#model_adapter_uielement) shows the relationship between those objects\.
+The UI building process does not make a distinction between basic and composed widgets\.Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
+
+The adapter, when created, will instantiate a widget that is specific to the UI framework being used\.
+
+
+    Note: For Ben: please clarify the 'when created'. Is this when the spec method executes, or at some later point in time?
+
+
+For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework specific widget which will be returned by the model and rendered\.
+
+
+    Note: For Ben: It is not clear when it will be returned, and to who it will be returned, and how this links to it being rendered.
+
+
+
+Figure [5\.1](#model_adapter_uielement) shows the relationship between those objects\.
+
+
+    Note: For Ben: Model is an instance of Adapter and Adapter is an instance of UI Element? That can not be right ...
+
+
 
 <a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the ui element")
 
@@ -396,77 +483,110 @@ The figure [1\.2\. ](#model_adapter_uielement) shows the relationship between th
 ###5\.2\.  The Model
 
 
-The new model needs to be a subclass of **AbstractWidgetModel**\.The name of a model is composed of the new basic widget concept \(like list, or button\) and of the word *Model*\.
+The new model needs to be a subclass of **AbstractWidgetModel** and its name should be composed of the new basic widget concept, e\.g\. list or button, and of the word *Model*\.The responsibility of the model is to store all the state of the widget\.Examples of widget\-specific state are:
 
-The model stores all the state of a widget\.
+-  the index of a list
+-  the label of a button
+-  the action block for when a text is validated in a text field
 
+&nbsp;
 
-
-<a name="ex_model_1"></a>**Examples of state**
-
-
-    index for a list, the label of a button, the action to perform when a text is validated in a text field
-
-
-
-The states are stored inside value holders\. They are later used to propagate state changes and thus create the interaction flow\.
+The state is wrapped in value holders and kept in instance variables\.For example, the code in [5\.1](#ex_value_holder) shows how to wrap the state `0` in a value holder and keep it as an instance variable\.Value holders are needed because they are later used to propagate state changes and thus create the interaction flow of the user interface, as discussed in Section [2](#sec_heart_of_spec)\.
 
 
 
-<a name="ex_value_holder"></a>**Storing an instance variable as a Value Holder**
+<a name="ex_value_holder"></a>**Storing state wrapped in a Value Holder in an instance variable**
 
 
     index := 0 asValueHolder.
 
 
 
-Then for each state \(in other words instance variable\) three methods should be defined: the getter, the setter, and the registration method\.The first two should be in the protocol *protocol* while the registration method should be in *protocol\-events*\.
+For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.The first two should classified in the protocol named *protocol* while the registration method should be in *protocol\-events*\.For example, the code in [5\.2](#ex_mutators) shows the methods for the example code in [5\.1](#ex_value_holder)\. 
 
 
 
 <a name="ex_mutators"></a>**Example of mutators for index**
 
 
-    protocol: protocol
+    "in protocol: protocol"
     index
-    	index value
+    	^index value
     
-    protocol: protocol
+    "in protocol: protocol"
     index: anInteger
     	index value: anInteger
     
-    protocol: protocol-events
+    "in protocol: protocol-events"
     whenIndexChanged: aBlock
     	index whenChangedDo: aBlock
 
 
 
-The last step to define a new model is to implement on class side a method `adapterName`\.The method should be in the protocol *spec* and should return a symbol\.The symbol should be composed with the concept of the widget \(like list, or button\) and the word *Adapter* like **ListAdapter**\.
+The last step to define a new model is to implement a method `adapterName` at class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
 
-Since a same model can hold the state of different views \(like in the MVC pattern\), multiple adapters can be refering to the same model\.Due to this, the way to update the adapters uses the dependents mechanism\.In fact the message `change: selector with: aCollection` is used to call the message *selector* with the arguments *aCollection* to the adapter\.The propagation is done regardless of the number of adapters\.
+Since the same model can hold the state of different views, like in the MVC pattern, multiple adapters can refer to the same model\.Consequently, the adapter updating logic uses the dependents mechanism\.In fact the message `change: with: ` is used to call the message *selector* on the adaptor with the arguments *aCollection* to the adapter\.The propagation is done regardless of the number of adapters\.
+
+
+
+    Note: For Ben: I do not understand the above paragraph. Is it there to explain the existence of the adapterName method? This is not clear at all.
+
+
 
 
 ###5\.3\.  The Adapter
 
 
-The adapter name is composed of the framework name \(like Morphic\) and the name of the adapter it is implementing \(like ListAdapter\)\.The adapter is an object used to connect a framework specific ui element and a framework independent model\.The only mandatory method for an adapter is `defaultSpec` on the class side\.
-
-But since the adapter is bridging the gap between the ui element and the model, the adapter often needs to forward the queries form the ui element to the model\.The other way around, since the model is holding the state, the adapter is used to update the ui element state for the model\.
-
-The methods involved in the communication with the model should be in the protocol *spec protocol* while the methods involded in the ui element should be *widget API*\.To communicate with the ui element, the adapter methods use the method `widgetDo:`\.This method execute the block provided as argument only if the ui element has already been created\.
 
 
-###5\.4\.  The Bindings
-
-
-The bindings is an object use to resolve the adapter name at run time\.This way a same model can be used with several frameworks\.
-
-Adding the new adapter to the default adapter is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class \(like **MorphicAdapterBindings** by example\)\.Once it is done, the bindings should be initialized again with the following snippet:
+    Note: For Ben: What is the class of the adaptor? Clarify.
 
 
 
-<a name="snip_bindings"></a>**Reset the bindings**
+The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.The adapter is an object used to connect a UI framework specific element and the framework independent model\.The only mandatory method for an adapter is `defaultSpec` on the class side\.
 
 
-    SpecInterpreter hardResetBindings
 
+    Note: For Ben: What should defaultSpec do? What are its responsibilities? Give an example.
+
+
+
+Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model\.Seen from the other way around: since the model is holding the state, the adapter is used to update the UI element state of the model\.
+
+The methods involved in the communication with the model should be in the protocol *spec protocol* while the methods involded in the UI element should be *widget API*\.
+
+
+
+    Note: For Ben: Rephrase: in the communication FROM the model TO the UI element should be ... and in the communication FROM the UI element TO the model should be ... I am confused which is which.
+
+
+
+To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the ui element has already been created\.
+
+
+
+    Note: For Ben: An example is needed here.
+
+
+
+
+###5\.4\.  The UI Framework binding
+
+
+The bindings is an object that is used to resolve the name of the adapter at run time\.This allows for the same model to be used with several UI frameworks\.
+
+
+
+    Note: For Ben: What is the class of the bindings (text above)? What is the default adapter (text below)?
+
+
+
+Adding the new adapter to the default adapter is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class, e\.g\. **MorphicAdapterBindings** for Morphic\.
+
+
+
+    Note: For Ben: Give an example here.
+
+
+
+Once this is done, the bindings should be re\-initialized by running the following snippet of code: `SpecInterpreter hardResetBindings`\.
