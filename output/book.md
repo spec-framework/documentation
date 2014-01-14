@@ -43,13 +43,7 @@ To avoid possible misunderstandings in this text due to confusion in terminology
 ###2\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
 
 
-This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
-
-
-
-    Note: For Ben: what happens with saving to the model ??
-
-
+This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.The behavior to update the model states is described in the method as well\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
 
 In general the `initializeWidgets` method should follow the pattern:
 
@@ -60,19 +54,9 @@ In general the `initializeWidgets` method should follow the pattern:
 
 &nbsp;
 
-
-
-    Note: For Ben: is the last step mandatory? What happens if there is no focus order? No tab focus or random?
-
-
+The last step is not mandatory but **highly** recommended\.Indeed, without this final step the keyboard navigation will not work at all\.
 
 The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
-
-
-
-    Note: For Ben: is the code of this example correct and consistent with the explanation? (I changed it)
-
-
 
 
 
@@ -88,7 +72,7 @@ The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidget
     	
     	self focusOrder
     		add: theButton;
-    		add:theList.
+    		add: theList.
 
 
 
@@ -111,11 +95,19 @@ The instantiation of a widget can be done in two ways: through the use of an cre
 
 This method takes care of the interactions between the different widgets\.By linking the behavior of the different widgets it specifies the overall presentation, i\.e\. how the overall UI responds to interactions by the user\.
 
-Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different widgets are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
+Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different ui models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
+
+The example [2\.2](#ex_button) shows how to use one of registration methods from the list widget to change the label of the button according to the list selection\.
 
 
 
-    Note: For Ben: please add an example that makes the button active when a list item is selected and inactive when a list item is deselected
+<a name="ex_button"></a>**How to change a button label according to a list selection**
+
+
+    theList whenSelectedItemChanged: [ :item | 
+    	item 
+    		ifNil: [ button text: 'No selected item' ]
+    		ifNotNil: [ button text: 'An item is selected']]
 
 
 
@@ -137,14 +129,18 @@ The whole event API of the basic widgets is described in the section [¿?](#sec_
 
 
 
-###2\.3\.  the *defaultSpec* method <sub>\(the MVP Presenter\)</sub>
+###2\.3\.  the *layouting* method <sub>\(the MVP Presenter\)</sub>
 
 
 This method specifies the layout of the different widgets in the UI\.It also specifies how a widget reacts when the window is resized\.
 
-For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified\.If no specific layout is given, the layout returned by the `defaultSpec` method will be used\.This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
+For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified\.If no specific layout is given, the layouting method returned by the lookup mechanism will be used\.
 
-The simpliest example of such a method is laying out just one widget\.The example [2\.2](#fig:ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
+The lookup mechanism search on class side in the whole class hierarchy for a method with the pragma *<spec: \#default>*\.If multiple exists, the first one found will be used\.If none is found and only one method has the pragma *<spec>*, this method is used\.Otherwise an error is raised\.
+
+This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
+
+The simpliest example of such a method is laying out just one widget\.The example [2\.3](#fig:ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
 
 
 
@@ -163,13 +159,6 @@ As said above, multiple views can be described for the same user interface\.In o
 
 
 
-    Note: For Ben. You need to clarify the name defaultSpec versus the pragmas and give an enumerated list that describes the method lookup for this guy
-
-
-
-
-
-
 
     Specifying this method is mandatory, as without it the UI would show no widgets to the user.
 
@@ -180,15 +169,9 @@ As said above, multiple views can be described for the same user interface\.In o
 ####2\.3\.1\.  Layout Examples
 
 
-
-
-    Note: For Ben. I am not sure that this is the right place for this, but I don't know a better place for now.
-
-
-
 As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
 <a name="layout_rows_and_column_layout"></a>
-Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.3](#fig:ex_layout_row) shows how to build a row of widgets\.
+Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.4](#fig:ex_layout_row) shows how to build a row of widgets\.
 
 
 
@@ -205,7 +188,7 @@ Often the layout of user interfaces can be described in rows and columns, and **
 
 
 
-Having the widgets rendered as a column is similar, as shown in the example [2\.4](#fig:ex_layout_column)
+Having the widgets rendered as a column is similar, as shown in the example [2\.5](#fig:ex_layout_column)
 
 
 
@@ -232,7 +215,7 @@ Having the widgets rendered as a column is similar, as shown in the example [2\.
 ---
 
 <a name="layout_set_size_pixels"></a>
-The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.5](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.6](#fig:ex_column_width) how to specify the column width\.
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.6](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.7](#fig:ex_column_width) how to specify the column width\.
 
 
 
@@ -270,7 +253,7 @@ Note that it is generally considered a bad habit to hardcode the size of the wid
 ---
 
 <a name="layout_percentage"></a>
-It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.7](#ex_layout_proportional)\.
+It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.8](#ex_layout_proportional)\.
 
 
 
@@ -309,7 +292,7 @@ In addition to those points, two offsets can be also be specified, using the met
 Note that this approach is similar to the ProportionalLayout of **Morphic**\.
 
 
-The example [2\.8](#fig:ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
+The example [2\.9](#fig:ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
 
 
 
