@@ -25,9 +25,8 @@ To avoid possible misunderstandings in this text due to confusion in terminology
 This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables.
 The configuration and default values of each widget are specified here as well.
 This focus in this method is to specify what the widgets will look like and what their self-contained behavior is.
+The behavior to update the model states is described in the method as well.
 It is explicitly ""not"" the responsibility of this method to define the interactions ""between"" the widgets.
-
-@@note For Ben: what happens with saving to the model ??
 
 In general the ==initializeWidgets== method should follow the pattern:
 
@@ -35,14 +34,13 @@ In general the ==initializeWidgets== method should follow the pattern:
 - widgets configuration specification
 - specification of order of focus
 
-@@note For Ben: is the last step mandatory? What happens if there is no focus order? No tab focus or random?
+The last step is not mandatory but ""highly"" recommended.
+Indeed, without this final step the keyboard navigation will not work at all.
 
 The code in figure *fig:pattern* shows an example of an ==initializeWidgets== method.
 It first instantiates a button and a list widget, storing each in an instance variable.
 It second configures the button it by setting its label.
 Third it specifies the focus order of all the widgets: first the button and then the list.
-
-@@note For Ben: is the code of this example correct and consistent with the explanation? (I changed it)
 
 [[[label=fig:pattern|caption=Example of initializeWidgets|
 initializeWidgets
@@ -54,7 +52,7 @@ initializeWidgets
 	
 	self focusOrder
 		add: theButton;
-		add:theList.
+		add: theList.
 ]]]
 
 [[[caption:Hint|
@@ -77,11 +75,18 @@ By linking the behavior of the different widgets it specifies the overall presen
 
 Usually this method consists of specifications of actions to perform when a certain event is received by a widget.
 From the propagation of those events the whole interaction flow of the UI emerges.
-In  ""Spec"", the different widgets are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets.
+In  ""Spec"", the different ui models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets.
 Value holders provide a single method ==whenChangedDo:== that is used to register a block to perform on change.
 In addition to this primitive  ==whenChangedDo:== method, the basic widgets provide more specific hooks, e.g. when an item in a list is selected or deselected.
 
-@@note For Ben: please add an example that makes the button active when a list item is selected and inactive when a list item is deselected
+The example *ex_button* shows how to use one of registration methods from the list widget to change the label of the button according to the list selection.
+
+[[[label=ex_button|caption=How to change a button label according to a list selection|language=Smalltalk 
+theList whenSelectedItemChanged: [ :item | 
+	item 
+		ifNil: [ button text: 'No selected item' ]
+		ifNotNil: [ button text: 'An item is selected']]
+]]]
 
 The whole event API of the basic widgets is described in the section *sec_where_to_find_what_I_want*.
 
@@ -94,13 +99,19 @@ they should provide a comprehensive API.
 This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
 ]]]
 
-!!! the ''defaultSpec'' method @@(the MVP Presenter)@@
+!!! the ''layouting'' method @@(the MVP Presenter)@@
 
 This method specifies the layout of the different widgets in the UI.
 It also specifies how a widget reacts when the window is resized.
 
 For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified.
-If no specific layout is given, the layout returned by the ==defaultSpec== method will be used.
+If no specific layout is given, the layouting method returned by the lookup mechanism will be used.
+
+The lookup mechanism search on class side in the whole class hierarchy for a method with the pragma ''<spec: #default>''.
+If multiple exists, the first one found will be used.
+If none is found and only one method has the pragma ''<spec>'', this method is used.
+Otherwise an error is raised.
+
 This method is on class side because it returns a value that usually is the same for all the instances.
 Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class-side accessor for a class variable.
 Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance.
@@ -123,17 +134,12 @@ As said above, multiple views can be described for the same user interface.
 In order to retrieve the correct method to apply, these methods need to be flagged with a pragma.
 The pragma can be either ==<spec: default>== for the view to use by default, or ==<spec>== for the other views.
 
-@@note For Ben. You need to clarify the name defaultSpec versus the pragmas and give an enumerated list that describes the method lookup for this guy 
-
-
 [[[caption:Hint|
 Specifying this method is mandatory, as without it the UI would show no widgets to the user.
 ]]]
 
 
 !!!! Layout Examples
-
-@@note For Ben. I am not sure that this is the right place for this, but I don't know a better place for now.
 
 As layouts can become quite complex, this section provides a list of examples of the construction of layouts.
 First two examples are given of the use of *rows and columns>layout_rows_and_column_layout*.
