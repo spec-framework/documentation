@@ -111,7 +111,7 @@ The example [2\.2](#ex_button) shows how to use one of registration methods from
 
 
 
-The whole event API of the basic widgets is described in the section [¿?](#sec_where_to_find_what_I_want)\.
+The whole event API of the basic widgets is described in the section [3](#sec_where_to_find_what_I_want)\.
 
 
 
@@ -130,7 +130,7 @@ The whole event API of the basic widgets is described in the section [¿?](#sec_
 
 
 ###2\.3\.  the *layouting* method <sub>\(the MVP Presenter\)</sub>
-
+<a name="subsec_layout"></a>
 
 This method specifies the layout of the different widgets in the UI\.It also specifies how a widget reacts when the window is resized\.
 
@@ -313,11 +313,11 @@ Contrary to the previous way to define layouts, while using `add: origin: corner
 Note that this approach is similar to the ProportionalLayout of **Morphic**\.
 
 
-The example [¿?](#ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
+The example [2\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
 
 
 
-<a name="fig:ex_layout_expert"></a>**Using expert mode to specify a toolbar**
+<a name="ex_layout_expert"></a>**Using expert mode to specify a toolbar**
 
 
     ^ SpecLayout composed
@@ -331,7 +331,7 @@ The example [¿?](#ex_layout_expert) shows how to add a widget as a toolbar\.It 
 
 <a name="layout_specify_layout"></a>
 
-As explained in the section [¿?](#subsec_pragma), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
+As explained in the section [2\.3](#subsec_layout), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
 
 All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.
 
@@ -352,7 +352,7 @@ Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the
 All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
 
 ##3\.  Where to find what I want
-
+<a name="sec_where_to_find_what_I_want"></a>
 
 This section explains where to find a model API and how to decrypt the meta information attached to those API methods\.
 
