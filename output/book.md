@@ -17,21 +17,10 @@ First the 3 pillars of *Spec* will be explained\. Second we expose how *Spec* re
 ##2\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
 
-Spec is built around three axes that are inspired by the MVP pattern\.These axes materialize themselves as the following three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.
+Spec is built around three axes borrowed from the MVP pattern\.Those axes are materialized as three methods: `initializeWidgets`, `initializePresenter`, and `defaultSpec`\.We first detail some necessary terminology before discussing each of these in detail\.
 
 
-    Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
-
-
-
-
-    Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
-
-
-We first detail some necessary terminology before discussing each of these methods in more detail\.
-
-
-To avoid possible misunderstandings in this text due to confusion in terminology, we define four terms:
+To avoid possible misundertandings due to terminology issues because of overloaded meanings, we first define four terms:
 <dl><dt>UI Element
 </dt><dd>an interactive graphical element displayed as part of the Graphical User Interface.</dd><dt>UI Model
 </dt><dd>an object that contains the state and behavior of one or several UI elements.</dd><dt>Widget
@@ -40,27 +29,25 @@ To avoid possible misunderstandings in this text due to confusion in terminology
 
 
 
-###2\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
+###2\.1\.  *initializeWidgets* the widgets <sub>the MVP View</sub>
 
 
-This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.The behavior to update the model states is described in the method as well\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
+This takes care of the configuration of the different widgets themselves, without the interaction\.It is used to instantiate the subwidgets and to specify their default values and general behavior\.This focus in this method is to specify how the widgets will look like\.
 
-In general the `initializeWidgets` method should follow the pattern:
+In general `initializeWidgets` should follow the pattern:
 
 
 -  widgets instantiation
--  widgets configuration specification
--  specification of order of focus
+-  widgets specification
+-  set the order of focus
 
 &nbsp;
 
-The last step is not mandatory but **highly** recommended\.Indeed, without this final step the keyboard navigation will not work at all\.
-
-The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
+The code [1\.1\. ](#pattern) is an example of an `initializeWidgets` method\.
 
 
 
-<a name="fig:pattern"></a>**Example of initializeWidgets**
+<a name="pattern"></a>**Example of initializeWidgets**
 
 
     initializeWidgets
@@ -481,24 +468,25 @@ The result can be seen in Figure [4\.1](#fig_popup)\.
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
 
-##5\.  Creating new basic widget
+##5\.  Writing my own basic widget
 
 
-*Spec* provides for a large amount and wide variety of basic widgets\. In the rare case that a basic widget is missing, the *Spec* framework will need to be extended to add this new widget\.In this section we will explain how to create such a new basic widget\.
+In the case of a basic widget missing, the following section will explain how to extend the *Spec* framework\.Creating a new widget is essentially three steps: writing a new model, writing an adapter, and updating or creating a specific binding\.
 
-We will first explain the applicable part of how the widget build process is performed\.This will reveal the different actors in the process and provide a clearer understanding of their responsibilities\.We then present the three steps of widget creation: writing a new model, writing an adapter, and updating or creating an individual UI framework binding\.
+Before explaining the details of how to create a new widget, we will explain how the creation of a widget is done\.It will expose the different actor and provide a clearer understanding of who is doing what\.
 
 
 ###5\.1\.  One step in the building process of a widget
 
+###5\.1\.  Overall view of the build of a widget
 
 The UI building process does not make a distinction between basic and composed widgets\.Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
-The adapter, when instantiated by the UI model, will instantiate a widget that is specific to the UI framework being used\.
+When a basic widget is built, like the others widget, the model default spec method is called\.But in this case, instead of providing a layout, it builds an adapter\.Depending of the bindings set currently used, it can provide different kind of adapter \(an adapter for Morphic, one for Seaside, etc\.\)\.
 
-For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework specific widget which will be added to the widget container\.
+This adapter when created will instantiate a UI framework specific widget \(a PluggableListMorph for a MorphicListAdapter\)\.This is this framework specific widget which will be returned by the model and rendered\.
 
-Figure [5\.1](#model_adapter_uielement) shows the relationship between those objects\.
+The figure [1\.2\. ](#model_adapter_uielement) shows the relationship between those objects\.
 
 <a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the ui element")
 
@@ -506,129 +494,77 @@ Figure [5\.1](#model_adapter_uielement) shows the relationship between those obj
 ###5\.2\.  The Model
 
 
-The new model needs to be a subclass of **AbstractWidgetModel** and its name should be composed of the new basic widget concept, e\.g\. list or button, and of the word *Model*\.The responsibility of the model is to store all the state of the widget\.Examples of widget\-specific state are:
+The new model needs to be a subclass of **AbstractWidgetModel**\.The name of a model is composed of the new basic widget concept \(like list, or button\) and of the word *Model*\.
 
--  the index of a list
--  the label of a button
--  the action block for when a text is validated in a text field
-
-&nbsp;
-
-The state is wrapped in value holders and kept in instance variables\.For example, the code in [5\.1](#ex_value_holder) shows how to wrap the state `0` in a value holder and keep it as an instance variable\.Value holders are needed because they are later used to propagate state changes and thus create the interaction flow of the user interface, as discussed in Section [2](#sec_heart_of_spec)\.
+The model stores all the state of a widget\.
 
 
 
-<a name="ex_value_holder"></a>**Storing state wrapped in a Value Holder in an instance variable**
+<a name="ex_model_1"></a>**Examples of state**
+
+
+    index for a list, the label of a button, the action to perform when a text is validated in a text field
+
+
+
+The states are stored inside value holders\. They are later used to propagate state changes and thus create the interaction flow\.
+
+
+
+<a name="ex_value_holder"></a>**Storing an instance variable as a Value Holder**
 
 
     index := 0 asValueHolder.
 
 
 
-For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.The first two should classified in the protocol named *protocol* while the registration method should be in *protocol\-events*\.For example, the code in [5\.2](#ex_mutators) shows the methods for the example code in [5\.1](#ex_value_holder)\. 
+Then for each state \(in other words instance variable\) three methods should be defined: the getter, the setter, and the registration method\.The first two should be in the protocol *protocol* while the registration method should be in *protocol\-events*\.
 
 
 
 <a name="ex_mutators"></a>**Example of mutators for index**
 
 
-    "in protocol: protocol"
+    protocol: protocol
     index
-    	^index value
+    	index value
     
-    "in protocol: protocol"
+    protocol: protocol
     index: anInteger
     	index value: anInteger
     
-    "in protocol: protocol-events"
+    protocol: protocol-events
     whenIndexChanged: aBlock
     	index whenChangedDo: aBlock
 
 
 
-The last step to define a new model is to implement a method `adapterName` at class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
+The last step to define a new model is to implement on class side a method `adapterName`\.The method should be in the protocol *spec* and should return a symbol\.The symbol should be composed with the concept of the widget \(like list, or button\) and the word *Adapter* like **ListAdapter**\.
 
-The communication from the UI model to the adapter is done using the dependents mechanism\.This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.In fact the message `change: with: ` is used to send the message *selector* with the arguments *aCollection* to the adapter\.
+Since a same model can hold the state of different views \(like in the MVC pattern\), multiple adapters can be refering to the same model\.Due to this, the way to update the adapters uses the dependents mechanism\.In fact the message `change: selector with: aCollection` is used to call the message *selector* with the arguments *aCollection* to the adapter\.The propagation is done regardless of the number of adapters\.
 
 
 ###5\.3\.  The Adapter
 
 
-An adapter must be a subclass of **AbstractAdapter**\.The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.The adapter is an object used to connect a UI framework specific element and the framework independent model\.
+The adapter name is composed of the framework name \(like Morphic\) and the name of the adapter it is implementing \(like ListAdapter\)\.The adapter is an object used to connect a framework specific ui element and a framework independent model\.The only mandatory method for an adapter is `defaultSpec` on the class side\.
 
-The only mandatory method for an adapter is `defaultSpec` on the class side\.This method has the responsibility to instantiate the corresponding UI element\.
+But since the adapter is bridging the gap between the ui element and the model, the adapter often needs to forward the queries form the ui element to the model\.The other way around, since the model is holding the state, the adapter is used to update the ui element state for the model\.
 
-The example [5\.3](#ex_adapter_instanciation) shows how **MorphicButtonAdapter** instantiates its UI element\.
-
-
-
-<a name="ex_adapter_instanciation"></a>**How MorphicButtonAdapter instantiates its UI element**
+The methods involved in the communication with the model should be in the protocol *spec protocol* while the methods involded in the ui element should be *widget API*\.To communicate with the ui element, the adapter methods use the method `widgetDo:`\.This method execute the block provided as argument only if the ui element has already been created\.
 
 
-    defaultSpec
-    	<spec>
-    	
-    	^ {#PluggableButtonMorph.
-    			#color:. Color white.
-    	    		#on:getState:action:label:menu:. 	#model. #state. #action. #label. nil.
-    			#getEnabledSelector:. 				#enabled.
-    			#getMenuSelector:.				#menu:.
-    			#hResizing:. 						#spaceFill.
-    			#vResizing:. 						#spaceFill.
-    			#borderWidth:.						#(model borderWidth).
-    			#borderColor:.						#(model borderColor).
-    			#askBeforeChanging:.				#(model askBeforeChanging).
-    			#setBalloonText:.					{ #model . #help}.
-    			#dragEnabled:.						#(model dragEnabled).
-    			#dropEnabled:.						#(model dropEnabled).	
-    			#eventHandler:.					{	#EventHandler. #on:send:to:. #keyStroke.	#keyStroke:fromMorph:. #model	}}
+###5\.4\.  The Bindings
+
+
+The bindings is an object use to resolve the adapter name at run time\.This way a same model can be used with several frameworks\.
+
+Adding the new adapter to the default adapter is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class \(like **MorphicAdapterBindings** by example\)\.Once it is done, the bindings should be initialized again with the following snippet:
 
 
 
-Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model\.Seen from the other way around: since the model is holding the state, the adapter is used to update the UI element state of the model\.
-
-The methods involved in the communication from the model to the adapter as well as the methods involved in the communication from the adapter to the UI model should be in the protocol *spec protocol*\.On the other hand the methods involved in the communication from the adapter to the UI element and vice versa should be categorized in the protocol *widget API*\.
-
-To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the ui element has already been created\.
-
-The example [5\.4](#ex_emphasis) shows how **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
+<a name="snip_bindings"></a>**Reset the bindings**
 
 
+    SpecInterpreter hardResetBindings
 
-<a name="ex_emphasis"></a>**How MorphicLabelAdapter propagates the emphasis changes**
-
-
-    emphasis: aTextEmphasis
-    
-    	self widgetDo: [ :w | w emphasis: aTextEmphasis ]
-
-
-
-
-###5\.4\.  The UI Framework binding
-
-
-The bindings is an object that is used to resolve the name of the adapter at run time\.This allows for the same model to be used with several UI frameworks\.
-
-Adding the new adapter to the default binding is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class, e\.g\. **MorphicAdapterBindings** for Morphic\.
-
-
-
-    Note: For Ben: Give an example here.
-
-
-
-Once this is done, the bindings should be re\-initialized by running the following snippet of code: `SpecInterpreter hardResetBindings`\.
-
-For creating a specific binding, the class **SpecAdapterBindings**needs to be overriden as well as its method `initializeBindings`\.It can then be used during a spec interpretation by setting it as the bindings to use for the **SpecInterpreter**\.The example [5\.5](#ex_setting_bindings) shows how to do so\.
-
-
-
-<a name="ex_setting_bindings"></a>**How to set custom bindings**
-
-
-    SpecInterpreter bindings: MyOwnBindingClass new.
-
-
-
-The **SpecInterpreter** bindings are resetted after each execution\.
