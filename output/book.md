@@ -52,43 +52,53 @@ The code [1\.1\. ](#pattern) is an example of an `initializeWidgets` method\.
 
     initializeWidgets
     
-    	button := self newButton.
+    	theButton := self newButton.
+    	theList := self newList.
     
-    	button label: 'I am a button'.
+    	theButton label: 'I am a button'.
     	
     	self focusOrder
-    		add: button
+    		add: theButton;
+    		add: theList.
 
 
 
-Note that this method is mandatory\.Each subclass need to override it\.
+
+
+
+    Specifying this method is mandatory, as without it the UI would have no widgets.
+
+
 
 
 ####2\.1\.1\.  Widget instantiation
 
 
-The instantiation of a widget can be done in two ways\.First if it is a basic widget \(like a button or a list\) which is instantiated, then the framework provides accesors for them\.The format of this accessors is `new[Widget]`\.By example `newList`, `newText`, etc\.The complete list of available widget creation methods can be found in the class *ComposableModel* in the protocol *widgets*\.
-
-Second if one wants to reuse any subclass of *ComposableModel* the widget needs to be initialized using the `instantiate:` method\.The example [1\.2\. ](#use_of_instantiate) shows how to instantiate a *MessageBrowser*\.
+The instantiation of a widget can be done in two ways: through the use of an creation method or through the use of the `instantiate:` method\.Considering the first option, the framework provides unary messages for the creation of all basic widgets\.The format of these messages is `new[Widget]`, for example `newButton` creates a button widget, and `newList` creates a list widget, as we have seen above\.The complete list of available widget creation methods can be found in the class *ComposableModel* in the protocol *widgets*\.Considering the second option, to reuse any composite widgets, i\.e\. a subclass of *ComposableModel*, the widget needs to be initialized using the `instantiate:` method\.For example, to reuse a *MessageBrowser*  widget, the code is ` self instantiate: MessageBrowser.`
 
 
-
-<a name="use_of_instantiate"></a>**How to reuse a MessageBrowser widget**
-
-
-    widget := self instantiate: MessageBrowser.
+###2\.2\.  The *initializePresenter* method <sub>\(the MVP Interactor\)</sub>
 
 
+This method takes care of the interactions between the different widgets\.By linking the behavior of the different widgets it specifies the overall presentation, i\.e\. how the overall UI responds to interactions by the user\.
+
+Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different ui models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
+
+The example [2\.2](#ex_button) shows how to use one of registration methods from the list widget to change the label of the button according to the list selection\.
 
 
-###2\.2\.  *initializePresenter* the Presenter <sub>the MVP Interactor</sub>
+
+<a name="ex_button"></a>**How to change a button label according to a list selection**
 
 
-This takes care of the interactions between the different widgets\.This method specifies the flow of exectution linking the sub widgets all together\.All the interaction between one widget and another is specified here\.
+    theList whenSelectedItemChanged: [ :item | 
+    	item 
+    		ifNil: [ button text: 'No selected item' ]
+    		ifNotNil: [ button text: 'An item is selected']]
 
-Usually this method is composed of actions to perform when a specific event is received\.Based on value holders, **Spec** event mechanism rely on the value holder announcements\.Value holders provide a single method `whenChangedDo:` to register a block to perform on change\.The propagation of those events build the whole interaction flow\.
 
-Moreover the basic widgets provide a full set of registration methods\.The whole API is described in the section [¿?\. ](#sec_where_to_find_what_I_want)\.
+
+The whole event API of the basic widgets is described in the section [¿?](#sec_where_to_find_what_I_want)\.
 
 
 
@@ -98,100 +108,141 @@ Moreover the basic widgets provide a full set of registration methods\.The whole
 
 
 
-Note that this method is optional\.
-
-
-###2\.3\.  *defaultSpec* the View <sub>the MVP Presenter</sub>
-
-
-This takes care of the layout of the different widgets\.This class side method is used to specify the position of each sub widgets\.It also specifies how a widget reacts when the window is resized\.
-
-Multiple layouts can be described\.Then when the widget is built a specific layout can be specified\.
-
-This method is on class side because usually all the instances of a same user interface have the same layout\.But the lookup for the spec method to use starts on instace side\.This way a class can have a more specific layout depending of the instance state\.
-
-
-####2\.3\.1\.  Pragmas
-<a name="subsec_pragma"></a>
-
-As previously said, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, the spec methods are flagged with a pragma\.
-
-The pragma can be `<spec: default>` for the view to use by default, or `<spec>` for the other views\.
-
-
-####2\.3\.2\.  Examples
-
-
-This section provides a list of examples about the constructions of layouts\.It starts with a [basic](#layout_basic_example) example\.Then two examples are given about the creation of [rows and columns](#layout_rows_and_column_layout)\.Now that rows and columns do not have any mystery, two other examples explain how to set a [fix size](#layout_set_size_pixels) for rows and columns\.Another example explains how to specify a widget [proportions](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else failed\.This section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
-
-<a name="layout_basic_example"></a>
-The simpliest example is to just render one widget\.The example [1\.3\. ](#ex_layout1) presents such a layout\.
 
 
 
-<a name="ex_layout1"></a>**Layout with only one widget**
+    This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
+
+
+
+
+###2\.3\.  the *layouting* method <sub>\(the MVP Presenter\)</sub>
+
+
+This method specifies the layout of the different widgets in the UI\.It also specifies how a widget reacts when the window is resized\.
+
+For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified\.If no specific layout is given, the layouting method returned by the lookup mechanism will be used\.
+
+The lookup mechanism search on class side in the whole class hierarchy for a method with the pragma *<spec: \#default>*\.If multiple exists, the first one found will be used\.If none is found and only one method has the pragma *<spec>*, this method is used\.Otherwise an error is raised\.
+
+This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
+
+The simpliest example of such a method is laying out just one widget\.The example [2\.3](#fig:ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
+
+
+
+<a name="fig:ex_layout1"></a>**Layout with only one widget**
 
 
     ^ SpecLayout composed
-    	add: #myWidget;
+    	add: #theList;
     	yourself
 
 
 
-The symbol `myWidget` refers to an instance side method returning a widget\.Note that by default, a widget will take all the space available\.
+The symbol `theList` refers to an instance side method returning a widget\.This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.Note that by default, a widget will take all the space available\.
 
----
+As said above, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, these methods need to be flagged with a pragma\.The pragma can be either `<spec: default>` for the view to use by default, or `<spec>` for the other views\.
 
+
+
+
+    Specifying this method is mandatory, as without it the UI would show no widgets to the user.
+
+
+
+
+
+####2\.3\.1\.  Layout Examples
+
+
+As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
 <a name="layout_rows_and_column_layout"></a>
-Often user interfaces can be describes in rows and columns\.The example [1\.4\. ](#ex_layout_row) sows how to build a row of widgets\.
+Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.4](#fig:ex_layout_row) shows how to build a row of widgets\.
 
 
 
-<a name="ex_layout_row"></a>**Row of widgets**
+<a name="fig:ex_layout_row"></a>**Row of widgets**
 
 
     ^ SpecLayout composed
     	newRow: [ :row |
     		row
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	];
     	yourself
 
 
 
-Now having the widgets rendered as a column is very similar as show in the example [1\.5\. ](#ex_layout_column)
+Having the widgets rendered as a column is similar, as shown in the example [2\.5](#fig:ex_layout_column)
 
 
 
-<a name="ex_layout_column"></a>**Column of widgets**
+<a name="fig:ex_layout_column"></a>**Column of widgets**
 
 
     ^ SpecLayout composed
     	newColumn: [ :column |
     		column
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	];
     	yourself
 
 
 
 
----
-<a name="layout_set_size_pixels"></a>
-The height of row, as well as the width of a column, can be specified to prevent it to take all the space available\.The example [1\.6\. ](#ex_row_height) shows how to specify the height of a row in pixels while the example [1\.7\. ](#ex_column_width) how to specify the column width\.
+Then rows and columns can be combined to build more complex layouts\.The example [2\.6](#ex_three_columns) shows how to create a 3 columns layout with three buttons in each column\.This example also introduce `addSplitter` which is used to add a splitter between the element added before it and the element added after\.
 
 
 
-<a name="ex_row_height"></a>**Row of 30px**
+<a name="ex_three_columns"></a>**3 columns layout**
 
 
     ^ SpecLayout composed
     	newRow: [ :row |
     		row
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button1;
+    					add: #button2;
+    					add: #button3 
+    			];
+    			addSplitter;
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button4;
+    					add: #button5;
+    					add: #button6 
+    			];
+    			addSplitter;
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button7;
+    					add: #button8;
+    					add: #button9 
+    			];
+    	]
+
+
+
+
+---
+
+<a name="layout_set_size_pixels"></a>
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.7](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.8](#fig:ex_column_width) how to specify the column width\.
+
+
+
+<a name="fig:ex_row_height"></a>**Row of 30 pixels**
+
+
+    ^ SpecLayout composed
+    	newRow: [ :row |
+    		row
+    			add: #theList;
+    			add: #theButton
     	] height: 30;
     	yourself
 
@@ -199,55 +250,61 @@ The height of row, as well as the width of a column, can be specified to prevent
 
 
 
-<a name="ex_column_width"></a>**Column of 30px**
+<a name="fig:ex_column_width"></a>**Column of 30 pixels**
 
 
     ^ SpecLayout composed
     	newColumn: [ :column |
     		column
-    			add: #myFirstWidget;
-    			add: #mySecondWidget
+    			add: #theList;
+    			add: #theButton
     	] width: 30;
     	yourself
 
 
 
-Note that it is a bad habit to hardcode the size of the widgets\.Methods are available on *ComposableModel* providing some default size like the width of a button\.If one wants to use his or her own widget size, he or she should not forget to take in account the current font size\.
+Note that it is generally considered a bad habit to hardcode the size of the widgets\.Methods are available on *ComposableModel* providing sensible default sizes, like the width of a button\.When specifying custom widget sizes, care should be taken to take in account the current font size\.
 
 
 ---
 
 <a name="layout_percentage"></a>
-It is also possible to specify the percentage of the container a widget should occupy\.This way the widget size will change accordingly when the window is resized by example\.To do so, the four sides of a widget can be specified as shown in the example [1\.8\. ](#ex_layout_proportional)\.
+It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.9](#ex_layout_proportional)\.
+
+For each edge, the proportion indicates at what percentage of the overall container the edge should be placed\.Zero percent is the container edge, 100 percent is the opposite container edge\.For example, for the top edge, the percentage is counted from the top down\.
 
 
 
-<a name="ex_layout_proportional"></a>**Square centered and half the size of its container**
+<a name="ex_layout_proportional"></a>**A Button centered in, and half the size of its container**
 
 
     ^ SpecLayout composed
-    	add: #square top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
+    	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
     	yourself
 
 
 
-Note that the value provided as argument moves the corresponding side toward the center of the widget\.Note also that the argument can be an integer if the offset has to be a fixed number of pixels\.
-
+Also, the argument can be an integer if the offset has to be a fixed number of pixels\.The number of pixels should be positive, as they indicate a distance from the corresponding edge, going to the opposite edge, similar to the arrangement of the proportional layout\.
 
 ---
 
 <a name="layout_expert"></a>
-The previous examples should cover most of the cases\.In case it does not, there is a last way to specify a widget position\.
+The previous examples should cover most of the cases of layout of widgets\.For the remaining cases there is a last way to specify a widget by specifying its position\.
 
-The method `add: aWidget origin: originPoint corner: cornerPoint offsetOrigin: ooPoint offsetCorner: ocPoint` allows one to add a widget from origin point to cornerPoint\.Those two points represents respectively the top left corner and the bottom right corner of the widget\.The points represent a percentage of the container \(so the coordinates <u>must</u> be between *0* and *1* \)\.
+The method `add: origin: corner: ` of `SpecLayout` specifies the layout of a widget, percentage\-wise from the origin point to the corner point\.These two points represent respectively the top left corner and the bottom right corner of the widget\.The arguments express a percentage of the container, so these <u>must</u> be between *0@0* and *1@1* \.
 
-In addition to those points, two offsets can be specified\.They represent the number of pixels the origin, respectively the corner, should be moved\.This approach is similar to the ProportionalLayout of **Morphic**\.
+In addition to those points, two offsets can be also be specified, using the method `add: origin: corner:  offsetOrigin: offsetCorner: `\.The offsets specify the number of pixels that the origin and the corner should be moved\.
 
-The exemple [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\.The widget should take all the window width, but should be only 30px height\.
+Contrary to the previous way to define layouts, while using `add: origin: corner:  offsetOrigin: offsetCorner: ` the offset can be negative\.The offset expresses the number of pixels the corresponding corner\.They are expressed in a classical coordinate system with the origin in the top left corner and towards the bottom right corner\.
+
+Note that this approach is similar to the ProportionalLayout of **Morphic**\.
+
+
+The example [¿?](#ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
 
 
 
-<a name="ex_layout_expert"></a>**Expert Mode: Toolbar**
+<a name="fig:ex_layout_expert"></a>**Using expert mode to specify a toolbar**
 
 
     ^ SpecLayout composed
@@ -261,9 +318,25 @@ The exemple [1\.9\. ](#ex_layout_expert) show how to add a widget as a toolbar\.
 
 <a name="layout_specify_layout"></a>
 
-As explained in the section [1\.2\.3\.1\. ](#subsec_pragma), a widget can have multiple views\.So when a sub widget layout is specified, the view to use for this sub widget can e specified\.
+As explained in the section [¿?](#subsec_pragma), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
 
-All the methods seen in the previous examples come with a variant used to specidy the view selector to use\.By example, for `add:` there is `add:withSpec:`\.All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
+All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.
+
+Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the default layout and another one `anotherLayout`\.The example [2\.11](#ex_specify_layout) shows how to add an instance of **MyWidget** using its `anotherLayout` layout\.
+
+
+
+<a name="ex_specify_layout"></a>**How to specify an alternative layout**
+
+
+    ^ SpecLayout composed
+    	add: #myWidget withSpec: #anotherLayout;
+    	yourself
+
+
+
+
+All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
 
 ##3\.  Where to find what I want
 
@@ -271,15 +344,23 @@ All the methods seen in the previous examples come with a variant used to specid
 ##4\.  Spec the Dynamic
 <a name="sec_spec_the_dynamic"></a>
 
-Having an user interface with a well known number of sub widgets and a static layout should now sounds easy\. But an user interface is often more than just that\. There are two situations where you need more\. First it happens that the layout of the user interface need to be changed at runtime to match the execution context\.Second if sub widgets are added or removed at runtime\. Then the programmer need to be able to parametrize those new sub widgets on the fly\.
+Having an user interface with a well known number of sub widgets and a static layout is not always sufficient\. A user interface is often more than just that, for example here are two situations where more is needed: First, it happens that the layout of the user interface needs to be changed at runtime to match the execution context of the software\.Second, sub widgets are added or removed at runtime and therefore the programmer need to be able to parametrize those new sub widgets on the fly\.
+
+*Spec* also provides support for such dynamic user interfaces\.In this section we show how to use *Spec* in these situations\.First, we talk about making dynamic modifications of the layout of widgets, and second discuss the dynamic adding and removing of subwidgets\.Third and last we show how the dynamic features can be used to quickly prototype a user interface\.
 
 
 ###4\.1\.  Dynamic modification of the layout
 
 
-Changing a widget layout at runtime is quite easy\.It consists of three steps: creating the new layout, setting the needed flag, and build the widget again with the newly created layout\.
+Changing the layout of widgets at runtime is straightforward, as we will see here\.Such changes basically consist of three steps:
 
-The snippet [1\.10\. ](#rebuildDynamically) shows how to simply rebuild a widget with a new layout\.
+1.  creating the new layout,
+2.  setting the required flag to prohibit the creation of a new ui element but to reuse the existing one,
+3.  building the UI again with the newly created layout\.
+
+&nbsp;
+
+The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new ui element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
 
 
 
@@ -295,26 +376,41 @@ The snippet [1\.10\. ](#rebuildDynamically) shows how to simply rebuild a widget
 
 
 
-One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.
+One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.If a model composing a *button* and a *list* just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements\.To prevent this, the method `needRebuild:` can be send to them as shown in the example [4\.2](#ex_needRebuild)\.
 
 
-###4\.2\.  Dynamic add and removal of subwidgets
+
+<a name="ex_needRebuild"></a>**How to need rebuild sub widgets**
 
 
-If an user interface needs a various number of sub widgets that can not be predicted at compilation time, another approach is needed\.When one faces this scenario, he or she should subclass `DynamicComposableModel` for his or her application\.
+    rebuildWithNewLayout
+    	| newLayout |
+    
+    	newLayout := self newLayoutCreatedDynamically.
+    	self needRebuild: false.
+    	button needRebuild: false.
+    	list needRebuild: false.
+    	self buildWithSpecLayout: newLayout.
 
-Then the instantion of the sub widgets is a bit different\.The method `instantiateModels:` should be used\.It takes as argument an array of pairs\.Each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.Then a widget can be accessed by sending a message whose selector is the widget name\.
 
-By example, if a widget named `button` is created, the this widget can be accessed by calling `self button` as shown in the example [1\.11\. ](#ex_dynamic_creation)\.
+
+
+###4\.2\.  Dynamic adding and removal of subwidgets
+
+
+If an user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.In this scenario, `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+
+When using `DynamicComposableModel` the instantiation of the sub widgets is a bit different from normal use\.In the `instantiateWidgets` method, instead of instantiating each widget separately, `instantiateModels:` should be used to instantiate them\.This method takes as argument an array of pairs, where each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.This allows for a widget to be accessed by sending a message whose selector is the widget name to the model\.
+
+By example, if a widget named `button` is created, then this widget can be accessed by calling `self button` as shown in the example [4\.3](#ex_dynamic_creation)\.
 
 
 
 <a name="ex_dynamic_creation"></a>**Dynamic creation of a widget**
 
 
-    self instantiateModels: { 'button' -> 'ButtonModel' }.
+    self instantiateModels: #( button ButtonModel ).
     	self button label: 'Click me'.
-
 
 
 
@@ -331,12 +427,12 @@ Note that the instantiation array can also be an array of pairs\. The previous e
 
 
 
-####4\.2\.1\.  Example
+###4\.3\.  Example: Prototyping a UI
 
 
-Thanks to the *Spec* capability to dynamically instantiate widgets, it is also possible to prototype an user interface\.From within any workspace a new user interface can be easily defined\.
+Thanks to the capability of *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 
-The example [1\.13\. ](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
+The example [4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
 
 
@@ -368,7 +464,7 @@ The example [1\.13\. ](#ex_prototyping) shows how to easily and quickly design a
 
 
 
-The result can be seen in Figure [1\.1\. ](#fig_popup)\.
+The result can be seen in Figure [4\.1](#fig_popup)\.
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
 
@@ -380,9 +476,11 @@ In the case of a basic widget missing, the following section will explain how to
 Before explaining the details of how to create a new widget, we will explain how the creation of a widget is done\.It will expose the different actor and provide a clearer understanding of who is doing what\.
 
 
+###5\.1\.  One step in the building process of a widget
 
 ###5\.1\.  Overall view of the build of a widget
 
+The UI building process does not make a distinction between basic and composed widgets\.Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
 When a basic widget is built, like the others widget, the model default spec method is called\.But in this case, instead of providing a layout, it builds an adapter\.Depending of the bindings set currently used, it can provide different kind of adapter \(an adapter for Morphic, one for Seaside, etc\.\)\.
 
