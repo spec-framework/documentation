@@ -494,25 +494,11 @@ We will first explain the applicable part of how the widget build process is per
 
 The UI building process does not make a distinction between basic and composed widgets\.Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
-The adapter, when created, will instantiate a widget that is specific to the UI framework being used\.
+The adapter, when instantiated by the UI model, will instantiate a widget that is specific to the UI framework being used\.
 
-
-    Note: For Ben: please clarify the 'when created'. Is this when the spec method executes, or at some later point in time?
-
-
-For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework specific widget which will be returned by the model and rendered\.
-
-
-    Note: For Ben: It is not clear when it will be returned, and to who it will be returned, and how this links to it being rendered.
-
-
+For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework specific widget which will be added to the widget container\.
 
 Figure [5\.1](#model_adapter_uielement) shows the relationship between those objects\.
-
-
-    Note: For Ben: Model is an instance of Adapter and Adapter is an instance of UI Element? That can not be right ...
-
-
 
 <a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the ui element")
 
@@ -562,47 +548,59 @@ For each instance variable that holds state three methods should be defined: the
 
 The last step to define a new model is to implement a method `adapterName` at class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
 
-Since the same model can hold the state of different views, like in the MVC pattern, multiple adapters can refer to the same model\.Consequently, the adapter updating logic uses the dependents mechanism\.In fact the message `change: with: ` is used to call the message *selector* on the adaptor with the arguments *aCollection* to the adapter\.The propagation is done regardless of the number of adapters\.
-
-
-
-    Note: For Ben: I do not understand the above paragraph. Is it there to explain the existence of the adapterName method? This is not clear at all.
-
-
+The communication from the UI model to the adapter is done using the dependents mechanism\.This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.In fact the message `change: with: ` is used to send the message *selector* with the arguments *aCollection* to the adapter\.
 
 
 ###5\.3\.  The Adapter
 
 
+An adapter must be a subclass of **AbstractAdapter**\.The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.The adapter is an object used to connect a UI framework specific element and the framework independent model\.
 
+The only mandatory method for an adapter is `defaultSpec` on the class side\.This method has the responsibility to instantiate the corresponding UI element\.
 
-    Note: For Ben: What is the class of the adaptor? Clarify.
-
-
-
-The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.The adapter is an object used to connect a UI framework specific element and the framework independent model\.The only mandatory method for an adapter is `defaultSpec` on the class side\.
+The example [5\.3](#ex_adapter_instanciation) shows how **MorphicButtonAdapter** instantiates its UI element\.
 
 
 
-    Note: For Ben: What should defaultSpec do? What are its responsibilities? Give an example.
+<a name="ex_adapter_instanciation"></a>**How MorphicButtonAdapter instantiates its UI element**
+
+
+    defaultSpec
+    	<spec>
+    	
+    	^ {#PluggableButtonMorph.
+    			#color:. Color white.
+    	    		#on:getState:action:label:menu:. 	#model. #state. #action. #label. nil.
+    			#getEnabledSelector:. 				#enabled.
+    			#getMenuSelector:.				#menu:.
+    			#hResizing:. 						#spaceFill.
+    			#vResizing:. 						#spaceFill.
+    			#borderWidth:.						#(model borderWidth).
+    			#borderColor:.						#(model borderColor).
+    			#askBeforeChanging:.				#(model askBeforeChanging).
+    			#setBalloonText:.					{ #model . #help}.
+    			#dragEnabled:.						#(model dragEnabled).
+    			#dropEnabled:.						#(model dropEnabled).	
+    			#eventHandler:.					{	#EventHandler. #on:send:to:. #keyStroke.	#keyStroke:fromMorph:. #model	}}
 
 
 
 Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model\.Seen from the other way around: since the model is holding the state, the adapter is used to update the UI element state of the model\.
 
-The methods involved in the communication with the model should be in the protocol *spec protocol* while the methods involded in the UI element should be *widget API*\.
-
-
-
-    Note: For Ben: Rephrase: in the communication FROM the model TO the UI element should be ... and in the communication FROM the UI element TO the model should be ... I am confused which is which.
-
-
+The methods involved in the communication from the model to the adapter as well as the methods involved in the communication from the adapter to the UI model should be in the protocol *spec protocol*\.On the other hand the methods involved in the communication from the adapter to the UI element and vice versa should be categorized in the protocol *widget API*\.
 
 To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the ui element has already been created\.
 
+The example [5\.4](#ex_emphasis) shows how **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
 
 
-    Note: For Ben: An example is needed here.
+
+<a name="ex_emphasis"></a>**How MorphicLabelAdapter propagates the emphasis changes**
+
+
+    emphasis: aTextEmphasis
+    
+    	self widgetDo: [ :w | w emphasis: aTextEmphasis ]
 
 
 
@@ -612,13 +610,7 @@ To communicate with the UI element, the adapter methods uses the method `widgetD
 
 The bindings is an object that is used to resolve the name of the adapter at run time\.This allows for the same model to be used with several UI frameworks\.
 
-
-
-    Note: For Ben: What is the class of the bindings (text above)? What is the default adapter (text below)?
-
-
-
-Adding the new adapter to the default adapter is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class, e\.g\. **MorphicAdapterBindings** for Morphic\.
+Adding the new adapter to the default binding is quite simple\.It requires to update two methods: `initializeBindings` in **SpecAdapterBindings** and `initializeBindings` in the framework specific adapter class, e\.g\. **MorphicAdapterBindings** for Morphic\.
 
 
 
@@ -627,3 +619,16 @@ Adding the new adapter to the default adapter is quite simple\.It requires to up
 
 
 Once this is done, the bindings should be re\-initialized by running the following snippet of code: `SpecInterpreter hardResetBindings`\.
+
+For creating a specific binding, the class **SpecAdapterBindings**needs to be overriden as well as its method `initializeBindings`\.It can then be used during a spec interpretation by setting it as the bindings to use for the **SpecInterpreter**\.The example [5\.5](#ex_setting_bindings) shows how to do so\.
+
+
+
+<a name="ex_setting_bindings"></a>**How to set custom bindings**
+
+
+    SpecInterpreter bindings: MyOwnBindingClass new.
+
+
+
+The **SpecInterpreter** bindings are resetted after each execution\.
