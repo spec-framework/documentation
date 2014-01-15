@@ -22,12 +22,12 @@ Spec is built around three axes that are inspired by the MVP pattern\.These axes
 
     Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
 
-
+&nbsp;
 
 
     Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
 
-
+&nbsp;
 We first detail some necessary terminology before discussing each of these methods in more detail\.
 
 
@@ -51,16 +51,15 @@ In general the `initializeWidgets` method should follow the pattern:
 -  widgets instantiation
 -  widgets configuration specification
 -  specification of order of focus
-
-&nbsp;
+&nbsp;
 
 The last step is not mandatory but **highly** recommended\.Indeed, without this final step the keyboard navigation will not work at all\.
 
-The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
+The code in figure [2\.1](#pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
 
 
 
-<a name="fig:pattern"></a>**Example of initializeWidgets**
+<a name="pattern"></a>**Example of initializeWidgets**
 
 
     initializeWidgets
@@ -74,14 +73,14 @@ The code in figure [2\.1](#fig:pattern) shows an example of an `initializeWidget
     		add: theButton;
     		add: theList.
 
-
+&nbsp;
 
 
 
 
     Specifying this method is mandatory, as without it the UI would have no widgets.
 
-
+&nbsp;
 
 
 ####2\.1\.1\.  Widget instantiation
@@ -109,7 +108,7 @@ The example [2\.2](#ex_button) shows how to use one of registration methods from
     		ifNil: [ button text: 'No selected item' ]
     		ifNotNil: [ button text: 'An item is selected']]
 
-
+&nbsp;
 
 The whole event API of the basic widgets is described in the section [3](#sec_where_to_find_what_I_want)\.
 
@@ -119,14 +118,14 @@ The whole event API of the basic widgets is described in the section [3](#sec_wh
     If a programmer wants his or her widgets to be reused,
     they should provide a comprehensive API.
 
-
+&nbsp;
 
 
 
 
     This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
 
-
+&nbsp;
 
 
 ###2\.3\.  the *layouting* method <sub>\(the MVP Presenter\)</sub>
@@ -140,18 +139,18 @@ The lookup mechanism search on class side in the whole class hierarchy for a met
 
 This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
 
-The simpliest example of such a method is laying out just one widget\.The example [2\.3](#fig:ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
+The simpliest example of such a method is laying out just one widget\.The example [2\.3](#ex_layout1) presents such a layout\.It returns a layout in which just one widget is added: the widget contained in `theList` instance variable\.
 
 
 
-<a name="fig:ex_layout1"></a>**Layout with only one widget**
+<a name="ex_layout1"></a>**Layout with only one widget**
 
 
     ^ SpecLayout composed
     	add: #theList;
     	yourself
 
-
+&nbsp;
 
 The symbol `theList` refers to an instance side method returning a widget\.This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.Note that by default, a widget will take all the space available\.
 
@@ -162,7 +161,7 @@ As said above, multiple views can be described for the same user interface\.In o
 
     Specifying this method is mandatory, as without it the UI would show no widgets to the user.
 
-
+&nbsp;
 
 
 
@@ -171,11 +170,11 @@ As said above, multiple views can be described for the same user interface\.In o
 
 As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
 <a name="layout_rows_and_column_layout"></a>
-Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.4](#fig:ex_layout_row) shows how to build a row of widgets\.
+Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.4](#ex_layout_row) shows how to build a row of widgets\.
 
 
 
-<a name="fig:ex_layout_row"></a>**Row of widgets**
+<a name="ex_layout_row"></a>**Row of widgets**
 
 
     ^ SpecLayout composed
@@ -186,13 +185,13 @@ Often the layout of user interfaces can be described in rows and columns, and **
     	];
     	yourself
 
+&nbsp;
+
+Having the widgets rendered as a column is similar, as shown in the example [2\.5](#ex_layout_column)
 
 
-Having the widgets rendered as a column is similar, as shown in the example [2\.5](#fig:ex_layout_column)
 
-
-
-<a name="fig:ex_layout_column"></a>**Column of widgets**
+<a name="ex_layout_column"></a>**Column of widgets**
 
 
     ^ SpecLayout composed
@@ -203,7 +202,7 @@ Having the widgets rendered as a column is similar, as shown in the example [2\.
     	];
     	yourself
 
-
+&nbsp;
 
 
 Then rows and columns can be combined to build more complex layouts\.The example [2\.6](#ex_three_columns) shows how to create a 3 columns layout with three buttons in each column\.This example also introduce `addSplitter` which is used to add a splitter between the element added before it and the element added after\.
@@ -239,17 +238,17 @@ Then rows and columns can be combined to build more complex layouts\.The example
     	];
     	yourself
 
-
+&nbsp;
 
 
 ---
 
 <a name="layout_set_size_pixels"></a>
-The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.7](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.8](#fig:ex_column_width) how to specify the column width\.
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.7](#ex_row_height) shows how to specify the height of a row in pixels while the example [2\.8](#ex_column_width) how to specify the column width\.
 
 
 
-<a name="fig:ex_row_height"></a>**Row of 30 pixels**
+<a name="ex_row_height"></a>**Row of 30 pixels**
 
 
     ^ SpecLayout composed
@@ -260,11 +259,11 @@ The height of rows as well as the width of columns can be specified, to prevent 
     	] height: 30;
     	yourself
 
+&nbsp;
 
 
 
-
-<a name="fig:ex_column_width"></a>**Column of 30 pixels**
+<a name="ex_column_width"></a>**Column of 30 pixels**
 
 
     ^ SpecLayout composed
@@ -275,7 +274,7 @@ The height of rows as well as the width of columns can be specified, to prevent 
     	] width: 30;
     	yourself
 
-
+&nbsp;
 
 Note that it is generally considered a bad habit to hardcode the size of the widgets\.Methods are available on *ComposableModel* providing sensible default sizes, like the width of a button\.When specifying custom widget sizes, care should be taken to take in account the current font size\.
 
@@ -296,7 +295,7 @@ For each edge, the proportion indicates at what percentage of the overall contai
     	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
     	yourself
 
-
+&nbsp;
 
 Also, the argument can be an integer if the offset has to be a fixed number of pixels\.The number of pixels should be positive, as they indicate a distance from the corresponding edge, going to the opposite edge, similar to the arrangement of the proportional layout\.
 
@@ -325,7 +324,7 @@ The example [2\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.I
     	add: #toolbar origin: 0@0 corner: 1@0 offsetOrigin: 0@0 offsetCorner: 0@30;
     	yourself
 
-
+&nbsp;
 
 
 ---
@@ -347,7 +346,7 @@ Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the
     	add: #myWidget withSpec: #anotherLayout;
     	yourself
 
-
+&nbsp;
 
 
 All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
@@ -390,7 +389,7 @@ For getters, the meta information is always *<api: \#inspect>*\.It points out th
     
     	^ actionHolder value
 
-
+&nbsp;
 
 The setters meta information are a bit more complex\.Its form is *<api: typeOfArgument getter: getterSelector registration: registrationMethodSelector>*\.
 
@@ -405,8 +404,7 @@ The possible values of *typeOfArguments* are:
 -  point,
 -  st : st is used to represent any other *Smalltalk* object,
 -  string\.
-
-&nbsp;
+&nbsp;
 
 *getterSelector* is used to precise which getter method return the state set by this method\.
 
@@ -425,7 +423,7 @@ The example [3\.2](#ex_api_setter) shows how *actions:* is implemented in **Butt
     
     	actionHolder value: aBlock
 
-
+&nbsp;
 
 The registration methods information always follow the pattern *<api: \#event>*\.The example [3\.3](#ex_api_registration) shows how the method *whenActionChangedDo:* is implemented on **ButtonModel**\.
 
@@ -440,7 +438,7 @@ The registration methods information always follow the pattern *<api: \#event>*\
     
     	actionHolder whenChangedDo: aBlock
 
-
+&nbsp;
 
 ##4\.  Spec the Dynamic
 <a name="sec_spec_the_dynamic"></a>
@@ -458,8 +456,7 @@ Changing the layout of widgets at runtime is straightforward, as we will see her
 1.  creating the new layout,
 2.  setting the required flag to prohibit the creation of a new UI element but to reuse the existing one,
 3.  building the UI again with the newly created layout\.
-
-&nbsp;
+&nbsp;
 
 The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new UI element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
 
@@ -475,7 +472,7 @@ The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget wi
     	self needRebuild: false. "tells the interpreter to keep my current UI element"
     	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
 
-
+&nbsp;
 
 One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.If a model composing a *button* and a *list* just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements\.To prevent this, the method `needRebuild:` can be send to them as shown in the example [4\.2](#ex_needRebuild)\.
 
@@ -493,7 +490,7 @@ One widget can also keep the UI elements of its sub widgets which did not need t
     	list needRebuild: false.
     	self buildWithSpecLayout: newLayout.
 
-
+&nbsp;
 
 
 ###4\.2\.  Dynamic adding and removal of subwidgets
@@ -513,7 +510,7 @@ By example, if a widget named `button` is created, then this widget can be acces
     self instantiateModels: #( button ButtonModel ).
     	self button label: 'Click me'.
 
-
+&nbsp;
 
 Note that the instantiation array can also be an array of pairs\. The previous example could be written
 
@@ -525,7 +522,7 @@ Note that the instantiation array can also be an array of pairs\. The previous e
     self instantiateModels: #( button ButtonModel ).
     	self button label: 'Click me'.
 
-
+&nbsp;
 
 
 ###4\.3\.  Example: Prototyping a UI
@@ -563,7 +560,7 @@ The example [4\.5](#ex_prototyping) shows how to easily and quickly design a pop
     	centered;
     	modalRelativeTo: World.
 
-
+&nbsp;
 
 The result can be seen in Figure [4\.1](#fig_popup)\.
 
@@ -599,8 +596,7 @@ The new model needs to be a subclass of **AbstractWidgetModel** and its name sho
 -  the index of a list
 -  the label of a button
 -  the action block for when a text is validated in a text field
-
-&nbsp;
+&nbsp;
 
 The state is wrapped in value holders and kept in instance variables\.For example, the code in [5\.1](#ex_value_holder) shows how to wrap the state `0` in a value holder and keep it as an instance variable\.Value holders are needed because they are later used to propagate state changes and thus create the interaction flow of the user interface, as discussed in Section [2](#sec_heart_of_spec)\.
 
@@ -611,7 +607,7 @@ The state is wrapped in value holders and kept in instance variables\.For exampl
 
     index := 0 asValueHolder.
 
-
+&nbsp;
 
 For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.The first two should classified in the protocol named *protocol* while the registration method should be in *protocol\-events*\.For example, the code in [5\.2](#ex_mutators) shows the methods for the example code in [5\.1](#ex_value_holder)\. 
 
@@ -632,7 +628,7 @@ For each instance variable that holds state three methods should be defined: the
     whenIndexChanged: aBlock
     	index whenChangedDo: aBlock
 
-
+&nbsp;
 
 The last step to define a new model is to implement a method `adapterName` at class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
 
@@ -671,7 +667,7 @@ The example [5\.3](#ex_adapter_instanciation) shows how **MorphicButtonAdapter**
     			#dropEnabled:.						#(model dropEnabled).	
     			#eventHandler:.					{	#EventHandler. #on:send:to:. #keyStroke.	#keyStroke:fromMorph:. #model	}}
 
-
+&nbsp;
 
 Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model\.Seen from the other way around: since the model is holding the state, the adapter is used to update the UI element state of the model\.
 
@@ -690,7 +686,7 @@ The example [5\.4](#ex_emphasis) shows how **MorphicLabelAdapter** propagates th
     
     	self widgetDo: [ :w | w emphasis: aTextEmphasis ]
 
-
+&nbsp;
 
 
 ###5\.4\.  The UI Framework binding
@@ -704,7 +700,7 @@ Adding the new adapter to the default binding is quite simple\.It requires to up
 
     Note: For Ben: Give an example here.
 
-
+&nbsp;
 
 Once this is done, the bindings should be re\-initialized by running the following snippet of code: `SpecInterpreter hardResetBindings`\.
 
@@ -717,6 +713,6 @@ For creating a specific binding, the class **SpecAdapterBindings**needs to be ov
 
     SpecInterpreter bindings: MyOwnBindingClass new.
 
-
+&nbsp;
 
 The **SpecInterpreter** bindings are resetted after each execution\.
