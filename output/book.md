@@ -95,7 +95,7 @@ The instantiation of a widget can be done in two ways: through the use of an cre
 
 This method takes care of the interactions between the different widgets\.By linking the behavior of the different widgets it specifies the overall presentation, i\.e\. how the overall UI responds to interactions by the user\.
 
-Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different ui models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
+Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different UI models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
 
 The example [2\.2](#ex_button) shows how to use one of registration methods from the list widget to change the label of the button according to the list selection\.
 
@@ -455,12 +455,12 @@ Having an user interface with a well known number of sub widgets and a static la
 Changing the layout of widgets at runtime is straightforward, as we will see here\.Such changes basically consist of three steps:
 
 1.  creating the new layout,
-2.  setting the required flag to prohibit the creation of a new ui element but to reuse the existing one,
+2.  setting the required flag to prohibit the creation of a new UI element but to reuse the existing one,
 3.  building the UI again with the newly created layout\.
 
 &nbsp;
 
-The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new ui element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
+The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new UI element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
 
 
 
@@ -471,7 +471,7 @@ The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget wi
     	| newLayout |
     
     	newLayout := self newLayoutCreatedDynamically.
-    	self needRebuild: false. "tells the interpreter to keep my current ui element"
+    	self needRebuild: false. "tells the interpreter to keep my current UI element"
     	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
 
 
@@ -587,7 +587,7 @@ For example, when using a List in the Morphic UI, the adaptor will be a MorphicL
 
 Figure [5\.1](#model_adapter_uielement) shows the relationship between those objects\.
 
-<a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the ui element")
+<a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
 
 
 ###5\.2\.  The Model
@@ -676,7 +676,7 @@ Since the adapter is bridging the gap between the element of the UI framework an
 
 The methods involved in the communication from the model to the adapter as well as the methods involved in the communication from the adapter to the UI model should be in the protocol *spec protocol*\.On the other hand the methods involved in the communication from the adapter to the UI element and vice versa should be categorized in the protocol *widget API*\.
 
-To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the ui element has already been created\.
+To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the UI element has already been created\.
 
 The example [5\.4](#ex_emphasis) shows how **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
 
