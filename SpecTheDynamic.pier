@@ -16,12 +16,12 @@ Third and last we show how the dynamic features can be used to quickly prototype
 Changing the layout of widgets at runtime is straightforward, as we will see here.
 Such changes basically consist of three steps:
 # creating the new layout,
-# setting the required flag to prohibit the creation of a new ui element but to reuse the existing one,
+# setting the required flag to prohibit the creation of a new UI element but to reuse the existing one,
 # building the UI again with the newly created layout.
 
 The code in  *rebuildDynamically* is an example of rebuilding a widget with a new layout.
 First, a helper method is used to obtain a ==SpecLayout== object that determines the new layout.
-Second, the ==needRebuild== flag is set to ==false== to prohibit the creation of a new ui element but to reuse the existing one.
+Second, the ==needRebuild== flag is set to ==false== to prohibit the creation of a new UI element but to reuse the existing one.
 This leads to the replacement of the content of the current container instead of just instantiating a new UI element.
 Third, the rebuilding of the user interface is performed.
 
@@ -30,7 +30,7 @@ rebuildWithNewLayout
 	| newLayout |
 
 	newLayout := self newLayoutCreatedDynamically.
-	self needRebuild: false. "tells the interpreter to keep my current ui element"
+	self needRebuild: false. "tells the interpreter to keep my current UI element"
 	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
 ]]]
 

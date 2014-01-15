@@ -22,7 +22,7 @@ This is this framework specific widget which will be added to the widget contain
 
 Figure *model_adapter_uielement* shows the relationship between those objects.
 
-+Relationship between the model, the adapter, and the ui element>file://figures/Model-Adapter-UIElement.png|width=50|label=model_adapter_uielement+
++Relationship between the model, the adapter, and the UI element>file://figures/Model-Adapter-UIElement.png|width=50|label=model_adapter_uielement+
 
 !!! The Model
 
@@ -105,7 +105,7 @@ The methods involved in the communication from the model to the adapter as well 
 On the other hand the methods involved in the communication from the adapter to the UI element and vice versa should be categorized in the protocol ''widget API''.
 
 To communicate with the UI element, the adapter methods uses the method ==widgetDo:==.
-This method executes the block provided as argument, which will only happen after the ui element has already been created.
+This method executes the block provided as argument, which will only happen after the UI element has already been created.
 
 The example *ex_emphasis* shows how ""MorphicLabelAdapter"" propagates the modification of the emphasis from the adapter to the UI element.
 
