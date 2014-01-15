@@ -100,6 +100,7 @@ This method is optional. Without it, the different widgets in the UI will simply
 ]]]
 
 !!! the ''layouting'' method @@(the MVP Presenter)@@
+@subsec_layout
 
 This method specifies the layout of the different widgets in the UI.
 It also specifies how a widget reacts when the window is resized.
@@ -278,7 +279,7 @@ Note that this approach is similar to the ProportionalLayout of ""Morphic"".
 The example *ex_layout_expert* shows how to add a widget as a toolbar.
 It specifies that the widget in the ==toolbar== instance variable should take all the window width, but should be only 30 pixels in height.
 
-[[[label=fig:ex_layout_expert|caption=Using expert mode to specify a toolbar|language=Smalltalk 
+[[[label=ex_layout_expert|caption=Using expert mode to specify a toolbar|language=Smalltalk 
 ^ SpecLayout composed
 	add: #toolbar origin: 0@0 corner: 1@0 offsetOrigin: 0@0 offsetCorner: 0@30;
 	yourself
@@ -288,7 +289,7 @@ _
 
 @layout_specify_layout
 
-As explained in the section *subsec_pragma*, a UI can have multiple views.
+As explained in the section *subsec_layout*, a UI can have multiple views.
 So when a widget layout is specified, the view to use for this sub widget can be specified.
 
 All the methods seen in the previous examples come with a variant used to specify which view selector to use.
