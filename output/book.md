@@ -206,8 +206,37 @@ Having the widgets rendered as a column is similar, as shown in the example [2\.
 
 
 
+Then rows and columns can be combined to build more complex layouts\.The example [2\.6](#ex_three_columns) shows how to create a 3 columns layout with three buttons in each column\.This example also introduce `addSplitter` which is used to add a splitter between the element added before it and the element added after\.
 
-    Note: For Ben: I think this needs an example that nests rows in columns or vice-versa.
+
+
+<a name="ex_three_columns"></a>**3 columns layout**
+
+
+    ^ SpecLayout composed
+    	newRow: [ :row |
+    		row
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button1;
+    					add: #button2;
+    					add: #button3 
+    			];
+    			addSplitter;
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button4;
+    					add: #button5;
+    					add: #button6 
+    			];
+    			addSplitter;
+    			newColumn: [ :column | 
+    				 column
+    				 	add: #button7;
+    					add: #button8;
+    					add: #button9 
+    			];
+    	]
 
 
 
@@ -215,7 +244,7 @@ Having the widgets rendered as a column is similar, as shown in the example [2\.
 ---
 
 <a name="layout_set_size_pixels"></a>
-The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.6](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.7](#fig:ex_column_width) how to specify the column width\.
+The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.The example [2\.7](#fig:ex_row_height) shows how to specify the height of a row in pixels while the example [2\.8](#fig:ex_column_width) how to specify the column width\.
 
 
 
@@ -253,7 +282,9 @@ Note that it is generally considered a bad habit to hardcode the size of the wid
 ---
 
 <a name="layout_percentage"></a>
-It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.8](#ex_layout_proportional)\.
+It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.9](#ex_layout_proportional)\.
+
+For each edge, the proportion indicates at what percentage of the overall container the edge should be placed\.Zero percent is the container edge, 100 percent is the opposite container edge\.For example, for the top edge, the percentage is counted from the top down\.
 
 
 
@@ -266,13 +297,7 @@ It is also possible to specify the percentage of the container, e\.g\. the windo
 
 
 
-Note that the value provided as argument moves the corresponding side toward the center of the widget\.Also, the argument can be an integer if the offset has to be a fixed number of pixels\.
-
-
-
-    Note: For Ben: negative offsets are possible and have semantics like in morphic? If so, explain (not saying, like in Morphic )
-
-
+Also, the argument can be an integer if the offset has to be a fixed number of pixels\.The number of pixels should be positive, as they indicate a distance from the corresponding edge, going to the opposite edge, similar to the arrangement of the proportional layout\.
 
 ---
 
@@ -281,18 +306,14 @@ The previous examples should cover most of the cases of layout of widgets\.For t
 
 The method `add: origin: corner: ` of `SpecLayout` specifies the layout of a widget, percentage\-wise from the origin point to the corner point\.These two points represent respectively the top left corner and the bottom right corner of the widget\.The arguments express a percentage of the container, so these <u>must</u> be between *0@0* and *1@1* \.
 
-In addition to those points, two offsets can be also be specified, using the method\. `add: origin: corner:  offsetOrigin: offsetCorner: `\.The offsets specify the number of pixels that the origin and the corner should be moved\.
+In addition to those points, two offsets can be also be specified, using the method `add: origin: corner:  offsetOrigin: offsetCorner: `\.The offsets specify the number of pixels that the origin and the corner should be moved\.
 
-
-
-    Note: For Ben: negative integer offsets are allowed? If so, say: negative offsets are allowed, similar to the offset example above.
-
-
+Contrary to the previous way to define layouts, while using `add: origin: corner:  offsetOrigin: offsetCorner: ` the offset can be negative\.The offset expresses the number of pixels the corresponding corner\.They are expressed in a classical coordinate system with the origin in the top left corner and towards the bottom right corner\.
 
 Note that this approach is similar to the ProportionalLayout of **Morphic**\.
 
 
-The example [2\.9](#fig:ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
+The example [¿?](#ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
 
 
 
@@ -312,13 +333,23 @@ The example [2\.9](#fig:ex_layout_expert) shows how to add a widget as a toolbar
 
 As explained in the section [¿?](#subsec_pragma), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
 
-All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
+All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.
+
+Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the default layout and another one `anotherLayout`\.The example [2\.11](#ex_specify_layout) shows how to add an instance of **MyWidget** using its `anotherLayout` layout\.
 
 
 
-    Note: For Ben. I don't understand the text above. (And I think I have seen it before.) Please expand with an example.
+<a name="ex_specify_layout"></a>**How to specify an alternative layout**
 
 
+    ^ SpecLayout composed
+    	add: #myWidget withSpec: #anotherLayout;
+    	yourself
+
+
+
+
+All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
 
 ##3\.  Where to find what I want
 
