@@ -16,14 +16,13 @@ Third and last we show how the dynamic features can be used to quickly prototype
 Changing the layout of widgets at runtime is straightforward, as we will see here.
 Such changes basically consist of three steps:
 # creating the new layout,
-# setting the required flag to prohibit WHAT
+# setting the required flag to prohibit the creation of a new ui element but to reuse the existing one,
 # building the UI again with the newly created layout.
-
-@@note For Ben: fill in the WHAT above and below please.
 
 The code in  *rebuildDynamically* is an example of rebuilding a widget with a new layout.
 First, a helper method is used to obtain a ==SpecLayout== object that determines the new layout.
-Second, the ==needRebuild== flag is set to ==false== to prohibit WHAT.
+Second, the ==needRebuild== flag is set to ==false== to prohibit the creation of a new ui element but to reuse the existing one.
+This leads to the replacement of the content of the current container instead of just instantiating a new UI element.
 Third, the rebuilding of the user interface is performed.
 
 [[[label=rebuildDynamically|caption=Rebuild a widget at run time|language=Smalltalk 
@@ -35,10 +34,21 @@ rebuildWithNewLayout
 	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
 ]]]
 
-One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt.
+One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt.
 The message ==needRebuild: false== need to be sent to any of those sub widgets.
+If a model composing a ''button'' and a ''list'' just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements.
+To prevent this, the method ==needRebuild:== can be send to them as shown in the example *ex_needRebuild*.
 
-@@note For Ben: The above paragraph is not clear. Please expand with a simple example.
+[[[label=ex_needRebuild|caption=How to need rebuild sub widgets|language=Smalltalk 
+rebuildWithNewLayout
+	| newLayout |
+
+	newLayout := self newLayoutCreatedDynamically.
+	self needRebuild: false.
+	button needRebuild: false.
+	list needRebuild: false.
+	self buildWithSpecLayout: newLayout.
+]]]
 
 !!! Dynamic adding and removal of subwidgets
 
@@ -53,11 +63,9 @@ This allows for a widget to be accessed by sending a message whose selector is t
 By example, if a widget named ==button== is created, then this widget can be accessed by calling ==self button== as shown in the example *ex_dynamic_creation*.
 
 [[[label=ex_dynamic_creation|caption=Dynamic creation of a widget|language=Smalltalk 
-	self instantiateModels: { 'button' -> 'ButtonModel' }.
+	self instantiateModels: #( button ButtonModel ).
 	self button label: 'Click me'.
 ]]]
-
-@@note For Ben: maybe it would be better to remove this alternate form of the argument from the documentation, to avoid confusion. Plus it is ugly :-)
 
 Note that the instantiation array can also be an array of pairs. The previous example could be written
 
