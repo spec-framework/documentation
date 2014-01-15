@@ -37,12 +37,12 @@ In general the ==initializeWidgets== method should follow the pattern:
 The last step is not mandatory but ""highly"" recommended.
 Indeed, without this final step the keyboard navigation will not work at all.
 
-The code in figure *fig:pattern* shows an example of an ==initializeWidgets== method.
+The code in figure *pattern* shows an example of an ==initializeWidgets== method.
 It first instantiates a button and a list widget, storing each in an instance variable.
 It second configures the button it by setting its label.
 Third it specifies the focus order of all the widgets: first the button and then the list.
 
-[[[label=fig:pattern|caption=Example of initializeWidgets|
+[[[label=pattern|caption=Example of initializeWidgets|
 initializeWidgets
 
 	theButton := self newButton.
@@ -118,10 +118,10 @@ Put differently, usually all the instances of the same user interface have the s
 Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance.
 
 The simpliest example of such a method is laying out just one widget.
-The example *fig:ex_layout1* presents such a layout.
+The example *ex_layout1* presents such a layout.
 It returns a layout in which just one widget is added: the widget contained in ==theList== instance variable.
 
-[[[label=fig:ex_layout1|caption=Layout with only one widget|language=Smalltalk 
+[[[label=ex_layout1|caption=Layout with only one widget|language=Smalltalk 
 ^ SpecLayout composed
 	add: #theList;
 	yourself
@@ -151,9 +151,9 @@ To conclude, this section ends with a little *explanation>layout_specify_layout*
 
 @layout_rows_and_column_layout
 Often the layout of user interfaces can be described in rows and columns, and ""Spec"" provides for an easy way to specify such layouts.
-The example *fig:ex_layout_row* shows how to build a row of widgets.
+The example *ex_layout_row* shows how to build a row of widgets.
 
-[[[label=fig:ex_layout_row|caption=Row of widgets|language=Smalltalk 
+[[[label=ex_layout_row|caption=Row of widgets|language=Smalltalk 
 ^ SpecLayout composed
 	newRow: [ :row |
 		row
@@ -163,9 +163,9 @@ The example *fig:ex_layout_row* shows how to build a row of widgets.
 	yourself
 ]]]
 
-Having the widgets rendered as a column is similar, as shown in the example *fig:ex_layout_column*
+Having the widgets rendered as a column is similar, as shown in the example *ex_layout_column*
 
-[[[label=fig:ex_layout_column|caption=Column of widgets|language=Smalltalk 
+[[[label=ex_layout_column|caption=Column of widgets|language=Smalltalk 
 ^ SpecLayout composed
 	newColumn: [ :column |
 		column
@@ -212,9 +212,9 @@ _
 
 @layout_set_size_pixels
 The height of rows as well as the width of columns can be specified, to prevent them to take all the available space.
-The example *fig:ex_row_height* shows how to specify the height of a row in pixels while the example *fig:ex_column_width* how to specify the column width.
+The example *ex_row_height* shows how to specify the height of a row in pixels while the example *ex_column_width* how to specify the column width.
 
-[[[label=fig:ex_row_height|caption=Row of 30 pixels|language=Smalltalk 
+[[[label=ex_row_height|caption=Row of 30 pixels|language=Smalltalk 
 ^ SpecLayout composed
 	newRow: [ :row |
 		row
@@ -224,7 +224,7 @@ The example *fig:ex_row_height* shows how to specify the height of a row in pixe
 	yourself
 ]]]
 
-[[[label=fig:ex_column_width|caption=Column of 30 pixels|language=Smalltalk 
+[[[label=ex_column_width|caption=Column of 30 pixels|language=Smalltalk 
 ^ SpecLayout composed
 	newColumn: [ :column |
 		column
