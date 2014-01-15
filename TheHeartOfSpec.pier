@@ -174,7 +174,37 @@ Having the widgets rendered as a column is similar, as shown in the example *fig
 	yourself
 ]]]
 
-@@note For Ben: I think this needs an example that nests rows in columns or vice-versa.
+
+Then rows and columns can be combined to build more complex layouts.
+The example *ex_three_columns* shows how to create a 3 columns layout with three buttons in each column.
+This example also introduce ==addSplitter== which is used to add a splitter between the element added before it and the element added after.
+
+[[[label=ex_three_columns|caption=3 columns layout|language=Smalltalk 
+^ SpecLayout composed
+	newRow: [ :row |
+		row
+			newColumn: [ :column | 
+				 column
+				 	add: #button1;
+					add: #button2;
+					add: #button3 
+			];
+			addSplitter;
+			newColumn: [ :column | 
+				 column
+				 	add: #button4;
+					add: #button5;
+					add: #button6 
+			];
+			addSplitter;
+			newColumn: [ :column | 
+				 column
+				 	add: #button7;
+					add: #button8;
+					add: #button9 
+			];
+	]
+]]]
 
 _
 
@@ -213,16 +243,18 @@ It is also possible to specify the percentage of the container, e.g. the window,
 As a result of this, the widget size will change accordingly when the container is resized.
 To do so, the proportional position of the four sides of a widget can be specified, as shown in the example *ex_layout_proportional*.
 
+For each edge, the proportion indicates at what percentage of the overall container the edge should be placed.
+Zero percent is the container edge, 100 percent is the opposite container edge.
+For example, for the top edge, the percentage is counted from the top down.
+
 [[[label=ex_layout_proportional|caption=A Button centered in, and half the size of its container|language=Smalltalk 
 ^ SpecLayout composed
 	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
 	yourself
 ]]]
 
-Note that the value provided as argument moves the corresponding side toward the center of the widget.
 Also, the argument can be an integer if the offset has to be a fixed number of pixels.
-
-@@note For Ben: negative offsets are possible and have semantics like in morphic? If so, explain (not saying, ''like in Morphic'' )
+The number of pixels should be positive, as they indicate a distance from the corresponding edge, going to the opposite edge, similar to the arrangement of the proportional layout.
 _
 
 @layout_expert
@@ -233,15 +265,17 @@ The method ==add: origin: corner: == of ==SpecLayout== specifies the layout of a
 These two points represent respectively the top left corner and the bottom right corner of the widget.
 The arguments express a percentage of the container, so these __must__ be between ''0@0'' and ''1@1'' .
 
-In addition to those points, two offsets can be also be specified, using the method. ==add: origin: corner:  offsetOrigin: offsetCorner: ==.
+In addition to those points, two offsets can be also be specified, using the method ==add: origin: corner:  offsetOrigin: offsetCorner: ==.
 The offsets specify the number of pixels that the origin and the corner should be moved.
 
-@@note For Ben: negative integer offsets are allowed? If so, say: negative offsets are allowed, similar to the offset example above.
+Contrary to the previous way to define layouts, while using ==add: origin: corner:  offsetOrigin: offsetCorner: == the offset can be negative.
+The offset expresses the number of pixels the corresponding corner.
+They are expressed in a classical coordinate system with the origin in the top left corner and towards the bottom right corner.
 
 Note that this approach is similar to the ProportionalLayout of ""Morphic"".
 
 
-The example *fig:ex_layout_expert* shows how to add a widget as a toolbar.
+The example *ex_layout_expert* shows how to add a widget as a toolbar.
 It specifies that the widget in the ==toolbar== instance variable should take all the window width, but should be only 30 pixels in height.
 
 [[[label=fig:ex_layout_expert|caption=Using expert mode to specify a toolbar|language=Smalltalk 
@@ -259,6 +293,15 @@ So when a widget layout is specified, the view to use for this sub widget can be
 
 All the methods seen in the previous examples come with a variant used to specify which view selector to use.
 By example, for the ==add:== methods there is also  ==add:withSpec:==.
-All the methods can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
 
-@@note For Ben. I don't understand the text above. (And I think I have seen it before.) Please expand with an example.
+Lets consider a widget ""MyWidget"" defining a first layout ==firstLayout== as the default layout and another one ==anotherLayout==.
+The example *ex_specify_layout* shows how to add an instance of ""MyWidget"" using its ==anotherLayout== layout.
+
+[[[label=ex_specify_layout|caption=How to specify an alternative layout|language=Smalltalk 
+^ SpecLayout composed
+	add: #myWidget withSpec: #anotherLayout;
+	yourself
+]]]
+
+
+All the methods can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
