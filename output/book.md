@@ -368,18 +368,12 @@ Having an user interface with a well known number of sub widgets and a static la
 Changing the layout of widgets at runtime is straightforward, as we will see here\.Such changes basically consist of three steps:
 
 1.  creating the new layout,
-2.  setting the required flag to prohibit WHAT
+2.  setting the required flag to prohibit the creation of a new ui element but to reuse the existing one,
 3.  building the UI again with the newly created layout\.
 
 &nbsp;
 
-
-
-    Note: For Ben: fill in the WHAT above and below please.
-
-
-
-The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit WHAT\.Third, the rebuilding of the user interface is performed\.
+The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new ui element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
 
 
 
@@ -395,11 +389,21 @@ The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget wi
 
 
 
-One widget can also keep the ui elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.
+One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.If a model composing a *button* and a *list* just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements\.To prevent this, the method `needRebuild:` can be send to them as shown in the example [4\.2](#ex_needRebuild)\.
 
 
 
-    Note: For Ben: The above paragraph is not clear. Please expand with a simple example.
+<a name="ex_needRebuild"></a>**How to need rebuild sub widgets**
+
+
+    rebuildWithNewLayout
+    	| newLayout |
+    
+    	newLayout := self newLayoutCreatedDynamically.
+    	self needRebuild: false.
+    	button needRebuild: false.
+    	list needRebuild: false.
+    	self buildWithSpecLayout: newLayout.
 
 
 
@@ -411,21 +415,15 @@ If an user interface needs a varying number of subwidgets, the amount of which c
 
 When using `DynamicComposableModel` the instantiation of the sub widgets is a bit different from normal use\.In the `instantiateWidgets` method, instead of instantiating each widget separately, `instantiateModels:` should be used to instantiate them\.This method takes as argument an array of pairs, where each pair is composed of the unique name of the widget as key, and the name of the widget class as value\.This allows for a widget to be accessed by sending a message whose selector is the widget name to the model\.
 
-By example, if a widget named `button` is created, then this widget can be accessed by calling `self button` as shown in the example [4\.2](#ex_dynamic_creation)\.
+By example, if a widget named `button` is created, then this widget can be accessed by calling `self button` as shown in the example [4\.3](#ex_dynamic_creation)\.
 
 
 
 <a name="ex_dynamic_creation"></a>**Dynamic creation of a widget**
 
 
-    self instantiateModels: { 'button' -> 'ButtonModel' }.
+    self instantiateModels: #( button ButtonModel ).
     	self button label: 'Click me'.
-
-
-
-
-
-    Note: For Ben: maybe it would be better to remove this alternate form of the argument from the documentation, to avoid confusion. Plus it is ugly :-)
 
 
 
@@ -447,7 +445,7 @@ Note that the instantiation array can also be an array of pairs\. The previous e
 
 Thanks to the capability of *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 
-The example [4\.4](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
+The example [4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
 
 
