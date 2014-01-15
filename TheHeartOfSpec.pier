@@ -204,7 +204,8 @@ This example also introduce ==addSplitter== which is used to add a splitter betw
 					add: #button8;
 					add: #button9 
 			];
-	]
+	];
+	yourself
 ]]]
 
 _
