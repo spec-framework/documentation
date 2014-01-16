@@ -354,29 +354,29 @@ All the methods can be found in the *commands* and *commands\-advanced* protocol
 ##3\.  Where to find what I want
 <a name="sec_where_to_find_what_I_want"></a>
 
-This section explains where to find a model API and how to decrypt the meta information attached to those API methods\.
+All the *Spec* models for basic widgets have an API that is explicitly documented through the use of pragmas\.This section explains where to find the API of a model and meaning of the meta information that is attached to the API methods\.
+
+Each model contains at least two protocols that group the public API methods\.The first protocol is named **protocol**\.It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements\.The second protocol is named **protocol\-events**\.It gathers all the methods that are used to register to a state change\.
+
+All the meta\-information of public API methods is documented through the use of pragmas that start with *api:*\.There are three types of public API methods: getters, setters and registration methods\.
 
 
-###3\.1\.  Where is the API
+
+    Note: For Ben: It is unclear which of these three the "the behavioral methods acting directly on these elements" are. It seems there are 4 types of public API methods? What is the pragma for these guys?
+
+&nbsp;
 
 
-Each model contains at least two protocols containin the public API methods\.
-
-The first protocol is named **protocol**\.It gathers all the methods to set or get the current states of the model plus the behavioral methods acting directly to these states\.
-
-The second protocol is named **protocol\-events**\.It gathers all the methods used to register to a state change\.
-
-All this methods are commented to explain the purpose of them\.
+###3\.1\.  Meta information for getters
 
 
-###3\.2\.  Meta information
+The pragma for getters is always *<api: \#inspect>*\.
 
 
-All the public methods have meta information attached documenting the usage of them\.
+    Note: For Ben: I understand this is literally always #inspect. #inspect is not just a random example, it should never be #read, #getter or some such. I hope I am right. If I am wrong, clarify in the text plz
 
-Each type of methods has a different syntax, even though they are close\.
-
-For getters, the meta information is always *<api: \#inspect>*\.It points out this method is a getter\.The example [3\.1](#ex_api_getter) shows how *action* is implemented in **ButtonModel**\.
+&nbsp;
+For example, the code in [3\.1](#ex_api_getter) shows how the *action*  method in **ButtonModel** is implemented\.
 
 
 
@@ -391,26 +391,33 @@ For getters, the meta information is always *<api: \#inspect>*\.It points out th
 
 &nbsp;
 
-The setters meta information are a bit more complex\.Its form is *<api: typeOfArgument getter: getterSelector registration: registrationMethodSelector>*\.
 
-The possible values of *typeOfArguments* are:
+###3\.2\.  Meta information for setters
 
 
--  block,
--  boolean,
--  color,
--  image,
--  integer,
--  point,
--  st : st is used to represent any other *Smalltalk* object,
--  string\.
+The pragma for setters is a bit more complex\.The pattern of the pragma is *<api: typeOfState getter: getterSelector registration: registrationMethodSelector>*\.In this pattern, *typeOfState* , *getterSelector* and *registrationMethodSelector* need to be substituted by the relevant values for this setter\.
+
+The *getterSelector* specifies the name of the getter method \(a Symbol\) that returns the state set by this method\.The *registrationMethodSelector* states the name of the method \(a Symbol\) that needs to be used to register to changes in the state\.*typeOfState*  gives the type of the state being set by this setter\.The possible types are as follows:
+
+
+-  \#block indicates a block, 
+-  \#boolean indicates a boolean,
+-  \#color indicates a Color,
+-  \#image indicates an image,
 &nbsp;
 
-*getterSelector* is used to precise which getter method return the state set by this method\.
 
-*registrationMethodSelector* precises which method to use to register to the corresponding state changes\.
+    Note: For Ben: an instance of Image or any kind of image? Clarify pls
 
-The example [3\.2](#ex_api_setter) shows how *actions:* is implemented in **ButtonModel**\.
+&nbsp;
+
+-  \#integer indicates an integer,
+-  \#point indicates a Point,
+-  \#string indicates a String,
+-  \#st indicates any other type of  *Smalltalk* object\.
+&nbsp;
+
+For example, the code in [3\.2](#ex_api_setter) shows how *actions:* is implemented in **ButtonModel**\.
 
 
 
@@ -425,7 +432,17 @@ The example [3\.2](#ex_api_setter) shows how *actions:* is implemented in **Butt
 
 &nbsp;
 
-The registration methods information always follow the pattern *<api: \#event>*\.The example [3\.3](#ex_api_registration) shows how the method *whenActionChangedDo:* is implemented on **ButtonModel**\.
+
+###3\.3\.  Meta information for registration methods
+
+
+The pragma for registration methods information always is *<api: \#event>*\.
+
+
+    Note: For Ben: Idem as in getter pragma.
+
+&nbsp;
+For example, the code in [3\.3](#ex_api_registration) shows how the method *whenActionChangedDo:* is implemented in **ButtonModel**\.
 
 
 
