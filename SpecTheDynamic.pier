@@ -16,12 +16,12 @@ Third and last we show how the dynamic features can be used to quickly prototype
 Changing the layout of widgets at runtime is straightforward, as we will see here.
 Such changes basically consist of three steps:
 # creating the new layout,
-# setting the required flag to prohibit the creation of a new UI element but to reuse the existing one,
+# setting a flag to prohibit the creation of a new UI element (and instead reuse the existing one),
 # building the UI again with the newly created layout.
 
 The code in  *rebuildDynamically* is an example of rebuilding a widget with a new layout.
 First, a helper method is used to obtain a ==SpecLayout== object that determines the new layout.
-Second, the ==needRebuild== flag is set to ==false== to prohibit the creation of a new UI element but to reuse the existing one.
+Second, the ==needRebuild== flag is set to ==false== such that the existing UI element is reused.
 This leads to the replacement of the content of the current container instead of just instantiating a new UI element.
 Third, the rebuilding of the user interface is performed.
 
@@ -34,10 +34,10 @@ rebuildWithNewLayout
 	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
 ]]]
 
-One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt.
-The message ==needRebuild: false== need to be sent to any of those sub widgets.
-If a model composing a ''button'' and a ''list'' just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements.
-To prevent this, the method ==needRebuild:== can be send to them as shown in the example *ex_needRebuild*.
+One widget can also keep the UI elements of its sub widgets which do not need to be rebuilt.
+The message ==needRebuild: false== needs to be sent to any of those sub widgets.
+If a model comprising a ''button'' and a ''list'' just wants to rearrange the position of these UI elements, there is no need to instantiate new UI elements.
+To prevent this, the message ==needRebuild: false== should be send to them, as shown in the example *ex_needRebuild*.
 
 [[[label=ex_needRebuild|caption=How to need rebuild sub widgets|language=Smalltalk 
 rebuildWithNewLayout
@@ -45,8 +45,8 @@ rebuildWithNewLayout
 
 	newLayout := self newLayoutCreatedDynamically.
 	self needRebuild: false.
-	button needRebuild: false.
-	list needRebuild: false.
+	theButton needRebuild: false.
+	theList needRebuild: false.
 	self buildWithSpecLayout: newLayout.
 ]]]
 
@@ -74,9 +74,13 @@ Note that the instantiation array can also be an array of pairs. The previous ex
 	self button label: 'Click me'.
 ]]]
 
+@@note For Ben: This section is still a mess with the 2 examples. We should discuss and decide on what to do here.
+
 !!! Example: Prototyping a UI
 
 Thanks to the capability of ''Spec'' to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace.
+
+@@note For Ben: Is it possible to divide this code in various snippets and make up a story? Something like: first we try this, then we add this, then we add that, blah.
 
 The example *ex_prototyping* shows how to easily and quickly design a popup window asking for an input.
 
