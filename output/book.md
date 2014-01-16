@@ -43,7 +43,7 @@ To avoid possible misunderstandings in this text due to confusion in terminology
 ###2\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
 
 
-This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.The behavior to update the model states is described in the method as well\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
+This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.The configuration and default values of each widget are specified here as well\.This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.The behavior to update model state, e\.g\. when pressing a `Save` button, is described in this method as well\.It is explicitly **not** the responsibility of this method to define the interactions **between** the widgets\.
 
 In general the `initializeWidgets` method should follow the pattern:
 
@@ -53,7 +53,7 @@ In general the `initializeWidgets` method should follow the pattern:
 -  specification of order of focus
 &nbsp;
 
-The last step is not mandatory but **highly** recommended\.Indeed, without this final step the keyboard navigation will not work at all\.
+The last step is not mandatory but **highly** recommended\.Indeed, without this final step keyboard navigation will not work at all\.
 
 The code in figure [2\.1](#pattern) shows an example of an `initializeWidgets` method\.It first instantiates a button and a list widget, storing each in an instance variable\.It second configures the button it by setting its label\.Third it specifies the focus order of all the widgets: first the button and then the list\.
 
@@ -96,7 +96,7 @@ This method takes care of the interactions between the different widgets\.By lin
 
 Usually this method consists of specifications of actions to perform when a certain event is received by a widget\.From the propagation of those events the whole interaction flow of the UI emerges\.In  **Spec**, the different UI models are contained in value holders, and the event mechanism relies on the announcements of these value holders to manage the interactions between widgets\.Value holders provide a single method `whenChangedDo:` that is used to register a block to perform on change\.In addition to this primitive  `whenChangedDo:` method, the basic widgets provide more specific hooks, e\.g\. when an item in a list is selected or deselected\.
 
-The example [2\.2](#ex_button) shows how to use one of registration methods from the list widget to change the label of the button according to the list selection\.
+The example [2\.2](#ex_button) shows how to use one of the registration methods of the list widget to change the label of the button according to the selection in the list\.
 
 
 
@@ -105,8 +105,8 @@ The example [2\.2](#ex_button) shows how to use one of registration methods from
 
     theList whenSelectedItemChanged: [ :item | 
     	item 
-    		ifNil: [ button text: 'No selected item' ]
-    		ifNotNil: [ button text: 'An item is selected']]
+    		ifNil: [ theButton text: 'No selected item' ]
+    		ifNotNil: [ theButton text: 'An item is selected']]
 
 &nbsp;
 
@@ -128,14 +128,18 @@ The whole event API of the basic widgets is described in the section [3](#sec_wh
 &nbsp;
 
 
-###2\.3\.  the *layouting* method <sub>\(the MVP Presenter\)</sub>
+###2\.3\.  the *layout* method <sub>\(the MVP Presenter\)</sub>
 <a name="subsec_layout"></a>
 
 This method specifies the layout of the different widgets in the UI\.It also specifies how a widget reacts when the window is resized\.
 
-For the same UI multiple layouts can be described, and when the UI is built a specific layout can be specified\.If no specific layout is given, the layouting method returned by the lookup mechanism will be used\.
+For the same UI multiple layouts can be described, and when the UI is built a specific layout to use can be specified\.If no such specific layout is given, the following lookup mechanism will be used to obtain the layout method:
 
-The lookup mechanism search on class side in the whole class hierarchy for a method with the pragma *<spec: \#default>*\.If multiple exists, the first one found will be used\.If none is found and only one method has the pragma *<spec>*, this method is used\.Otherwise an error is raised\.
+1.  Search on class side, throughout the whole class hierarchy, for a method with the pragma *<spec: \#default>*\.
+2.  If multiple such methods exist, the first one found is used\.
+3.  If none such methods exist and if there is exactly one method with the pragma *<spec>*, this method is used\.
+4.  No layout method is found, an error is raised\.
+&nbsp;
 
 This method is on class side because it returns a value that usually is the same for all the instances\.Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.Note that the lookup for the spec method to use starts on instance side, which allows a UI to have a more specific layout depending on the state of the instance\.
 
@@ -154,7 +158,7 @@ The simpliest example of such a method is laying out just one widget\.The exampl
 
 The symbol `theList` refers to an instance side method returning a widget\.This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.Note that by default, a widget will take all the space available\.
 
-As said above, multiple views can be described for the same user interface\.In order to retrieve the correct method to apply, these methods need to be flagged with a pragma\.The pragma can be either `<spec: default>` for the view to use by default, or `<spec>` for the other views\.
+As said above, multiple layouts can be described for the same user interface\.In order to retrieve the correct method to apply, these methods need to be flagged with a pragma\.The pragma can be either `<spec: default>` for the layout to use by default, or `<spec>` for the other layouts\.
 
 
 
@@ -168,7 +172,7 @@ As said above, multiple views can be described for the same user interface\.In o
 ####2\.3\.1\.  Layout Examples
 
 
-As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which view to use and where to find the complete API\.
+As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.First two examples are given of the use of [rows and columns](#layout_rows_and_column_layout)\.This is followed by two examples that explain how to set a [fixed size](#layout_set_size_pixels) for rows and columns\.Next is an example that explains how to specify a widget [proportionally](#layout_percentage)\.The last example presents the [expert](#layout_expert) mode in case everything else fails\.To conclude, this section ends with a little [explanation](#layout_specify_layout) of how to specify which layout to use and where to find the complete API\.
 <a name="layout_rows_and_column_layout"></a>
 Often the layout of user interfaces can be described in rows and columns, and **Spec** provides for an easy way to specify such layouts\.The example [2\.4](#ex_layout_row) shows how to build a row of widgets\.
 
@@ -205,7 +209,7 @@ Having the widgets rendered as a column is similar, as shown in the example [2\.
 &nbsp;
 
 
-Then rows and columns can be combined to build more complex layouts\.The example [2\.6](#ex_three_columns) shows how to create a 3 columns layout with three buttons in each column\.This example also introduce `addSplitter` which is used to add a splitter between the element added before it and the element added after\.
+Rows and columns can be combined to build more complex layouts, and splitters between cells can be added\.The example [2\.6](#ex_three_columns) shows how to create a 3 column layout, containing three buttons in each column\.This example also shows the `addSplitter` message, which adds a splitter between the element added before it and the element added after\.
 
 
 
@@ -284,7 +288,7 @@ Note that it is generally considered a bad habit to hardcode the size of the wid
 <a name="layout_percentage"></a>
 It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.As a result of this, the widget size will change accordingly when the container is resized\.To do so, the proportional position of the four sides of a widget can be specified, as shown in the example [2\.9](#ex_layout_proportional)\.
 
-For each edge, the proportion indicates at what percentage of the overall container the edge should be placed\.Zero percent is the container edge, 100 percent is the opposite container edge\.For example, for the top edge, the percentage is counted from the top down\.
+For each edge, the proportion indicates at what percentage of the overall container the edge should be placed\.Zero percent is the container edge, 100 percent is the opposite container edge\.For example, for the top edge, the percentage is counted from the top down: 0 is the top edge, and 1 is the bottom edge\.
 
 
 
@@ -297,7 +301,7 @@ For each edge, the proportion indicates at what percentage of the overall contai
 
 &nbsp;
 
-Also, the argument can be an integer if the offset has to be a fixed number of pixels\.The number of pixels should be positive, as they indicate a distance from the corresponding edge, going to the opposite edge, similar to the arrangement of the proportional layout\.
+Also, the argument can be an integer if the offset has to be a fixed number of pixels\.The number of pixels should be positive, as it indicates a distance from the corresponding edge, going to the opposite edge\.
 
 ---
 
@@ -308,9 +312,7 @@ The method `add: origin: corner: ` of `SpecLayout` specifies the layout of a wid
 
 In addition to those points, two offsets can be also be specified, using the method `add: origin: corner:  offsetOrigin: offsetCorner: `\.The offsets specify the number of pixels that the origin and the corner should be moved\.
 
-Contrary to the previous way to define layouts, while using `add: origin: corner:  offsetOrigin: offsetCorner: ` the offset can be negative\.The offset expresses the number of pixels the corresponding corner\.They are expressed in a classical coordinate system with the origin in the top left corner and towards the bottom right corner\.
-
-Note that this approach is similar to the ProportionalLayout of **Morphic**\.
+Contrary to the previous way to define layouts, while using `add: origin: corner:  offsetOrigin: offsetCorner: ` the offset can be negative\.The offset expresses the number of pixels from the corresponding corner, in the classical computer graphics coordinate system where the origin is in the top left corner\.Note that this approach is similar to the ProportionalLayout of **Morphic**\.
 
 
 The example [2\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.It specifies that the widget in the `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
@@ -331,11 +333,11 @@ The example [2\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.I
 
 <a name="layout_specify_layout"></a>
 
-As explained in the section [2\.3](#subsec_layout), a UI can have multiple views\.So when a widget layout is specified, the view to use for this sub widget can be specified\.
+As explained in the section [2\.3](#subsec_layout), a UI can have multiple different layouts\.So when the layout of a widget that is composed of multiple sub\-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub\-widgets, the layout method to use can be specified\.
 
-All the methods seen in the previous examples come with a variant used to specify which view selector to use\.By example, for the `add:` methods there is also  `add:withSpec:`\.
+All the methods seen in the previous examples come with a variant used to specify which selector to use for the layout method\.By example, for the `add:` method the variant is  `add:withSpec:`\.
 
-Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the default layout and another one `anotherLayout`\.The example [2\.11](#ex_specify_layout) shows how to add an instance of **MyWidget** using its `anotherLayout` layout\.
+For example, consider a widget **MyWidget** defining a first layout method `firstLayout` as the default layout and another layout method called `anotherLayout`\.The example [2\.11](#ex_specify_layout) shows how to add an instance of **MyWidget** using its `anotherLayout` layout method\.
 
 
 
@@ -349,6 +351,11 @@ Lets consider a widget **MyWidget** defining a first layout `firstLayout` as the
 &nbsp;
 
 
+
+
+    Note: For Ben: Please clarify here what you mean with 'All the methods'. Also, put this at the beginning of the corresponding subsection (last line of the subsection). It is lost here.
+
+&nbsp;
 All the methods can be found in the *commands* and *commands\-advanced* protocols of **SpecLayout**\.
 
 ##3\.  Where to find what I want
@@ -471,11 +478,11 @@ Having an user interface with a well known number of sub widgets and a static la
 Changing the layout of widgets at runtime is straightforward, as we will see here\.Such changes basically consist of three steps:
 
 1.  creating the new layout,
-2.  setting the required flag to prohibit the creation of a new UI element but to reuse the existing one,
+2.  setting a flag to prohibit the creation of a new UI element \(and instead reuse the existing one\),
 3.  building the UI again with the newly created layout\.
 &nbsp;
 
-The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` to prohibit the creation of a new UI element but to reuse the existing one\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
+The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.First, a helper method is used to obtain a `SpecLayout` object that determines the new layout\.Second, the `needRebuild` flag is set to `false` such that the existing UI element is reused\.This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.Third, the rebuilding of the user interface is performed\.
 
 
 
@@ -491,7 +498,7 @@ The code in  [4\.1](#rebuildDynamically) is an example of rebuilding a widget wi
 
 &nbsp;
 
-One widget can also keep the UI elements of its sub widgets which did not need to be rebuilt\.The message `needRebuild: false` need to be sent to any of those sub widgets\.If a model composing a *button* and a *list* just want to rearrange the position of the UI elements, there is no need to instantiate new UI elements\.To prevent this, the method `needRebuild:` can be send to them as shown in the example [4\.2](#ex_needRebuild)\.
+One widget can also keep the UI elements of its sub widgets which do not need to be rebuilt\.The message `needRebuild: false` needs to be sent to any of those sub widgets\.If a model comprising a *button* and a *list* just wants to rearrange the position of these UI elements, there is no need to instantiate new UI elements\.To prevent this, the message `needRebuild: false` should be send to them, as shown in the example [4\.2](#ex_needRebuild)\.
 
 
 
@@ -503,8 +510,8 @@ One widget can also keep the UI elements of its sub widgets which did not need t
     
     	newLayout := self newLayoutCreatedDynamically.
     	self needRebuild: false.
-    	button needRebuild: false.
-    	list needRebuild: false.
+    	theButton needRebuild: false.
+    	theList needRebuild: false.
     	self buildWithSpecLayout: newLayout.
 
 &nbsp;
@@ -542,10 +549,22 @@ Note that the instantiation array can also be an array of pairs\. The previous e
 &nbsp;
 
 
+
+    Note: For Ben: This section is still a mess with the 2 examples. We should discuss and decide on what to do here.
+
+&nbsp;
+
+
 ###4\.3\.  Example: Prototyping a UI
 
 
 Thanks to the capability of *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
+
+
+
+    Note: For Ben: Is it possible to divide this code in various snippets and make up a story? Something like: first we try this, then we add this, then we add that, blah.
+
+&nbsp;
 
 The example [4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
@@ -596,9 +615,9 @@ We will first explain the applicable part of how the widget build process is per
 
 The UI building process does not make a distinction between basic and composed widgets\.Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
-The adapter, when instantiated by the UI model, will instantiate a widget that is specific to the UI framework being used\.
+The adapter, when instantiated by the UI model, will in turn instantiate a widget that is specific to the UI framework being used\.
 
-For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework specific widget which will be added to the widget container\.
+For example, when using a List in the Morphic UI, the adaptor will be a MorphicListAdapter and it will contain a PluggableListMorph\.This is this framework\-specific widget that will be added to the widget container\.
 
 Figure [5\.1](#model_adapter_uielement) shows the relationship between those objects\.
 
@@ -647,9 +666,15 @@ For each instance variable that holds state three methods should be defined: the
 
 &nbsp;
 
-The last step to define a new model is to implement a method `adapterName` at class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
+The last step to define a new model is to implement a method `adapterName` at the class side\.The method should be in the protocol named *spec* and should return a symbol\.The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word *Adapter* like **ListAdapter**\.
 
-The communication from the UI model to the adapter is done using the dependents mechanism\.This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.In fact the message `change: with: ` is used to send the message *selector* with the arguments *aCollection* to the adapter\.
+The communication from the UI model to the adapter is performed using the dependents mechanism\.This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.In fact the message `change: with: ` is used to send the message *selector* with the arguments *aCollection* to the adapter\.
+
+
+
+    Note: For Ben. I still don't understand it. Please explain to me tomorrow.
+
+&nbsp;
 
 
 ###5\.3\.  The Adapter
@@ -690,7 +715,7 @@ Since the adapter is bridging the gap between the element of the UI framework an
 
 The methods involved in the communication from the model to the adapter as well as the methods involved in the communication from the adapter to the UI model should be in the protocol *spec protocol*\.On the other hand the methods involved in the communication from the adapter to the UI element and vice versa should be categorized in the protocol *widget API*\.
 
-To communicate with the UI element, the adapter methods uses the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the UI element has already been created\.
+To communicate with the UI element, the adapter methods use the method `widgetDo:`\.This method executes the block provided as argument, which will only happen after the UI element has already been created\.
 
 The example [5\.4](#ex_emphasis) shows how **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
 
@@ -732,4 +757,4 @@ For creating a specific binding, the class **SpecAdapterBindings**needs to be ov
 
 &nbsp;
 
-The **SpecInterpreter** bindings are resetted after each execution\.
+Note that the **SpecInterpreter** bindings are reset after each execution\.
