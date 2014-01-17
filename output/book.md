@@ -52,8 +52,7 @@ These axes materialize themselves as the following three methods:
 
     Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
 
-
-We first detail some necessary terminology before discussing each of these methods in more detail\.
+We first detail some necessary terminology before discussing each of these methods in more detail\.
 
 
 
@@ -89,7 +88,6 @@ In general the
 -  widgets configuration specification
 -  specification of order of focus
 
-
 The last step is not mandatory but 
 **highly** recommended\.
 Indeed, without this final step keyboard navigation will not work at all\.
@@ -121,11 +119,10 @@ Third it specifies the focus order of all the widgets: first the button and then
 
 
 
-&nbsp;
+&nbsp;
 
 
     Specifying this method is mandatory, as without it the UI would have no widgets.
-
 
 
 
@@ -182,7 +179,6 @@ The example
     		ifNotNil: [ theButton text: 'An item is selected'] ]
 
 
-
 The whole event API of the basic widgets is described in the section 
 [3](#sec_where_to_find_what_I_want)\.
 
@@ -195,11 +191,10 @@ The whole event API of the basic widgets is described in the section
 
 
 
-&nbsp;
+&nbsp;
 
 
     This method is optional. Without it, the different widgets in the UI will simply not respond to changes in each others' state.
-
 
 
 
@@ -218,7 +213,6 @@ If no such specific layout is given, the following lookup mechanism will be used
 2.  If multiple such methods exist, the first one found is used\.
 3.  If none such methods exist and if there is exactly one method with the pragma *<spec>*, this method is used\.
 4.  No layout method is found, an error is raised\.
-
 
 This method is on class side because it returns a value that usually is the same for all the instances\.
 Put differently, usually all the instances of the same user interface have the same layout and hence this can be considered as being a class\-side accessor for a class variable\.
@@ -242,7 +236,6 @@ It returns a layout in which just one widget is added: the widget contained in
     	yourself
 
 
-
 The symbol 
 `theList` refers to an instance side method returning a widget\.
 This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.
@@ -260,7 +253,6 @@ The pragma can be either
 
 
     Specifying this method is mandatory, as without it the UI would show no widgets to the user.
-
 
 
 
@@ -301,7 +293,6 @@ The example
     	yourself
 
 
-
 Having the widgets rendered as a column is similar, as shown in the example 
 [2\.5](#ex_layout_column)
 
@@ -317,7 +308,6 @@ Having the widgets rendered as a column is similar, as shown in the example
     			add: #theButton
     	];
     	yourself
-
 
 
 
@@ -361,7 +351,6 @@ This example also shows the
 
 
 
-
 ---
 
 <a name="layout_set_size_pixels"></a>
@@ -386,7 +375,7 @@ The example
 
 
 
-&nbsp;
+&nbsp;
 
 <a name="ex_column_width"></a>**Column of 30 pixels**
 
@@ -398,7 +387,6 @@ The example
     			add: #theButton
     	] width: 30;
     	yourself
-
 
 
 Note that it is generally considered a bad habit to hardcode the size of the widgets\.
@@ -430,7 +418,6 @@ For example, for the top edge, the percentage is counted from the top down: 0 is
     ^ SpecLayout composed
     	add: #theButton top: 0.25 bottom: 0.25 left: 0.25 right: 0.25;
     	yourself
-
 
 
 Also, the argument can be an integer if the offset has to be a fixed number of pixels\.
@@ -484,17 +471,9 @@ It specifies that the widget in the
 
 
 
-
 ---
 
 <a name="layout_specify_layout"></a>
-
-All the methods for adding sub widgets can be found in the 
-*commands* and 
-*commands\-advanced* protocols of 
-**SpecLayout**\.
-
-
 
 As explained in the section 
 [2\.3](#subsec_layout), a UI can have multiple different layouts\.
@@ -519,13 +498,24 @@ The example
 
 
 
-<a name="ex_specify_layout"></a>**How to specify an alternative layout**
-
 
     ^ SpecLayout composed
     	add: #myWidget withSpec: #anotherLayout;
     	yourself
 
+
+
+
+&nbsp;
+
+
+    Note: For Ben: Please clarify here what you mean with 'All the methods'. Also, put this at the beginning of the corresponding subsection (last line of the subsection). It is lost here.
+
+
+All the methods can be found in the 
+*commands* and 
+*commands\-advanced* protocols of 
+**SpecLayout**\.
 
 
 ##3\.  Where to find what I want
@@ -539,7 +529,7 @@ This section explains where to find the API of a model and meaning of the meta i
 Each model contains at least two protocols that group the public API methods\.
 The first protocol is named 
 **protocol**\.
-It gathers all the methods that set or get the different state elements of the model plus the behavioural methods acting directly on these elements\.
+It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements\.
 The second protocol is named 
 **protocol\-events**\.
 It gathers all the methods that are used to register to a state change\.
@@ -551,11 +541,23 @@ There are three types of public API methods: getters, setters and registration m
 
 
 
+
+    Note: For Ben: It is unclear which of these three the "the behavioral methods acting directly on these elements" are. It seems there are 4 types of public API methods? What is the pragma for these guys?
+
+
+
+
 ###3\.1\.  Meta information for getters
 
 
 The pragma for getters is always 
 *<api: \#inspect>*\.
+
+
+
+    Note: For Ben: I understand this is literally always #inspect. #inspect is not just a random example, it should never be #read, #getter or some such. I hope I am right. If I am wrong, clarify in the text plz
+
+
 For example, the code in 
 [3\.1](#ex_api_getter) shows how the 
 *action*  method in 
@@ -572,7 +574,6 @@ For example, the code in
     	"get the block performed when the button is clicked"
     
     	^ actionHolder value
-
 
 
 
@@ -606,7 +607,6 @@ The possible types are as follows:
 -  \#string indicates a String,
 -  \#st indicates any other type of *Smalltalk* object\.
 
-
 For example, the code in 
 [3\.2](#ex_api_setter) shows how 
 *actions:* is implemented in 
@@ -626,12 +626,17 @@ For example, the code in
 
 
 
-
 ###3\.3\.  Meta information for registration methods
 
 
 The pragma for registration methods information always is 
 *<api: \#event>*\.
+
+
+
+    Note: For Ben: Idem as in getter pragma.
+
+
 For example, the code in 
 [3\.3](#ex_api_registration) shows how the method 
 *whenActionChangedDo:* is implemented in 
@@ -648,33 +653,6 @@ For example, the code in
     	"Set the block performed when the action to perform is changed"
     
     	actionHolder whenChangedDo: aBlock
-
-
-
-
-###3\.4\.  Meta information for behavioural method
-
-
-The other methods should be mainly behavioural methods\.
-The pragma for these methods is 
-*<api: \#do>*\.
-The example 
-[3\.4](#ex_resetSelection) shows how 
-*resetSelection* is implemented in 
-**ListModel**\.
-
-
-
-
-<a name="ex_resetSelection"></a>**Implementation of ListModel>>\#resetSelection**
-
-
-    resetSelection
-    	<api: #do>
-    	"Unselect every items"
-    
-    	selectionHolder reset.
-    	multiSelectionHolder removeAll
 
 
 
@@ -707,7 +685,7 @@ Such changes basically consist of three steps:
 3.  building the UI again with the newly created layout\.
 
 
-The code in 
+The code in  
 [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.
 First, a helper method is used to obtain a 
 `SpecLayout` object that determines the new layout\.
@@ -729,7 +707,6 @@ Third, the rebuilding of the user interface is performed\.
     	newLayout := self newLayoutCreatedDynamically.
     	self needRebuild: false. "tells the interpreter to keep my current UI element"
     	self buildWithSpecLayout: newLayout. "rebuilds me with the new layout"
-
 
 
 One widget can also keep the UI elements of its sub widgets which do not need to be rebuilt\.
@@ -756,7 +733,6 @@ To prevent this, the message
     	theButton needRebuild: false.
     	theList needRebuild: false.
     	self buildWithSpecLayout: newLayout.
-
 
 
 
@@ -792,7 +768,6 @@ By example, if a widget named
     	self button label: 'Click me'.
 
 
-
 Note that the instantiation array can also be an array of pairs\. The previous example could be written
 
 
@@ -805,19 +780,17 @@ Note that the instantiation array can also be an array of pairs\. The previous e
     	self button label: 'Click me'.
 
 
-&nbsp;
+&nbsp;
 
 
     Note: For Ben: This section is still a mess with the 2 examples. We should discuss and decide on what to do here.
 
 
 
-
 ###4\.3\.  Example: Prototyping a UI
 
 
-Thanks to the capability of 
-*Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
+Thanks to the capability of *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 
 
 This example shows how to easily and quickly design a popup window asking for an input\.
@@ -828,8 +801,8 @@ First we create a simple model with two sub widgets, a label and a text field as
 
 
 
-
-<a name="ex_widget_creation"></a>**Create a widget**
+The example 
+[4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
 
     view := DynamicComposableModel new
@@ -972,7 +945,6 @@ The code
     	modalRelativeTo: World.
 
 
-
 The result can be seen in Figure 
 [4\.1](#fig_popup)\.
 
@@ -1031,7 +1003,6 @@ Examples of widget\-specific state are:
 -  the label of a button
 -  the action block for when a text is validated in a text field
 
-
 The state is wrapped in value holders and kept in instance variables\.
 For example, the code in 
 [5\.1](#ex_value_holder) shows how to wrap the state 
@@ -1046,7 +1017,6 @@ Value holders are needed because they are later used to propagate state changes 
 
 
     index := 0 asValueHolder.
-
 
 
 For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.
@@ -1076,7 +1046,6 @@ For example, the code in
     	index whenChangedDo: aBlock
 
 
-
 The last step to define a new model is to implement a method 
 `adapterName` at the class side\.
 The method should be in the protocol named 
@@ -1097,7 +1066,6 @@ In fact the message
 
 
     Note: For Ben. I still don't understand it. Please explain to me tomorrow.
-
 
 
 
@@ -1144,7 +1112,6 @@ The example
     			#eventHandler:.					{	#EventHandler. #on:send:to:. #keyStroke.	#keyStroke:fromMorph:. #model	}}
 
 
-
 Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model\.
 Seen from the other way around: since the model is holding the state, the adapter is used to update the UI element state of the model\.
 
@@ -1176,7 +1143,6 @@ The example
 
 
 
-
 ###5\.4\.  The UI Framework binding
 
 
@@ -1197,13 +1163,12 @@ It requires to update two methods:
     Note: For Ben: Give an example here.
 
 
-
 Once this is done, the bindings should be re\-initialized by running the following snippet of code: 
 `SpecInterpreter hardResetBindings`\.
 
 
 For creating a specific binding, the class 
-**SpecAdapterBindings** needs to be overriden as well as its method 
+**SpecAdapterBindings**needs to be overriden as well as its method 
 `initializeBindings`\.
 It can then be used during a spec interpretation by setting it as the bindings to use for the 
 **SpecInterpreter**\.
@@ -1217,7 +1182,6 @@ The example
 
 
     SpecInterpreter bindings: MyOwnBindingClass new.
-
 
 
 Note that the 
