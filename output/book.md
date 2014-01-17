@@ -179,7 +179,7 @@ The example
     theList whenSelectedItemChanged: [ :item | 
     	item 
     		ifNil: [ theButton text: 'No selected item' ]
-    		ifNotNil: [ theButton text: 'An item is selected'] ]
+    		ifNotNil: [ theButton text: 'An item is selected']]
 
 
 
@@ -489,13 +489,6 @@ It specifies that the widget in the
 
 <a name="layout_specify_layout"></a>
 
-All the methods for adding sub widgets can be found in the 
-*commands* and 
-*commands\-advanced* protocols of 
-**SpecLayout**\.
-
-
-
 As explained in the section 
 [2\.3](#subsec_layout), a UI can have multiple different layouts\.
 So when the layout of a widget that is composed of multiple sub\-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub\-widgets, the layout method to use can be specified\.
@@ -528,6 +521,18 @@ The example
 
 
 
+&nbsp;
+
+
+    Note: For Ben: Please clarify here what you mean with 'All the methods'. Also, put this at the beginning of the corresponding subsection (last line of the subsection). It is lost here.
+
+
+All the methods can be found in the 
+*commands* and 
+*commands\-advanced* protocols of 
+**SpecLayout**\.
+
+
 ##3\.  Where to find what I want
 <a name="sec_where_to_find_what_I_want"></a>
 
@@ -539,7 +544,7 @@ This section explains where to find the API of a model and meaning of the meta i
 Each model contains at least two protocols that group the public API methods\.
 The first protocol is named 
 **protocol**\.
-It gathers all the methods that set or get the different state elements of the model plus the behavioural methods acting directly on these elements\.
+It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements\.
 The second protocol is named 
 **protocol\-events**\.
 It gathers all the methods that are used to register to a state change\.
@@ -551,11 +556,23 @@ There are three types of public API methods: getters, setters and registration m
 
 
 
+
+    Note: For Ben: It is unclear which of these three the "the behavioral methods acting directly on these elements" are. It seems there are 4 types of public API methods? What is the pragma for these guys?
+
+
+
+
 ###3\.1\.  Meta information for getters
 
 
 The pragma for getters is always 
 *<api: \#inspect>*\.
+
+
+
+    Note: For Ben: I understand this is literally always #inspect. #inspect is not just a random example, it should never be #read, #getter or some such. I hope I am right. If I am wrong, clarify in the text plz
+
+
 For example, the code in 
 [3\.1](#ex_api_getter) shows how the 
 *action*  method in 
@@ -600,11 +617,18 @@ The possible types are as follows:
 -  \#block indicates a block, 
 -  \#boolean indicates a boolean,
 -  \#color indicates a Color,
--  \#image indicates a Form,
+-  \#image indicates an image,
+&nbsp;
+
+
+    Note: For Ben: an instance of Image or any kind of image? Clarify pls
+
+&nbsp;
+
 -  \#integer indicates an integer,
 -  \#point indicates a Point,
 -  \#string indicates a String,
--  \#st indicates any other type of *Smalltalk* object\.
+-  \#st indicates any other type of  *Smalltalk* object\.
 
 
 For example, the code in 
@@ -632,6 +656,12 @@ For example, the code in
 
 The pragma for registration methods information always is 
 *<api: \#event>*\.
+
+
+
+    Note: For Ben: Idem as in getter pragma.
+
+
 For example, the code in 
 [3\.3](#ex_api_registration) shows how the method 
 *whenActionChangedDo:* is implemented in 
@@ -648,33 +678,6 @@ For example, the code in
     	"Set the block performed when the action to perform is changed"
     
     	actionHolder whenChangedDo: aBlock
-
-
-
-
-###3\.4\.  Meta information for behavioural method
-
-
-The other methods should be mainly behavioural methods\.
-The pragma for these methods is 
-*<api: \#do>*\.
-The example 
-[3\.4](#ex_resetSelection) shows how 
-*resetSelection* is implemented in 
-**ListModel**\.
-
-
-
-
-<a name="ex_resetSelection"></a>**Implementation of ListModel>>\#resetSelection**
-
-
-    resetSelection
-    	<api: #do>
-    	"Unselect every items"
-    
-    	selectionHolder reset.
-    	multiSelectionHolder removeAll
 
 
 
@@ -707,7 +710,7 @@ Such changes basically consist of three steps:
 3.  building the UI again with the newly created layout\.
 
 
-The code in 
+The code in  
 [4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.
 First, a helper method is used to obtain a 
 `SpecLayout` object that determines the new layout\.
@@ -820,125 +823,19 @@ Thanks to the capability of
 *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 
 
-This example shows how to easily and quickly design a popup window asking for an input\.
 
 
-First we create a simple model with two sub widgets, a label and a text field as shown by the snippet 
-[4\.5](#ex_widget_creation)\.
-
+    Note: For Ben: Is it possible to divide this code in various snippets and make up a story? Something like: first we try this, then we add this, then we add that, blah.
 
 
 
-<a name="ex_widget_creation"></a>**Create a widget**
-
-
-    view := DynamicComposableModel new
-    	instantiateModels: #(label LabelModel text TextInputFieldModel);
-    	yourself.
-
-
-
-We can then specify the title ans the initiale size of the widget and have the code as 
-[4\.6](#ex_set_title)\.
+The example 
+[4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
 
 
 
 
-<a name="ex_set_title"></a>**Specify the title ans the initial size**
-
-
-    view extent: 300@90;
-    	title: 'Choose your project'.
-
-
-
-The next step is to set up the sub widgets states and behaviours\.
-We set the label text as well as the text field ghostText\.
-We also precise here that the text field should automatically accept the text on each keystroke\.
-This result in the code 
-[4\.7](#ex_setup_subwidget)\.
-
-
-
-
-<a name="ex_setup_subwidget"></a>**Set up the sub widgets**
-
-
-    view label text: 'Packages:'.
-    
-    view text
-    	autoAccept: true;
-    	entryCompletion: nil;
-    	ghostText: '.*'.
-
-
-
-As we want the widget to be a popup with a single button 
-*Ok*, the toolbar to use should be defined explicitely \(the default toolbar has an 
-*Ok* button and a 'Cancel' button\)\.
-We also set the toolbar action when 
-*Ok* is clicked\.
-Here the current text of the text field will be saved in the instance variable 
-*regex*\.
-The code 
-[4\.8](#ex_toolbar) shows how to do it\.
-
-
-
-
-<a name="ex_toolbar"></a>**Instantiate the toolbar**
-
-
-    toolbar := OkToolbar new
-    	okAction: [ regex := view text text ];
-    	yourself.
-
-
-
-We can also add a shortcut to the text field on 
-*Enter* to simulate the click on 
-*Ok*\.
-The code 
-[4\.9](#ex_shortcut) explains how to set up such a shortcut\.
-
-
-
-
-<a name="ex_shortcut"></a>**Add a shortcut**
-
-
-    view text 
-    	bindKeyCombination: Character cr asKeyCombination 
-    	toAction: [ toolbar triggerOkAction ].
-
-
-
-Then we specify the UI element layout\.
-It will be only one row with the label and the text field\.
-The snippet 
-[4\.10](#ex_layout) shows the layout definition\.
-
-
-
-
-<a name="ex_layout"></a>**Define the layout**
-
-
-    layout := SpecLayout composed
-    	newRow: [ :r | r add: #label width: 75; add: #text ];
-    	yourself.
-
-
-
-We finally open the widget\.
-In addition we specify it will be centered in the Pharo window and modal\.
-The code 
-[4\.11](#ex_final) shows the final version of the code
-
-
-
-
-<a name="ex_final"></a>**Open the widget**
+<a name="ex_prototyping"></a>**Popup requiring a simple input**
 
 
     view := DynamicComposableModel new
@@ -947,26 +844,19 @@ The code
     	title: 'Choose your project'
     	yourself.
     	
-    view label text: 'Packages:'.
-    
-    view text
-    	autoAccept: true;
-    	entryCompletion: nil;
-    	ghostText: '.*'.
-    	
     toolbar := OkToolbar new
     	okAction: [ regex := view text text ];
     	yourself.
-    	
-    view text 
-    	bindKeyCombination: Character cr asKeyCombination 
-    	toAction: [ toolbar triggerOkAction ].
-    	
-    layout := SpecLayout composed
-    	newRow: [ :r | r add: #label width: 75; add: #text ];
-    	yourself.
-    	
-    (view openDialogWithSpecLayout: layout)
+    	view focusOrder add: view text.
+    view text bindKeyCombination: Character cr asKeyCombination  toAction: [ toolbar triggerOkAction ].
+    view label text: 'Packages:'.
+    view text
+    	autoAccept: true;
+    		entryCompletion: nil;
+    	ghostText: '.*'.
+    view openDialogWithSpecLayout: (SpecLayout composed
+    		newRow: [ :r | r add: #label width: 75; add: #text ];
+    yourself))
     	toolbar: toolbar;
     	centered;
     	modalRelativeTo: World.
@@ -1203,7 +1093,7 @@ Once this is done, the bindings should be re\-initialized by running the followi
 
 
 For creating a specific binding, the class 
-**SpecAdapterBindings** needs to be overriden as well as its method 
+**SpecAdapterBindings**needs to be overriden as well as its method 
 `initializeBindings`\.
 It can then be used during a spec interpretation by setting it as the bindings to use for the 
 **SpecInterpreter**\.
