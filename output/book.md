@@ -566,11 +566,41 @@ Thanks to the capability of *Spec* to dynamically instantiate widgets, it is als
 
 &nbsp;
 
-The example [4\.5](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
+The example [¿?](#ex_prototyping) shows how to easily and quickly design a popup window asking for an input\.
+
+First we create a simple model with two sub widgets, a label and a text field\.
 
 
 
-<a name="ex_prototyping"></a>**Popup requiring a simple input**
+<a name="label"></a>**Create a widget**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	yourself.
+
+&nbsp;
+
+We can then specify the title ans the initiale size of the widget\.
+
+
+
+<a name="label"></a>**Specify the title ans the initial size**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	extent: 300@90;
+    	title: 'Choose your project'
+    	yourself.
+
+&nbsp;
+
+The next step is to set up the sub widgets states and behaviours\.We set the label text as well as the text field ghostText\.We also precise here that the text field should automtically accept the text on each keystroke\.
+
+
+
+<a name="label"></a>**Set up the sub widgets**
 
 
     view := DynamicComposableModel new
@@ -579,19 +609,138 @@ The example [4\.5](#ex_prototyping) shows how to easily and quickly design a pop
     	title: 'Choose your project'
     	yourself.
     	
+    view label text: 'Packages:'.
+    
+    view text
+    	autoAccept: true;
+    	entryCompletion: nil;
+    	ghostText: '.*'.
+
+&nbsp;
+
+As we want the widget to be a popup with a single button 'Ok', the toolbar to use should be defined explicitely \(the default toolbar has an 'Ok' button and a 'Cancel' button\)\.We also set the toolbar action when 'Ok' is clicked\.Here the current text of the text field will be saved in the instance variable *regex*\.
+
+
+
+<a name="label"></a>**Instantiate the toolbar**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	extent: 300@90;
+    	title: 'Choose your project'
+    	yourself.
+    	
+    view label text: 'Packages:'.
+    
+    view text
+    	autoAccept: true;
+    	entryCompletion: nil;
+    	ghostText: '.*'.
+    	
     toolbar := OkToolbar new
     	okAction: [ regex := view text text ];
     	yourself.
-    	view focusOrder add: view text.
-    view text bindKeyCombination: Character cr asKeyCombination  toAction: [ toolbar triggerOkAction ].
+
+&nbsp;
+
+We can also add a shortcut to the text field on *Enter* to simulate the click on 'Ok'\.
+
+
+
+<a name="label"></a>**Add a shortcut**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	extent: 300@90;
+    	title: 'Choose your project'
+    	yourself.
+    	
     view label text: 'Packages:'.
+    
     view text
     	autoAccept: true;
-    		entryCompletion: nil;
+    	entryCompletion: nil;
     	ghostText: '.*'.
-    view openDialogWithSpecLayout: (SpecLayout composed
-    		newRow: [ :r | r add: #label width: 75; add: #text ];
-    yourself))
+    	
+    toolbar := OkToolbar new
+    	okAction: [ regex := view text text ];
+    	yourself.
+    	
+    view text 
+    	bindKeyCombination: Character cr asKeyCombination 
+    	toAction: [ toolbar triggerOkAction ].
+
+&nbsp;
+
+Then we specify the UI element layout\.It will be only one row with the label and the text field\.
+
+
+
+<a name="label"></a>**Define the layout**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	extent: 300@90;
+    	title: 'Choose your project'
+    	yourself.
+    	
+    view label text: 'Packages:'.
+    
+    view text
+    	autoAccept: true;
+    	entryCompletion: nil;
+    	ghostText: '.*'.
+    	
+    toolbar := OkToolbar new
+    	okAction: [ regex := view text text ];
+    	yourself.
+    	
+    view text 
+    	bindKeyCombination: Character cr asKeyCombination 
+    	toAction: [ toolbar triggerOkAction ].
+    	
+    layout := SpecLayout composed
+    	newRow: [ :r | r add: #label width: 75; add: #text ];
+    	yourself.
+
+&nbsp;
+
+We finally open the widget\.In addition we specify it will be centered in the Pharo window and modal\.
+
+
+
+<a name="label"></a>**Open the widget**
+
+
+    view := DynamicComposableModel new
+    	instantiateModels: #(label LabelModel text TextInputFieldModel);
+    	extent: 300@90;
+    	title: 'Choose your project'
+    	yourself.
+    	
+    view label text: 'Packages:'.
+    
+    view text
+    	autoAccept: true;
+    	entryCompletion: nil;
+    	ghostText: '.*'.
+    	
+    toolbar := OkToolbar new
+    	okAction: [ regex := view text text ];
+    	yourself.
+    	
+    view text 
+    	bindKeyCombination: Character cr asKeyCombination 
+    	toAction: [ toolbar triggerOkAction ].
+    	
+    layout := SpecLayout composed
+    	newRow: [ :r | r add: #label width: 75; add: #text ];
+    	yourself.
+    	
+    (view openDialogWithSpecLayout: layout)
     	toolbar: toolbar;
     	centered;
     	modalRelativeTo: World.
@@ -600,7 +749,7 @@ The example [4\.5](#ex_prototyping) shows how to easily and quickly design a pop
 
 The result can be seen in Figure [4\.1](#fig_popup)\.
 
-<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
+<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")file://figures/Popup\.png\|width=50\|label=fig\_popup\+
 
 ##5\.  Creating new basic widget
 
