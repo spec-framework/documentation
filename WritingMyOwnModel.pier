@@ -129,7 +129,7 @@ It requires to update two methods: ==initializeBindings== in ""SpecAdapterBindin
 
 Once this is done, the bindings should be re-initialized by running the following snippet of code: ==SpecInterpreter hardResetBindings==.
 
-For creating a specific binding, the class ""SpecAdapterBindings""needs to be overriden as well as its method ==initializeBindings==.
+For creating a specific binding, the class ""SpecAdapterBindings"" needs to be overriden as well as its method ==initializeBindings==.
 It can then be used during a spec interpretation by setting it as the bindings to use for the ""SpecInterpreter"".
 The example *ex_setting_bindings* shows how to do so.
 
