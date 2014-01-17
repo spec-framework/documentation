@@ -85,7 +85,7 @@ The example *ex_button* shows how to use one of the registration methods of the 
 theList whenSelectedItemChanged: [ :item | 
 	item 
 		ifNil: [ theButton text: 'No selected item' ]
-		ifNotNil: [ theButton text: 'An item is selected']]
+		ifNotNil: [ theButton text: 'An item is selected'] ]
 ]]]
 
 The whole event API of the basic widgets is described in the section *sec_where_to_find_what_I_want*.
@@ -287,6 +287,9 @@ _
 
 @layout_specify_layout
 
+All the methods for adding sub widgets can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
+
+
 As explained in the section *subsec_layout*, a UI can have multiple different layouts.
 So when the layout of a widget that is composed of multiple sub-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub-widgets, the layout method to use can be specified.
 
@@ -301,7 +304,3 @@ The example *ex_specify_layout* shows how to add an instance of ""MyWidget"" usi
 	add: #myWidget withSpec: #anotherLayout;
 	yourself
 ]]]
-
-
-@@note For Ben: Please clarify here what you mean with 'All the methods'. Also, put this at the beginning of the corresponding subsection (last line of the subsection). It is lost here.
-All the methods can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".

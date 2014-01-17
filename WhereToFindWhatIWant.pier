@@ -6,19 +6,16 @@ This section explains where to find the API of a model and meaning of the meta i
 
 Each model contains at least two protocols that group the public API methods.
 The first protocol is named ""protocol"".
-It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements.
+It gathers all the methods that set or get the different state elements of the model plus the behavioural methods acting directly on these elements.
 The second protocol is named ""protocol-events"".
 It gathers all the methods that are used to register to a state change.
 
 All the meta-information of public API methods is documented through the use of pragmas that start with ''api:''.
 There are three types of public API methods: getters, setters and registration methods.
 
-@@note For Ben: It is unclear which of these three the "the behavioral methods acting directly on these elements" are. It seems there are 4 types of public API methods? What is the pragma for these guys?
-
 !!! Meta information for getters
 
 The pragma for getters is always ''<api: #inspect>''.
-@@note For Ben: I understand this is literally always #inspect. #inspect is not just a random example, it should never be #read, #getter or some such. I hope I am right. If I am wrong, clarify in the text plz
 For example, the code in *ex_api_getter* shows how the ''action''  method in ""ButtonModel"" is implemented.
 
 [[[label=ex_api_getter|caption=Implementation of ButtonModel>>#action|language=Smalltalk 
@@ -43,12 +40,11 @@ The possible types are as follows:
 - #block indicates a block, 
 - #boolean indicates a boolean,
 - #color indicates a Color,
-- #image indicates an image,
-@@note For Ben: an instance of Image or any kind of image? Clarify pls
+- #image indicates a Form,
 - #integer indicates an integer,
 - #point indicates a Point,
 - #string indicates a String,
-- #st indicates any other type of  ''Smalltalk'' object.
+- #st indicates any other type of ''Smalltalk'' object.
 
 For example, the code in *ex_api_setter* shows how ''actions:'' is implemented in ""ButtonModel"".
 
@@ -63,7 +59,6 @@ action: aBlock
 !!! Meta information for registration methods
 
 The pragma for registration methods information always is ''<api: #event>''.
-@@note For Ben: Idem as in getter pragma.
 For example, the code in *ex_api_registration* shows how the method ''whenActionChangedDo:'' is implemented in ""ButtonModel"".
 
 [[[label=ex_api_registration|caption=Implementation of ButtonModel>>#whenActionChangedDo|language=Smalltalk 
@@ -72,4 +67,19 @@ whenActionChangedDo: aBlock
 	"Set the block performed when the action to perform is changed"
 
 	actionHolder whenChangedDo: aBlock
+]]]
+
+!!! Meta information for behavioural method
+
+The other methods should be mainly behavioural methods.
+The pragma for these methods is ''<api: #do>''.
+The example *ex_resetSelection* shows how ''resetSelection'' is implemented in ""ListModel"".
+
+[[[label=ex_resetSelection|caption=Implementation of ListModel>>#resetSelection|language=Smalltalk
+resetSelection
+	<api: #do>
+	"Unselect every items"
+
+	selectionHolder reset.
+	multiSelectionHolder removeAll
 ]]]
