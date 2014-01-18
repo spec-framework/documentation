@@ -18,7 +18,7 @@ after_success:
 - cp -r figures output/
 - cp -r figures output/chapters/
 - mv *.md output/chapters/
-- git add output
+- git add -r output
 - git commit -m "Generate Markdown output"
 - git push https://BenjaminVanRyseghem:${GH_TOKEN}@github.com/SpecForPharo/documentation.git "${TRAVIS_BRANCH}"
 env:
