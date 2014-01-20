@@ -27,7 +27,7 @@ There are three types of public API methods: getters, setters and registration m
 
 
 The pragma for getters is always 
-*<api: \#inspect>*\.
+`<api: #inspect>`\.
 For example, the code in 
 [1\.1](#ex_api_getter) shows how the 
 *action*  method in 
@@ -53,7 +53,7 @@ For example, the code in
 
 The pragma for setters is a bit more complex\.
 The pattern of the pragma is 
-*<api: typeOfState getter: getterSelector registration: registrationMethodSelector>*\.
+`<api: typeOfState getter: getterSelector registration: registrationMethodSelector>`\.
 In this pattern, 
 *typeOfState* , 
 *getterSelector* and 
