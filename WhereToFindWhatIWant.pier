@@ -15,7 +15,7 @@ There are three types of public API methods: getters, setters and registration m
 
 !!! Meta information for getters
 
-The pragma for getters is always ''<api: #inspect>''.
+The pragma for getters is always ==<api: #inspect>==.
 For example, the code in *ex_api_getter* shows how the ''action''  method in ""ButtonModel"" is implemented.
 
 [[[label=ex_api_getter|caption=Implementation of ButtonModel>>#action|language=Smalltalk 
@@ -29,7 +29,7 @@ action
 !!! Meta information for setters
 
 The pragma for setters is a bit more complex.
-The pattern of the pragma is ''<api: typeOfState getter: getterSelector registration: registrationMethodSelector>''.
+The pattern of the pragma is ==<api: typeOfState getter: getterSelector registration: registrationMethodSelector>==.
 In this pattern, ''typeOfState'' , ''getterSelector'' and ''registrationMethodSelector'' need to be substituted by the relevant values for this setter.
 
 The ''getterSelector'' specifies the name of the getter method (a Symbol) that returns the state set by this method.
