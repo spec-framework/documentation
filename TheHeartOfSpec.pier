@@ -107,9 +107,9 @@ It also specifies how a widget reacts when the window is resized.
 
 For the same UI multiple layouts can be described, and when the UI is built a specific layout to use can be specified.
 If no such specific layout is given, the following lookup mechanism will be used to obtain the layout method:
-# Search on class side, throughout the whole class hierarchy, for a method with the pragma ''<spec: #default>''.
+# Search on class side, throughout the whole class hierarchy, for a method with the pragma ==<spec: #default>==.
 # If multiple such methods exist, the first one found is used.
-# If none such methods exist and if there is exactly one method with the pragma ''<spec>'', this method is used.
+# If none such methods exist and if there is exactly one method with the pragma ==<spec>==, this method is used.
 # No layout method is found, an error is raised.
 
 This method is on class side because it returns a value that usually is the same for all the instances.
