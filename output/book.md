@@ -214,9 +214,9 @@ For the same UI multiple layouts can be described, and when the UI is built a sp
 If no such specific layout is given, the following lookup mechanism will be used to obtain the layout method:
 
 
-1.  Search on class side, throughout the whole class hierarchy, for a method with the pragma *<spec: \#default>*\.
+1.  Search on class side, throughout the whole class hierarchy, for a method with the pragma `<spec: #default>`\.
 2.  If multiple such methods exist, the first one found is used\.
-3.  If none such methods exist and if there is exactly one method with the pragma *<spec>*, this method is used\.
+3.  If none such methods exist and if there is exactly one method with the pragma `<spec>`, this method is used\.
 4.  No layout method is found, an error is raised\.
 
 
