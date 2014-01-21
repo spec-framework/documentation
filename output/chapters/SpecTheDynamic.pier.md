@@ -12,6 +12,14 @@ Second, sub widgets are added or removed at runtime and therefore the programmer
 *Spec* also provides support for such dynamic user interfaces\.
 In this section we show how to use 
 *Spec* in these situations\.
+
+
+To be able to compose dynamic user interfaces at run time, a new method has been introduced\.
+This method is 
+`assign:to:` and take a model instance as a first argument, and a unique symbol as a second argument\.
+This way composing dynamic model is as simple as composing any other user interface\.
+
+
 First, we talk about making dynamic modifications of the layout of widgets, and second we discuss the dynamic adding and removing of subwidgets\.
 Third and last we show how the dynamic features can be used to quickly prototype a user interface\.
 
@@ -116,11 +124,21 @@ By example, if a widget named
 
 
 
-###1\.3\.  Example: Prototyping a UI
+###1\.3\.  Examples: Prototyping a UI
 
 
 Thanks to the capability of 
 *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
+The following examples show how 
+*Spec* can be used to prototype quickly a user interace\.
+
+
+The first example explains how to design by prototyping a user interface\.
+The second example introduce the composition of dynamic models\.
+
+
+
+####1\.3\.1\.  Designing a pop up
 
 
 This example shows how to easily and quickly design a popup window asking for an input\.
@@ -290,3 +308,79 @@ The result can be seen in Figure
 
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
+
+
+####1\.3\.2\.  Composing dynamic models
+
+
+This exemple shows in three parts how to buid a simple code browser\.
+
+
+First a simple list widget is created displaying all the subclasses of AstractWidgetModel\.
+
+
+
+
+<a name="ex_dyn_list"></a>**Defining a list widget**
+
+
+    m := DynamicComposableModel new.
+    m instantiateModels: #( list ListModel ).
+    m list items: (AbstractWidgetModel allSubclasses sorted: [:a :b | a name < b name ]).
+    m layout: (SpecLayout composed
+    	add: #list;
+    	yourself).
+    m openWithSpec.
+
+
+
+Then the list widget is reused to build a viewer widget displaying the protocol methods of the selected class\.
+
+
+
+
+<a name="ex_dyn_protocols"></a>**Definition of a protocol methods viewer**
+
+
+    m2 := DynamicComposableModel new.
+    m2 assign: m to: #classes.
+    m2 instantiateModels: #( methods ListModel ).
+    m list whenSelectedItemChanged: [ :item | 
+    	item 
+    		ifNil: [ m2 methods: #() ]
+    		ifNotNil: [ m2 methods items: ((item selectorsInProtocol: 'protocol') sorted) ] ].
+    m2 layout: (SpecLayout composed
+    	newRow: [ :r | r add: #classes; add: #methods ];
+    	yourself).
+    m2 openWithSpec.
+
+
+
+Finally the last widget is defined with the viewer previously created\.
+In addition, a text zone is edited to show the selected method source code\.
+
+
+
+
+<a name="ex_dyn_browser"></a>**Definition of a Protocol Browser**
+
+
+    m3 := DynamicComposableModel new.
+    m3 assign: m2 to: #top.
+    m3 instantiateModels: #( text TextModel ).
+    m2 methods whenSelectedItemChanged: [ :selector | 
+    	selector ifNil: [ m3 text text: '' ] ifNotNil: [ m3 text text: (m list selectedItem >> selector ) sourceCode ] ].
+    m3 layout: (SpecLayout composed
+    	newColumn: [ :c | c add: #top; add: #text ];
+    	yourself).
+    	
+    m3 openWithSpec.
+    m3 title: 'Protocol browser'
+
+
+
+The final result looks like the Figure 
+[1\.2](#ex_browser)\.
+
+
+<a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
