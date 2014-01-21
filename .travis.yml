@@ -2,7 +2,7 @@ language: c
 install:
 - sudo FORCE_ADD_APT_REPOSITORY=1 add-apt-repository ppa:pharo/stable
 - sudo apt-get update
-- sudo apt-get install pharo-launcher:i386
+- sudo apt-get install pharo-vm-core:i386
 before_script: ./download.sh
 script: ./compile.sh
 after_success:
