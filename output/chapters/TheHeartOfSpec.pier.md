@@ -11,12 +11,19 @@ These axes materialize themselves as the following three methods:
 
 
 
+
     Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
 
 &nbsp;
 
 
     Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
+
+&nbsp;
+
+
+    Note: to Johan: should we introduce ComposableModel somewhere?
+
 
 
 We first detail some necessary terminology before discussing each of these methods in more detail\.
@@ -289,7 +296,7 @@ Having the widgets rendered as a column is similar, as shown in the example
 
 Rows and columns can be combined to build more complex layouts, and splitters between cells can be added\.
 The example 
-[1\.6](#ex_three_columns) shows how to create a 3 column layout, containing three buttons in each column\.
+[1\.6](#ex_three_columns) shows how to create a 3 columns layout, containing three buttons in each column\.
 This example also shows the 
 `addSplitter` message, which adds a splitter between the element added before it and the element added after\.
 
@@ -463,7 +470,7 @@ All the methods for adding sub widgets can be found in the
 
 
 As explained in the section 
-[1\.3](#subsec_layout), a UI can have multiple different layouts\.
+[1\.3](#subsec_layout), a UI can have multiple layouts\.
 So when the layout of a widget that is composed of multiple sub\-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub\-widgets, the layout method to use can be specified\.
 
 
