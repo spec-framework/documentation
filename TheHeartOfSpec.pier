@@ -3,8 +3,11 @@
 
 Spec is built around three axes that are inspired by the MVP pattern.
 These axes materialize themselves as the following three methods: ==initializeWidgets==, ==initializePresenter==, and ==defaultSpec==.
+
 @@note For JF we need to talk about the name of the class, you need to subclass it to make a new UI
 @@note For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
+@@note to Johan: should we introduce ComposableModel somewhere?
+
 We first detail some necessary terminology before discussing each of these methods in more detail.
 
 
@@ -176,7 +179,7 @@ Having the widgets rendered as a column is similar, as shown in the example *ex_
 
 
 Rows and columns can be combined to build more complex layouts, and splitters between cells can be added.
-The example *ex_three_columns* shows how to create a 3 column layout, containing three buttons in each column.
+The example *ex_three_columns* shows how to create a 3 columns layout, containing three buttons in each column.
 This example also shows the ==addSplitter== message, which adds a splitter between the element added before it and the element added after.
 
 [[[label=ex_three_columns|caption=3 columns layout|language=Smalltalk 
@@ -290,7 +293,7 @@ _
 All the methods for adding sub widgets can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
 
 
-As explained in the section *subsec_layout*, a UI can have multiple different layouts.
+As explained in the section *subsec_layout*, a UI can have multiple layouts.
 So when the layout of a widget that is composed of multiple sub-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub-widgets, the layout method to use can be specified.
 
 All the methods seen in the previous examples come with a variant used to specify which selector to use for the layout method.
