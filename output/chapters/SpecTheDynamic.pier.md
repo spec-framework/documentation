@@ -14,12 +14,6 @@ In this section we show how to use
 *Spec* in these situations\.
 
 
-To be able to compose dynamic user interfaces at run time, a new method has been introduced\.
-This method is 
-`assign:to:` and take a model instance as a first argument, and a unique symbol as a second argument\.
-This way composing dynamic model is as simple as composing any other user interface\.
-
-
 First, we talk about making dynamic modifications of the layout of widgets, and second we discuss the dynamic adding and removing of subwidgets\.
 Third and last we show how the dynamic features can be used to quickly prototype a user interface\.
 
@@ -44,7 +38,6 @@ First, a helper method is used to obtain a
 Second, the 
 `needRebuild` flag is set to 
 `false` such that the existing UI element is reused\.
-This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.
 Third, the rebuilding of the user interface is performed\.
 
 
@@ -96,6 +89,14 @@ To prevent this, the message
 If a user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.
 In this scenario, 
 `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+Amongst others, this class adds the method 
+`assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
+
+
+
+
+    Note: For Ben: explain when assign:to: is used.
+
 
 
 When using 
@@ -130,11 +131,11 @@ By example, if a widget named
 Thanks to the capability of 
 *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 The following examples show how 
-*Spec* can be used to prototype quickly a user interace\.
+*Spec* can be used to quickly prototype a user interace\.
 
 
 The first example explains how to design by prototyping a user interface\.
-The second example introduce the composition of dynamic models\.
+The second example introduces the composition of dynamic models\.
 
 
 
@@ -356,8 +357,8 @@ Then the list widget is reused to build a viewer widget displaying the protocol 
 
 
 
-Finally the last widget is defined with the viewer previously created\.
-In addition, a text zone is edited to show the selected method source code\.
+Finally the last widget is defined with the previously created viewer\.
+In addition, a text zone is added to show the selected methods source code\.
 
 
 

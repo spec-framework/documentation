@@ -7,21 +7,26 @@
 
 
 Writing user interfaces is notoriously a tedious task\.
-It often requires time and a clear understanding of the separation of concerns\. 
-Indeed most of the frameworks mix domain applicative models with widget models\.
+It often requires time and a clear understanding of the separation of concerns between the logic of the model and the logic of the user interface\.
+Indeed, many frameworks mix domain models with widget models\.
 
 
 *Spec* is a framework for describing user interfaces\. 
-It allows the separation of concerns between the different part of the user interface as expressed in the MVP pattern\.
-*Spec* emphasis the reuse of the widgets as well as there customization\.
+It allows for the separation of concerns between the different parts of the user interface as expressed in the MVP pattern, on which it is inspired\.
+*Spec* emphasizes the reuse of widgets as well as their customization\.
+The goal of this text is to provide an overview of the functionalities of 
+*Spec*\. 
 
 
-This article goal is to provide an overview of the 
-*Spec* functionalities\. 
-The general purpose of 
-*Spec* will be explained through several examples among sections\.
+To avoid possible misunderstandings due to confusion in terminology, we first define the following four terms, which will be used frequently:
 
+<dl><dt>UI Element
+</dt><dd>an interactive graphical element displayed as part of the Graphical User Interface.</dd><dt>UI Model
+</dt><dd>an object that contains the state and behavior of one or several UI elements.</dd><dt>Widget
+</dt><dd>the union of a UI Element and its UI model.</dd><dt>Basic widgets
+</dt><dd>low level widgets like a list, a button, etc. They are not composed of other widgets.</dd></dl>
 
+The structure of this text is as follows:
 First the 3 pillars of 
 *Spec* will be explained\. 
 Second we expose how 
@@ -34,51 +39,47 @@ The final section is dedicated to the creation of your own
 *Spec* model\.
 
 
+
+
+    Note: JF: check structure.
+
+
+
 ##2\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
 
-Spec is built around three axes that are inspired by the MVP pattern\.
-These axes materialize themselves as the following three methods: 
+All user interfaces in 
+*Spec* are constructed through the composition of existing user interfaces\.
+To define a user interface, it is sufficient to define the model of the user interface\.
+The UI elements that correspond to this model are instantiated by 
+*Spec*, depending on the underlying UI framework\.
+It is the composition of this model and these UI elements that makes up the resulting widget that is shown to the user, i\.e\. the resulting user interface\.
+Hence, since all UIs are constructed through 
+**composition** of other UI's, and it is sufficient to define the 
+**model** to define the UI, the root class of all UIs is named 
+`ComposableModel`\.
+So, to define a new user interface, a subclass of 
+`ComposableModel` needs to be created\.
+
+
+As said above, Spec is inspired by the MVP pattern\.
+It is built around three axes that materialize themselves as the following three methods in 
+`ComposableModel`: 
 `initializeWidgets`, 
 `initializePresenter`, and 
 `defaultSpec`\.
+These methods are hence typically found in the model for each user interface\.
+In this section we describe the responsibility for each method, i\.e\. how these three work together to build the overall UI\.
 
 
 
-
-    Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
-
-&nbsp;
+###2\.1\.  the *initializeWidgets* method 
 
 
-    Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
-
-&nbsp;
-
-
-    Note: to Johan: should we introduce ComposableModel somewhere?
-
-
-
-We first detail some necessary terminology before discussing each of these methods in more detail\.
-
-
-
-To avoid possible misunderstandings in this text due to confusion in terminology, we define four terms:
-
-<dl><dt>UI Element
-</dt><dd>an interactive graphical element displayed as part of the Graphical User Interface.</dd><dt>UI Model
-</dt><dd>an object that contains the state and behavior of one or several UI elements.</dd><dt>Widget
-</dt><dd>the union of a UI Element and its UI model.</dd><dt>Basic widgets
-</dt><dd>low level widgets like a list, a button, etc. They are not composed of other widgets.</dd></dl>
-
-
-
-###2\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
-
-
-This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.
-The configuration and default values of each widget are specified here as well\.
+This method is used to instantiate the models for the different widgets that will be part of the UI and store them in their respective instance variables\.
+Instantiation of the models will in turn result in the instantiation and initialization of the different widgets that make up the UI\.
+Consequently, configuration and default values of each widget are specified here as well, which is why this method is called 
+**initializeWidgets**\.
 This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.
 The behavior to update model state, e\.g\. when pressing a 
 `Save` button, is described in this method as well\.
@@ -139,7 +140,7 @@ Third it specifies the focus order of all the widgets: first the button and then
 ####2\.1\.1\.  Widget instantiation
 
 
-The instantiation of a widget can be done in two ways: through the use of an creation method or through the use of the 
+The instantiation of the model for a widget \(and hence the widget\) can be done in two ways: through the use of an creation method or through the use of the 
 `instantiate:` method\.
 Considering the first option, the framework provides unary messages for the creation of all basic widgets\.
 The format of these messages is 
@@ -157,7 +158,7 @@ For example, to reuse a
 ` self instantiate: MessageBrowser.`
 
 
-###2\.2\.  The *initializePresenter* method <sub>\(the MVP Interactor\)</sub>
+###2\.2\.  The *initializePresenter* method
 
 
 This method takes care of the interactions between the different widgets\.
@@ -210,7 +211,7 @@ The whole event API of the basic widgets is described in the section
 
 
 
-###2\.3\.  the *layout* method <sub>\(the MVP Presenter\)</sub>
+###2\.3\.  the *layout* method
 <a name="subsec_layout"></a>
 
 This method specifies the layout of the different widgets in the UI\.
@@ -233,7 +234,7 @@ Note that the lookup for the spec method to use starts on instance side, which a
 
 
 The simpliest example of such a method is laying out just one widget\.
-The example 
+Example 
 [2\.3](#ex_layout1) presents such a layout\.
 It returns a layout in which just one widget is added: the widget contained in 
 `theList` instance variable\.
@@ -252,8 +253,8 @@ It returns a layout in which just one widget is added: the widget contained in
 
 The symbol 
 `theList` refers to an instance side method returning a widget\.
-This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.
-Note that by default, a widget will take all the space available\.
+This is because instance variables are private, so the layout class needs to use an accessor to obtain it when building the UI\.
+Note that by default, a widget will take all the space available in its container\.
 
 
 As said above, multiple layouts can be described for the same user interface\.
@@ -285,7 +286,14 @@ Next is an example that explains how to specify a widget
 The last example presents the 
 [expert](#layout_expert) mode in case everything else fails\.
 To conclude, this section ends with a little 
-[explanation](#layout_specify_layout) of how to specify which layout to use and where to find the complete API\.
+[explanation](#layout_specify_layout) of how to specify which layout to use when a model defines multiple layouts\.
+
+
+
+
+
+    All the methods for adding sub widgets can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
+
 
 <a name="layout_rows_and_column_layout"></a>
 Often the layout of user interfaces can be described in rows and columns, and 
@@ -337,7 +345,7 @@ This example also shows the
 
 
 
-<a name="ex_three_columns"></a>**3 columns layout**
+<a name="ex_three_columns"></a>**3\-column layout**
 
 
     ^ SpecLayout composed
@@ -375,7 +383,7 @@ This example also shows the
 The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.
 The example 
 [2\.7](#ex_row_height) shows how to specify the height of a row in pixels while the example 
-[2\.8](#ex_column_width) how to specify the column width\.
+[2\.8](#ex_column_width) shows how to specify the column width\.
 
 
 
@@ -496,13 +504,6 @@ It specifies that the widget in the
 
 <a name="layout_specify_layout"></a>
 
-All the methods for adding sub widgets can be found in the 
-*commands* and 
-*commands\-advanced* protocols of 
-**SpecLayout**\.
-
-
-
 As explained in the section 
 [2\.3](#subsec_layout), a UI can have multiple layouts\.
 So when the layout of a widget that is composed of multiple sub\-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub\-widgets, the layout method to use can be specified\.
@@ -546,7 +547,7 @@ This section explains where to find the API of a model and meaning of the meta i
 Each model contains at least two protocols that group the public API methods\.
 The first protocol is named 
 **protocol**\.
-It gathers all the methods that set or get the different state elements of the model plus the behavioural methods acting directly on these elements\.
+It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements\.
 The second protocol is named 
 **protocol\-events**\.
 It gathers all the methods that are used to register to a state change\.
@@ -637,7 +638,7 @@ For example, the code in
 ###3\.3\.  Meta information for registration methods
 
 
-The pragma for registration methods information always is 
+The pragma for registration methods information is always 
 *<api: \#event>*\.
 For example, the code in 
 [3\.3](#ex_api_registration) shows how the method 
@@ -659,13 +660,14 @@ For example, the code in
 
 
 
-###3\.4\.  Meta information for behavioural method
+###3\.4\.  Meta information for behavioral methods
 
 
-The other methods should be mainly behavioural methods\.
+The other methods should be mainly methods that implement some
+behavior of the widget\.
 The pragma for these methods is 
 *<api: \#do>*\.
-The example 
+For example,  
 [3\.4](#ex_resetSelection) shows how 
 *resetSelection* is implemented in 
 **ListModel**\.
@@ -699,12 +701,6 @@ In this section we show how to use
 *Spec* in these situations\.
 
 
-To be able to compose dynamic user interfaces at run time, a new method has been introduced\.
-This method is 
-`assign:to:` and take a model instance as a first argument, and a unique symbol as a second argument\.
-This way composing dynamic model is as simple as composing any other user interface\.
-
-
 First, we talk about making dynamic modifications of the layout of widgets, and second we discuss the dynamic adding and removing of subwidgets\.
 Third and last we show how the dynamic features can be used to quickly prototype a user interface\.
 
@@ -729,7 +725,6 @@ First, a helper method is used to obtain a
 Second, the 
 `needRebuild` flag is set to 
 `false` such that the existing UI element is reused\.
-This leads to the replacement of the content of the current container instead of just instantiating a new UI element\.
 Third, the rebuilding of the user interface is performed\.
 
 
@@ -781,6 +776,14 @@ To prevent this, the message
 If a user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.
 In this scenario, 
 `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+Amongst others, this class adds the method 
+`assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
+
+
+
+
+    Note: For Ben: explain when assign:to: is used.
+
 
 
 When using 
@@ -815,11 +818,11 @@ By example, if a widget named
 Thanks to the capability of 
 *Spec* to dynamically instantiate widgets, it is also possible to prototype a user interface from within any workspace\.
 The following examples show how 
-*Spec* can be used to prototype quickly a user interace\.
+*Spec* can be used to quickly prototype a user interace\.
 
 
 The first example explains how to design by prototyping a user interface\.
-The second example introduce the composition of dynamic models\.
+The second example introduces the composition of dynamic models\.
 
 
 
@@ -1041,8 +1044,8 @@ Then the list widget is reused to build a viewer widget displaying the protocol 
 
 
 
-Finally the last widget is defined with the viewer previously created\.
-In addition, a text zone is edited to show the selected method source code\.
+Finally the last widget is defined with the previously created viewer\.
+In addition, a text zone is added to show the selected methods source code\.
 
 
 
@@ -1070,7 +1073,7 @@ The final result looks like the Figure
 
 <a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
 
-##5\.  Creating new basic widget
+##5\.  Creating new basic widgets
 
 
 *Spec* provides for a large amount and wide variety of basic widgets\. 
@@ -1089,7 +1092,7 @@ We then present the three steps of widget creation: writing a new model, writing
 
 
 The UI building process does not make a distinction between basic and composed widgets\.
-Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.
+At a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.
 However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.
 Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
@@ -1141,7 +1144,7 @@ Value holders are needed because they are later used to propagate state changes 
 
 
 For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.
-The first two should classified in the protocol named 
+The first two should be classified in the protocol named 
 *protocol* while the registration method should be in 
 *protocol\-events*\.
 For example, the code in 
@@ -1169,11 +1172,11 @@ For example, the code in
 
 
 The last step to define a new model is to implement a method 
-`adapterName` at the class side\.
+`adapterName` on the class side\.
 The method should be in the protocol named 
 *spec* and should return a symbol\.
 The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word 
-*Adapter* like 
+*Adapter*, like 
 **ListAdapter**\.
 
 
@@ -1187,7 +1190,7 @@ In fact the message
 
 
 
-    Note: For Ben. I still don't understand it. Please explain to me tomorrow.
+    Note: For Ben. I still don't understand it. Please explain to me.
 
 
 
@@ -1198,7 +1201,7 @@ In fact the message
 An adapter must be a subclass of 
 **AbstractAdapter**\.
 The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.
-The adapter is an object used to connect a UI framework specific element and the framework independent model\.
+The adapter is an object used to connect a UI framework specific element to the framework independent model\.
 
 
 The only mandatory method for an adapter is 
@@ -1271,7 +1274,7 @@ The example
 ###5\.4\.  The UI Framework binding
 
 
-The bindings is an object that is used to resolve the name of the adapter at run time\.
+The binding is an object that is used to resolve the name of the adapter at run time\.
 This allows for the same model to be used with several UI frameworks\.
 
 
@@ -1298,6 +1301,14 @@ For creating a specific binding, the class
 `initializeBindings`\.
 It can then be used during a spec interpretation by setting it as the bindings to use for the 
 **SpecInterpreter**\.
+
+
+
+
+    Note: For Ben: Explain "Spec interpretation"
+
+
+
 The example 
 [5\.5](#ex_setting_bindings) shows how to do so\.
 

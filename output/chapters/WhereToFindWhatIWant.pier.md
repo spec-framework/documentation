@@ -11,7 +11,7 @@ This section explains where to find the API of a model and meaning of the meta i
 Each model contains at least two protocols that group the public API methods\.
 The first protocol is named 
 **protocol**\.
-It gathers all the methods that set or get the different state elements of the model plus the behavioural methods acting directly on these elements\.
+It gathers all the methods that set or get the different state elements of the model plus the behavioral methods acting directly on these elements\.
 The second protocol is named 
 **protocol\-events**\.
 It gathers all the methods that are used to register to a state change\.
@@ -102,7 +102,7 @@ For example, the code in
 ###1\.3\.  Meta information for registration methods
 
 
-The pragma for registration methods information always is 
+The pragma for registration methods information is always 
 *<api: \#event>*\.
 For example, the code in 
 [1\.3](#ex_api_registration) shows how the method 
@@ -124,13 +124,14 @@ For example, the code in
 
 
 
-###1\.4\.  Meta information for behavioural method
+###1\.4\.  Meta information for behavioral methods
 
 
-The other methods should be mainly behavioural methods\.
+The other methods should be mainly methods that implement some
+behavior of the widget\.
 The pragma for these methods is 
 *<api: \#do>*\.
-The example 
+For example,  
 [1\.4](#ex_resetSelection) shows how 
 *resetSelection* is implemented in 
 **ListModel**\.

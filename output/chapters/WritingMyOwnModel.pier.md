@@ -1,6 +1,6 @@
 
 
-##1\.  Creating new basic widget
+##1\.  Creating new basic widgets
 
 
 *Spec* provides for a large amount and wide variety of basic widgets\. 
@@ -19,7 +19,7 @@ We then present the three steps of widget creation: writing a new model, writing
 
 
 The UI building process does not make a distinction between basic and composed widgets\.
-Hence, at a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.
+At a specific point in the building process of a basic widget the default spec method of the widget is called, just as if it would be a composed widget\.
 However in this case, instead of providing a layout for multiple widgets that comprise the UI, this method builds an adapter to the underlying UI framework\.
 Depending of the underlying UI framework that is currently used, this method can provide different kind of adapters, for example an adapter for Morphic, or an adapter for Seaside, etc\.
 
@@ -71,7 +71,7 @@ Value holders are needed because they are later used to propagate state changes 
 
 
 For each instance variable that holds state three methods should be defined: the getter, the setter, and the registration method\.
-The first two should classified in the protocol named 
+The first two should be classified in the protocol named 
 *protocol* while the registration method should be in 
 *protocol\-events*\.
 For example, the code in 
@@ -99,11 +99,11 @@ For example, the code in
 
 
 The last step to define a new model is to implement a method 
-`adapterName` at the class side\.
+`adapterName` on the class side\.
 The method should be in the protocol named 
 *spec* and should return a symbol\.
 The symbol should be composed of the basic concept of the widget, e\.g\. list or button, and the word 
-*Adapter* like 
+*Adapter*, like 
 **ListAdapter**\.
 
 
@@ -117,7 +117,7 @@ In fact the message
 
 
 
-    Note: For Ben. I still don't understand it. Please explain to me tomorrow.
+    Note: For Ben. I still don't understand it. Please explain to me.
 
 
 
@@ -128,7 +128,7 @@ In fact the message
 An adapter must be a subclass of 
 **AbstractAdapter**\.
 The adapter name should be composed of the UI framework name, e\.g\. Morphic, and the name of the adapter it is implementing, e\.g\. ListAdapter\.
-The adapter is an object used to connect a UI framework specific element and the framework independent model\.
+The adapter is an object used to connect a UI framework specific element to the framework independent model\.
 
 
 The only mandatory method for an adapter is 
@@ -201,7 +201,7 @@ The example
 ###1\.4\.  The UI Framework binding
 
 
-The bindings is an object that is used to resolve the name of the adapter at run time\.
+The binding is an object that is used to resolve the name of the adapter at run time\.
 This allows for the same model to be used with several UI frameworks\.
 
 
@@ -228,6 +228,14 @@ For creating a specific binding, the class
 `initializeBindings`\.
 It can then be used during a spec interpretation by setting it as the bindings to use for the 
 **SpecInterpreter**\.
+
+
+
+
+    Note: For Ben: Explain "Spec interpretation"
+
+
+
 The example 
 [1\.5](#ex_setting_bindings) shows how to do so\.
 

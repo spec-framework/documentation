@@ -3,48 +3,38 @@
 ##1\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
 
-Spec is built around three axes that are inspired by the MVP pattern\.
-These axes materialize themselves as the following three methods: 
+All user interfaces in 
+*Spec* are constructed through the composition of existing user interfaces\.
+To define a user interface, it is sufficient to define the model of the user interface\.
+The UI elements that correspond to this model are instantiated by 
+*Spec*, depending on the underlying UI framework\.
+It is the composition of this model and these UI elements that makes up the resulting widget that is shown to the user, i\.e\. the resulting user interface\.
+Hence, since all UIs are constructed through 
+**composition** of other UI's, and it is sufficient to define the 
+**model** to define the UI, the root class of all UIs is named 
+`ComposableModel`\.
+So, to define a new user interface, a subclass of 
+`ComposableModel` needs to be created\.
+
+
+As said above, Spec is inspired by the MVP pattern\.
+It is built around three axes that materialize themselves as the following three methods in 
+`ComposableModel`: 
 `initializeWidgets`, 
 `initializePresenter`, and 
 `defaultSpec`\.
+These methods are hence typically found in the model for each user interface\.
+In this section we describe the responsibility for each method, i\.e\. how these three work together to build the overall UI\.
 
 
 
-
-    Note: For JF we need to talk about the name of the class, you need to subclass it to make a new UI
-
-&nbsp;
+###1\.1\.  the *initializeWidgets* method 
 
 
-    Note: For JF add some blah of the interplay/how the 3 work together to build the overall UI and we discuss the role of the 3 methods here
-
-&nbsp;
-
-
-    Note: to Johan: should we introduce ComposableModel somewhere?
-
-
-
-We first detail some necessary terminology before discussing each of these methods in more detail\.
-
-
-
-To avoid possible misunderstandings in this text due to confusion in terminology, we define four terms:
-
-<dl><dt>UI Element
-</dt><dd>an interactive graphical element displayed as part of the Graphical User Interface.</dd><dt>UI Model
-</dt><dd>an object that contains the state and behavior of one or several UI elements.</dd><dt>Widget
-</dt><dd>the union of a UI Element and its UI model.</dd><dt>Basic widgets
-</dt><dd>low level widgets like a list, a button, etc. They are not composed of other widgets.</dd></dl>
-
-
-
-###1\.1\.  the *initializeWidgets* method  <sub>\(the MVP View\)</sub>
-
-
-This method is used to instantiate the different widgets that are part of the UI and store them in their respective instance variables\.
-The configuration and default values of each widget are specified here as well\.
+This method is used to instantiate the models for the different widgets that will be part of the UI and store them in their respective instance variables\.
+Instantiation of the models will in turn result in the instantiation and initialization of the different widgets that make up the UI\.
+Consequently, configuration and default values of each widget are specified here as well, which is why this method is called 
+**initializeWidgets**\.
 This focus in this method is to specify what the widgets will look like and what their self\-contained behavior is\.
 The behavior to update model state, e\.g\. when pressing a 
 `Save` button, is described in this method as well\.
@@ -105,7 +95,7 @@ Third it specifies the focus order of all the widgets: first the button and then
 ####1\.1\.1\.  Widget instantiation
 
 
-The instantiation of a widget can be done in two ways: through the use of an creation method or through the use of the 
+The instantiation of the model for a widget \(and hence the widget\) can be done in two ways: through the use of an creation method or through the use of the 
 `instantiate:` method\.
 Considering the first option, the framework provides unary messages for the creation of all basic widgets\.
 The format of these messages is 
@@ -123,7 +113,7 @@ For example, to reuse a
 ` self instantiate: MessageBrowser.`
 
 
-###1\.2\.  The *initializePresenter* method <sub>\(the MVP Interactor\)</sub>
+###1\.2\.  The *initializePresenter* method
 
 
 This method takes care of the interactions between the different widgets\.
@@ -176,7 +166,7 @@ The whole event API of the basic widgets is described in the section
 
 
 
-###1\.3\.  the *layout* method <sub>\(the MVP Presenter\)</sub>
+###1\.3\.  the *layout* method
 <a name="subsec_layout"></a>
 
 This method specifies the layout of the different widgets in the UI\.
@@ -199,7 +189,7 @@ Note that the lookup for the spec method to use starts on instance side, which a
 
 
 The simpliest example of such a method is laying out just one widget\.
-The example 
+Example 
 [1\.3](#ex_layout1) presents such a layout\.
 It returns a layout in which just one widget is added: the widget contained in 
 `theList` instance variable\.
@@ -218,8 +208,8 @@ It returns a layout in which just one widget is added: the widget contained in
 
 The symbol 
 `theList` refers to an instance side method returning a widget\.
-This is because as instance variables are private, the layout class needs to use an accessor to obtain it when building the UI\.
-Note that by default, a widget will take all the space available\.
+This is because instance variables are private, so the layout class needs to use an accessor to obtain it when building the UI\.
+Note that by default, a widget will take all the space available in its container\.
 
 
 As said above, multiple layouts can be described for the same user interface\.
@@ -251,7 +241,14 @@ Next is an example that explains how to specify a widget
 The last example presents the 
 [expert](#layout_expert) mode in case everything else fails\.
 To conclude, this section ends with a little 
-[explanation](#layout_specify_layout) of how to specify which layout to use and where to find the complete API\.
+[explanation](#layout_specify_layout) of how to specify which layout to use when a model defines multiple layouts\.
+
+
+
+
+
+    All the methods for adding sub widgets can be found in the ''commands'' and ''commands-advanced'' protocols of ""SpecLayout"".
+
 
 <a name="layout_rows_and_column_layout"></a>
 Often the layout of user interfaces can be described in rows and columns, and 
@@ -303,7 +300,7 @@ This example also shows the
 
 
 
-<a name="ex_three_columns"></a>**3 columns layout**
+<a name="ex_three_columns"></a>**3\-column layout**
 
 
     ^ SpecLayout composed
@@ -341,7 +338,7 @@ This example also shows the
 The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.
 The example 
 [1\.7](#ex_row_height) shows how to specify the height of a row in pixels while the example 
-[1\.8](#ex_column_width) how to specify the column width\.
+[1\.8](#ex_column_width) shows how to specify the column width\.
 
 
 
@@ -461,13 +458,6 @@ It specifies that the widget in the
 ---
 
 <a name="layout_specify_layout"></a>
-
-All the methods for adding sub widgets can be found in the 
-*commands* and 
-*commands\-advanced* protocols of 
-**SpecLayout**\.
-
-
 
 As explained in the section 
 [1\.3](#subsec_layout), a UI can have multiple layouts\.
