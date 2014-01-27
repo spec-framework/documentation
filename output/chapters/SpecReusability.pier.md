@@ -18,7 +18,7 @@ Third a protocol viewer is defined by combining a
 **ProtocolList** to browse the 
 *protocol* and 
 *protocol\-events* methods\.
-Finally a protocol editor is made by reusing a protocol viewer with a text zone in addition\.
+Finally a protocol browser is made by reusing a protocol viewer with a text zone in addition\.
 
 
 
@@ -177,8 +177,8 @@ The code
     	<spec: #default>
     
     	^ SpecLayout composed
-    		newColumn: [ :r |
-    			r 
+    		newColumn: [ :column |
+    			column
     				add: #label
     				height: self toolbarHeight;
     				add: #protocols ];
@@ -239,3 +239,332 @@ The code
 The 
 **ProtocolList** UI can be seen by evaluating the snippet 
 `ProtocolList new openWithSpec`\.
+
+
+
+###1\.3\.  The ProtocolViewer
+
+
+The third user interface is a composition of the two previous user interfaces\.
+It is composed of a 
+**ModelList** and two 
+**ProtocolList**\.
+When a model class is selected, the methods in the protocol 
+*protocol* and in the protocol 
+*protocol\-events* are listed\.
+
+
+The class has now three instance variables: 
+`models` to store the 
+**ModelList**, 
+`protocols` to store the 
+**ProtocolList** for the protocol 
+*protocol*, and 
+`events` to store the 
+**ProtocolList** for protocol 
+*protocol\-events*\.
+The code 
+[1\.9](#ex_viewer_definition) shows the definition of the class 
+**ProtocolViewer**\.
+
+
+
+
+<a name="ex_viewer_definition"></a>**ProtocolViewer definition**
+
+
+    ComposableModel subclass: #ProtocolViewer
+    	instanceVariableNames: 'models protocols events'
+    	classVariableNames: ''
+    	category: 'Spec-Examples'
+
+
+
+The 
+`initializeWidgets` method remains quite similar to the previous implementation as shown in the code 
+[1\.10](#ex_viewer_initializeWidgets)\.
+
+
+
+
+<a name="ex_viewer_initializeWidgets"></a>**Implementation of ProtocolViewer>>\#initializeWidgets**
+
+
+    initializeWidgets
+    
+    	models := self instantiate: ModelList.
+    	protocols := self instantiate: ProtocolList.
+    	events := self instantiate: ProtocolList.
+    	
+    	protocols
+    		label: 'protocol';
+    		displayBlock: [ :m | m selector ].
+    	events
+    		label: 'protocol-events';
+    		displayBlock: [ :m | m selector ].
+    		
+    	self focusOrder 
+    		add: models;
+    		add: protocols;
+    		add: events
+
+
+
+The layout put the sub widget in one column, with all sub widget taking the same amount of space\.
+The code 
+[1\.11](#ex_viewer_layout) shows the implementation of this layout\.
+
+
+
+
+<a name="ex_viewer_layout"></a>**ProtocolViewer column layout**
+
+
+    defaultSpec
+    	<spec: #default>
+    	
+    	^ SpecLayout composed
+    		newColumn: [ :column |
+    			column 
+    				add: #models; 
+    				add: #protocols; 
+    				add: #events ];
+    		yourself
+
+
+
+The method 
+`initializePresenter` describe the interactions between the sub widgets\.
+Here it specifies that when a class is selected, the two protocol lists are populated\.
+The protocol list selections are also resetted when a new class is selected\.
+The implementation of this method is exposed in code 
+[1\.12](#ex_viewer_presenter)\.
+
+
+
+
+<a name="ex_viewer_presenter"></a>**ProtocolViewer interactions**
+
+
+    initializePresenter
+    
+    	models whenSelectedItemChanged: [ :class |
+    		protocols resetSelection.
+    		events resetSelection.
+    		class
+    			ifNil: [ 
+    				protocols items: #().
+    				events items: #() ]
+    			ifNotNil: [ 
+    				protocols items: (self methodsIn: class for: 'protocol').
+    				events items: (self methodsIn: class for: 'protocol-events') ] ].
+    	
+    	protocols whenSelectedItemChanged: [ :method | method ifNotNil: [ self resetEventSelection ] ].
+    	events whenSelectedItemChanged: [ :method | method ifNotNil: [ self resetProtocolSelection ] ].
+
+
+
+The remaining methods are getters, methods to delegate to sub widgets, one method to compute the methods in a specific class for a specific protocol, and methods to register to sub widgets events\.
+Those methods are summed up in the code 
+[1\.13](#ex_viewer_others)\.
+
+
+
+
+<a name="ex_viewer_others"></a>**ProtocolViewer other methods**
+
+
+    "accessing"
+    events
+    	^ events
+    
+    "accessing"
+    models
+    	^ models
+    
+    "accessing"
+    protocols
+    	^ protocols
+    
+    "private"
+    methodsIn: class for: protocol
+    
+    	^ (class methodsInProtocol: protocol)
+    		sorted: [ :a :b | a selector < b selector ]
+    
+    "protocol"
+    resetEventSelection
+    
+    	events resetSelection
+    
+    "protocol"
+    resetProtocolSelection
+    
+    	protocols resetSelection
+    
+    "protocol"
+    title
+    
+    	^ 'Protocol viewer'
+    
+    "protocol-events"
+    whenClassChanged: aBlock
+    
+    	models whenSelectedItemChanged: aBlock
+    
+    "protocol-events"
+    whenEventChangedDo: aBlock
+    
+    	events whenSelectedItemChanged: aBlock
+    
+    "protocol-events"
+    whenProtocolChangedDo: aBlock
+    
+    	protocols whenSelectedItemChanged: aBlock
+
+
+
+As previously the result can be seen by executing the following snippet: 
+`ProtocolViewer new openWithSpec`\.
+
+
+
+###1\.4\.  Protocol Editor
+
+
+The last user interface reuses a 
+**ProtocolViewer** with a different and a text zone to visualize the selected method sourceCode\.
+The class definition can be seen in code 
+[1\.14](#ex_browser_definition)\.
+
+
+
+
+<a name="ex_browser_definition"></a>**ProtocolBrowser definition**
+
+
+    ComposableModel subclass: #ProtocolEditor
+    	instanceVariableNames: 'viewer text'
+    	classVariableNames: ''
+    	category: 'Spec-Examples'
+
+
+
+The 
+`initializeWidgets` implementation is exposed in code 
+[1\.15](#ex_browser_initializeWidgets)\.
+
+
+
+
+<a name="ex_browser_initializeWidgets"></a>**ProtocolEditor>>\#initializeWidgets**
+
+
+    initializeWidgets
+    
+    	text := self newText.
+    	viewer := self instantiate: ProtocolViewer.
+    	
+    	text aboutToStyle: true.
+    
+    	self focusOrder 
+    		add: viewer;
+    		add: text
+
+
+
+The layout is more complex than previous layouts\.
+Indeed, the user interface mainly layout sub widget sub widgets\.
+The layout is based on a column which first row is divided in columns\.
+The implementation of this method is shown in code 
+[1\.16](#ex_browser_layout)\.
+
+
+
+
+<a name="ex_browser_layout"></a>**ProtocolBrowser layout**
+
+
+    defaultSpec
+    	<spec: #default>
+    	
+    	^ SpecLayout composed
+    		newColumn: [ :col | 
+    			col 
+    				newRow: [ :r | 
+    					r 
+    						add: #(viewer models);
+    					 	newColumn: [ :c | 
+    							c 
+    								add: #(viewer protocols);
+    								add: #(viewer events) ] ];
+    				add: #text
+    		];
+    		yourself
+
+
+
+The 
+`initalizePresenter` method is used to make the text zone reacts to lists selection\.
+When a method is seleted, the text zone update its contents to show the selected method source code\.
+The implementation of this method is detailled in code 
+[1\.17](#ex_browser_presenter)\.
+
+
+
+
+<a name="ex_browser_presenter"></a>**ProtocolBrowser interactions**
+
+
+    initializePresenter
+    
+    	viewer whenClassChanged: [ :class | text behavior: class ].
+    
+    	viewer whenProtocolChangedDo: [ :item | 
+    		item 
+    			ifNil: [ text text: '' ]
+    			ifNotNil: [ text text: item sourceCode ] ].
+    	viewer whenEventChangedDo: [ :item | 
+    		item 
+    			ifNil: [ text text: '' ]
+    			ifNotNil: [ text text: item sourceCode ] ]
+
+
+
+The others methods are two getters, a method to set the default size, and a method to set the UI title\.
+Their implemenations are detailled in code 
+[1\.18](#ex_browser_others)\.
+
+
+
+
+<a name="ex_browser_others"></a>**ProtocolBrowser remaining methods**
+
+
+    "accessing"
+    text
+    	^ text
+    
+    "accessing"
+    viewer
+    	^ viewer
+    
+    "protocol"
+    initialExtent
+    
+    	^ 750@600
+    
+    "protocol"
+    title
+    
+    	^ 'Protocols browser'
+
+
+
+The final user interface can be opened with the following snippet: 
+`ProtocolBrowser new openWithSpec`\.
+The result can be seen in figure 
+[1\.1](#fig_protocol_browser)\.
+
+
+<a name="fig\_protocol\_browser"></a>![fig\_protocol\_browser](figures/Protocol_Browser.png "Protocol Browser")
