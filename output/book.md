@@ -45,7 +45,248 @@ The final section is dedicated to the creation of your own
 
 
 
-##2\.  The heart of Spec
+##2\.  Reuse with *Spec*
+<a name="sec_reuse_spec"></a>
+
+The section introduces an exemple of how to define and reuse 
+*Spec* models\.
+
+
+The example is structured in four parts\.
+First a list dedicated to render the subclasses of 
+`AbstractWidgetModel` is created under the name 
+**ModelList**\.
+Second a UI composed of a list and a label is defined and named 
+**ProtocolList**\.
+Third a protocol viewer is defined by combining a 
+**ModelList** with two 
+**ProtocolList** to browse the 
+*protocol* and 
+*protocol\-events* methods\.
+Finally a protocol editor is made by reusing a protocol viewer with a text zone in addition\.
+
+
+
+###2\.1\.  The MethodList
+
+
+Defining a dedicated list is quite simple since 
+**ListModel** provides default values for all the states\.
+Creating a specific widget always starts with the subclassing of 
+**ComposableModel**\.
+Each sub widget is stored into an instance variable\.
+The snippet 
+[2\.1](#ex_model_list) shows the definition of ModelList\.
+
+
+
+
+<a name="ex_model_list"></a>**ModelList definition**
+
+
+    ComposableModel subclass: #ModelList
+    	instanceVariableNames: 'list'
+    	classVariableNames: ''
+    	category: 'Spec-Examples'
+
+
+
+The first required step then is to instantiate and define the sub widget\.
+This step is done in the method 
+**MethodList** as shown is the code 
+[2\.2](#ex_modelList_initializeWidgets)\.
+
+
+
+
+<a name="ex_modelList_initializeWidgets"></a>**Implementation of ModelList>>\#initializeWidgets**
+
+
+    initializeWidgets
+    
+    	list := self newList.
+    	
+    	list items: (AbstractWidgetModel allSubclasses 
+    		sorted: [:a :b | a name < b name ]).
+    		
+    	self focusOrder add: list
+
+
+
+The second required step is to define a layout on class side\.
+Since there is here only one sub widget, the layout is quite simple as shown in code 
+[2\.3](#ex_modelList_layout)\.
+
+
+
+
+<a name="ex_modelList_layout"></a>**ModelList layout**
+
+
+    ModelList class>>#defaultSpec
+    	<spec: #default>
+    	
+    	^ SpecLayout composed
+    		add: #list;
+    		yourself
+
+
+
+The three last methods defined on MethodList are a getter, and method to display the UI title and a method to register to list selection changes\.
+The code 
+[2\.4](#ex_modelList_others) shows the implementation of these three methods and their protocol\.
+
+
+
+
+<a name="ex_modelList_others"></a>**ModelList other methods**
+
+
+    "accessing"
+    list
+    	^ list
+    	
+    "protocol"
+    title
+    
+    	^ 'Widgets'
+    	
+    "protocol-events"
+    whenSelectedItemChanged: aBlock
+    
+    	list whenSelectedItemChanged: aBlock
+
+
+
+
+The first UI is now done\.
+The result can be seen by performing the following snippet: 
+`ModelList new openWithSpec`\.
+
+
+
+###2\.2\.  The ProtocolList
+
+
+The next user interface is the protocol list\.
+This UI combines two sub widgets: a list and a label\.
+The class definition is then similar to the code 
+[2\.5](#ex_protocolList_definition)\.
+
+
+
+
+<a name="ex_protocolList_definition"></a>**ProtocolList definition**
+
+
+    ComposableModel subclass: #ProtocolList
+    	instanceVariableNames: 'label protocols'
+    	classVariableNames: ''
+    	category: 'Spec-Examples'
+
+
+
+The 
+`initializeWidgets` method for this UI is quite similar of the ModelList method as the code 
+[2\.6](#ex_protocolList_init) shows\.
+
+
+
+
+<a name="ex_protocolList_init"></a>**ProtocolList implementation of initializeWidgets**
+
+
+    initializeWidgets
+    
+    	protocols := self newList.
+    	label := self newLabel.
+    	
+    	label text: 'Protocol'.
+    	
+    	self focusOrder add: protocols
+
+
+
+The layout method is quite different though\.
+Indeed the sub widgets need to be placed more specifically than previously\.
+The code 
+[2\.7](#ex_protocolList_layout) shows how to build a column with the label on top and the list taking all the space left\.
+
+
+
+
+<a name="ex_protocolList_layout"></a>**ProtocolList layout**
+
+
+    defaultSpec
+    	<spec: #default>
+    
+    	^ SpecLayout composed
+    		newColumn: [ :r |
+    			r 
+    				add: #label
+    				height: self toolbarHeight;
+    				add: #protocols ];
+    		yourself
+
+
+
+The remaining methods are getters, sub widget delegation methods, a method to disply the title, and a method to register to list selection changes\.
+The code 
+[2\.8](#ex_protocolList_others) shows the implementations of these methods as well as their protocol\.
+
+
+
+
+<a name="ex_protocolList_others"></a>**ProtocolList other methods**
+
+
+    "accessing"
+    label
+    	^ label
+    	
+    "accessing"
+    protocols
+    	^ protocols
+    	
+    "protocol"
+    displayBlock: aBlock
+    
+    	protocols displayBlock: aBlock
+    
+    "protocol"
+    items: aCollection
+    
+    	protocols items: aCollection
+    	
+    "protocol"
+    label: aText
+    
+    	label text: aText
+    	
+    "protocol"
+    resetSelection
+    
+    	protocols resetSelection
+    	
+    "protocol"
+    title
+    
+    	^ 'Protocol widget'
+    	
+    "protocol-events"
+    whenSelectedItemChanged: aBlock
+    
+    	protocols whenSelectedItemChanged: aBlock
+
+
+
+The 
+**ProtocolList** UI can be seen by evaluating the snippet 
+`ProtocolList new openWithSpec`\.
+
+
+##3\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
 
 All user interfaces in 
@@ -73,7 +314,7 @@ In this section we describe the responsibility for each method, i\.e\. how these
 
 
 
-###2\.1\.  the *initializeWidgets* method 
+###3\.1\.  the *initializeWidgets* method 
 
 
 This method is used to instantiate the models for the different widgets that will be part of the UI and store them in their respective instance variables\.
@@ -104,7 +345,7 @@ Indeed, without this final step keyboard navigation will not work at all\.
 
 
 The code in figure 
-[2\.1](#pattern) shows an example of an 
+[3\.1](#pattern) shows an example of an 
 `initializeWidgets` method\.
 It first instantiates a button and a list widget, storing each in an instance variable\.
 It second configures the button it by setting its label\.
@@ -137,7 +378,7 @@ Third it specifies the focus order of all the widgets: first the button and then
 
 
 
-####2\.1\.1\.  Widget instantiation
+####3\.1\.1\.  Widget instantiation
 
 
 The instantiation of the model for a widget \(and hence the widget\) can be done in two ways: through the use of an creation method or through the use of the 
@@ -158,7 +399,7 @@ For example, to reuse a
 ` self instantiate: MessageBrowser.`
 
 
-###2\.2\.  The *initializePresenter* method
+###3\.2\.  The *initializePresenter* method
 
 
 This method takes care of the interactions between the different widgets\.
@@ -176,7 +417,7 @@ In addition to this primitive
 
 
 The example 
-[2\.2](#ex_button) shows how to use one of the registration methods of the list widget to change the label of the button according to the selection in the list\.
+[3\.2](#ex_button) shows how to use one of the registration methods of the list widget to change the label of the button according to the selection in the list\.
 
 
 
@@ -192,7 +433,7 @@ The example
 
 
 The whole event API of the basic widgets is described in the section 
-[3](#sec_where_to_find_what_I_want)\.
+[4](#sec_where_to_find_what_I_want)\.
 
 
 
@@ -211,7 +452,7 @@ The whole event API of the basic widgets is described in the section
 
 
 
-###2\.3\.  the *layout* method
+###3\.3\.  the *layout* method
 <a name="subsec_layout"></a>
 
 This method specifies the layout of the different widgets in the UI\.
@@ -235,7 +476,7 @@ Note that the lookup for the spec method to use starts on instance side, which a
 
 The simpliest example of such a method is laying out just one widget\.
 Example 
-[2\.3](#ex_layout1) presents such a layout\.
+[3\.3](#ex_layout1) presents such a layout\.
 It returns a layout in which just one widget is added: the widget contained in 
 `theList` instance variable\.
 
@@ -273,7 +514,7 @@ The pragma can be either
 
 
 
-####2\.3\.1\.  Layout Examples
+####3\.3\.1\.  Layout Examples
 
 
 As layouts can become quite complex, this section provides a list of examples of the construction of layouts\.
@@ -299,7 +540,7 @@ To conclude, this section ends with a little
 Often the layout of user interfaces can be described in rows and columns, and 
 **Spec** provides for an easy way to specify such layouts\.
 The example 
-[2\.4](#ex_layout_row) shows how to build a row of widgets\.
+[3\.4](#ex_layout_row) shows how to build a row of widgets\.
 
 
 
@@ -318,7 +559,7 @@ The example
 
 
 Having the widgets rendered as a column is similar, as shown in the example 
-[2\.5](#ex_layout_column)
+[3\.5](#ex_layout_column)
 
 
 
@@ -338,7 +579,7 @@ Having the widgets rendered as a column is similar, as shown in the example
 
 Rows and columns can be combined to build more complex layouts, and splitters between cells can be added\.
 The example 
-[2\.6](#ex_three_columns) shows how to create a 3 columns layout, containing three buttons in each column\.
+[3\.6](#ex_three_columns) shows how to create a 3 columns layout, containing three buttons in each column\.
 This example also shows the 
 `addSplitter` message, which adds a splitter between the element added before it and the element added after\.
 
@@ -382,8 +623,8 @@ This example also shows the
 <a name="layout_set_size_pixels"></a>
 The height of rows as well as the width of columns can be specified, to prevent them to take all the available space\.
 The example 
-[2\.7](#ex_row_height) shows how to specify the height of a row in pixels while the example 
-[2\.8](#ex_column_width) shows how to specify the column width\.
+[3\.7](#ex_row_height) shows how to specify the height of a row in pixels while the example 
+[3\.8](#ex_column_width) shows how to specify the column width\.
 
 
 
@@ -429,7 +670,7 @@ When specifying custom widget sizes, care should be taken to take in account the
 It is also possible to specify the percentage of the container, e\.g\. the window, that a widget should occupy\.
 As a result of this, the widget size will change accordingly when the container is resized\.
 To do so, the proportional position of the four sides of a widget can be specified, as shown in the example 
-[2\.9](#ex_layout_proportional)\.
+[3\.9](#ex_layout_proportional)\.
 
 
 For each edge, the proportion indicates at what percentage of the overall container the edge should be placed\.
@@ -483,7 +724,7 @@ Note that this approach is similar to the ProportionalLayout of
 
 
 The example 
-[2\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.
+[3\.10](#ex_layout_expert) shows how to add a widget as a toolbar\.
 It specifies that the widget in the 
 `toolbar` instance variable should take all the window width, but should be only 30 pixels in height\.
 
@@ -505,7 +746,7 @@ It specifies that the widget in the
 <a name="layout_specify_layout"></a>
 
 As explained in the section 
-[2\.3](#subsec_layout), a UI can have multiple layouts\.
+[3\.3](#subsec_layout), a UI can have multiple layouts\.
 So when the layout of a widget that is composed of multiple sub\-widgets is defined, and this widget contains multiple layout methods that determine the layout of its sub\-widgets, the layout method to use can be specified\.
 
 
@@ -520,7 +761,7 @@ For example, consider a widget
 `firstLayout` as the default layout and another layout method called 
 `anotherLayout`\.
 The example 
-[2\.11](#ex_specify_layout) shows how to add an instance of 
+[3\.11](#ex_specify_layout) shows how to add an instance of 
 **MyWidget** using its 
 `anotherLayout` layout method\.
 
@@ -536,7 +777,7 @@ The example
 
 
 
-##3\.  Where to find what I want
+##4\.  Where to find what I want
 <a name="sec_where_to_find_what_I_want"></a>
 
 All the 
@@ -559,13 +800,13 @@ There are three types of public API methods: getters, setters and registration m
 
 
 
-###3\.1\.  Meta information for getters
+###4\.1\.  Meta information for getters
 
 
 The pragma for getters is always 
 `<api: #inspect>`\.
 For example, the code in 
-[3\.1](#ex_api_getter) shows how the 
+[4\.1](#ex_api_getter) shows how the 
 *action*  method in 
 **ButtonModel** is implemented\.
 
@@ -584,7 +825,7 @@ For example, the code in
 
 
 
-###3\.2\.  Meta information for setters
+###4\.2\.  Meta information for setters
 
 
 The pragma for setters is a bit more complex\.
@@ -616,7 +857,7 @@ The possible types are as follows:
 
 
 For example, the code in 
-[3\.2](#ex_api_setter) shows how 
+[4\.2](#ex_api_setter) shows how 
 *actions:* is implemented in 
 **ButtonModel**\.
 
@@ -635,13 +876,13 @@ For example, the code in
 
 
 
-###3\.3\.  Meta information for registration methods
+###4\.3\.  Meta information for registration methods
 
 
 The pragma for registration methods information is always 
 *<api: \#event>*\.
 For example, the code in 
-[3\.3](#ex_api_registration) shows how the method 
+[4\.3](#ex_api_registration) shows how the method 
 *whenActionChangedDo:* is implemented in 
 **ButtonModel**\.
 
@@ -660,7 +901,7 @@ For example, the code in
 
 
 
-###3\.4\.  Meta information for behavioral methods
+###4\.4\.  Meta information for behavioral methods
 
 
 The other methods should be mainly methods that implement some
@@ -668,7 +909,7 @@ behavior of the widget\.
 The pragma for these methods is 
 *<api: \#do>*\.
 For example,  
-[3\.4](#ex_resetSelection) shows how 
+[4\.4](#ex_resetSelection) shows how 
 *resetSelection* is implemented in 
 **ListModel**\.
 
@@ -687,7 +928,7 @@ For example,
 
 
 
-##4\.  Spec the Dynamic
+##5\.  Spec the Dynamic
 <a name="sec_spec_the_dynamic"></a>
 
 Having an user interface with a well known number of sub widgets and a static layout is not always sufficient\. 
@@ -706,7 +947,7 @@ Third and last we show how the dynamic features can be used to quickly prototype
 
 
 
-###4\.1\.  Dynamic modification of the layout
+###5\.1\.  Dynamic modification of the layout
 
 
 Changing the layout of widgets at runtime is straightforward, as we will see here\.
@@ -719,7 +960,7 @@ Such changes basically consist of three steps:
 
 
 The code in 
-[4\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.
+[5\.1](#rebuildDynamically) is an example of rebuilding a widget with a new layout\.
 First, a helper method is used to obtain a 
 `SpecLayout` object that determines the new layout\.
 Second, the 
@@ -750,7 +991,7 @@ For example, if a model comprising a
 *list* just wants to rearrange the position of these UI elements, there is no need to rebuild them, i\.e\. instantiate new UI elements for them\.
 To prevent this, the message 
 `needRebuild: false` should be send to them, as shown in the example 
-[4\.2](#ex_needRebuild)\.
+[5\.2](#ex_needRebuild)\.
 
 
 
@@ -770,7 +1011,7 @@ To prevent this, the message
 
 
 
-###4\.2\.  Dynamic adding and removal of subwidgets
+###5\.2\.  Dynamic adding and removal of subwidgets
 
 
 If a user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.
@@ -797,7 +1038,7 @@ This allows for a widget to be accessed by sending a message whose selector is t
 By example, if a widget named 
 `button` is created, then this widget can be accessed by calling 
 `self button` as shown in the example 
-[4\.3](#ex_dynamic_creation)\.
+[5\.3](#ex_dynamic_creation)\.
 
 
 
@@ -811,7 +1052,7 @@ By example, if a widget named
 
 
 
-###4\.3\.  Examples: Prototyping a UI
+###5\.3\.  Examples: Prototyping a UI
 
 
 Thanks to the capability of 
@@ -825,14 +1066,14 @@ The second example introduces the composition of dynamic models\.
 
 
 
-####4\.3\.1\.  Designing a pop up
+####5\.3\.1\.  Designing a pop up
 
 
 This example shows how to easily and quickly design a popup window asking for an input\.
 
 
 First we create a simple model with two sub widgets, a label and a text field, as shown by the snippet 
-[4\.4](#ex_widget_creation)\.
+[5\.4](#ex_widget_creation)\.
 
 
 
@@ -847,7 +1088,7 @@ First we create a simple model with two sub widgets, a label and a text field, a
 
 
 We can then specify the title and the initial size of the widget, adding the code in 
-[4\.5](#ex_set_title)\.
+[5\.5](#ex_set_title)\.
 
 
 
@@ -863,7 +1104,7 @@ We can then specify the title and the initial size of the widget, adding the cod
 Then we specify the UI element layout\.
 It will be only one row with the label and the text field\.
 The snippet 
-[4\.6](#ex_layout) shows the layout definition\.
+[5\.6](#ex_layout) shows the layout definition\.
 
 
 
@@ -886,7 +1127,7 @@ The next step is to set up the sub widget state and behavior\.
 We set the text of the label as well as the ghost text of the textfield\.
 We also specify here that the text field should automatically accept the text on each keystroke, such that it does not show the yellow 'edited' triangle on the top right\.
 This is shown in the code in 
-[4\.7](#ex_setup_subwidget)\.
+[5\.7](#ex_setup_subwidget)\.
 
 
 
@@ -915,7 +1156,7 @@ We also set the toolbar action for when
 *Ok* is clicked: the current text of the text field will be saved in the instance variable 
 *regex*\.
 The code in 
-[4\.8](#ex_toolbar) shows how to do it\.
+[5\.8](#ex_toolbar) shows how to do it\.
 
 
 
@@ -933,7 +1174,7 @@ We can also add a shortcut to the text field on
 *Enter* to simulate the click on 
 *Ok*\.
 The code 
-[4\.9](#ex_shortcut) illustrates how to set up such a shortcut\.
+[5\.9](#ex_shortcut) illustrates how to set up such a shortcut\.
 
 
 
@@ -950,7 +1191,7 @@ The code
 This completes the specification of the UI\.
 As a final step, when opening it we pass it the toolbar and configure it to be centered in the Pharo window and modal\.
 The code in 
-[4\.10](#ex_final) shows the final version of the code
+[5\.10](#ex_final) shows the final version of the code
 
 
 
@@ -991,13 +1232,13 @@ The code in
 
 
 The result can be seen in Figure 
-[4\.1](#fig_popup)\.
+[5\.1](#fig_popup)\.
 
 
 <a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
 
 
-####4\.3\.2\.  Composing dynamic models
+####5\.3\.2\.  Composing dynamic models
 
 
 This exemple shows in three parts how to buid a simple code browser\.
@@ -1067,12 +1308,12 @@ In addition, a text zone is added to show the selected methods source code\.
 
 
 The final result looks like the Figure 
-[4\.2](#ex_browser)\.
+[5\.2](#ex_browser)\.
 
 
 <a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
 
-##5\.  Creating new basic widgets
+##6\.  Creating new basic widgets
 
 
 *Spec* provides for a large amount and wide variety of basic widgets\. 
@@ -1087,7 +1328,7 @@ We then present the three steps of widget creation: writing a new model, writing
 
 
 
-###5\.1\.  One step in the building process of a widget
+###6\.1\.  One step in the building process of a widget
 
 
 The UI building process does not make a distinction between basic and composed widgets\.
@@ -1104,13 +1345,13 @@ This is this framework\-specific widget that will be added to the widget contain
 
 
 Figure 
-[5\.1](#model_adapter_uielement) shows the relationship between those objects\.
+[6\.1](#model_adapter_uielement) shows the relationship between those objects\.
 
 
 <a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
 
 
-###5\.2\.  The Model
+###6\.2\.  The Model
 
 
 The new model needs to be a subclass of 
@@ -1127,10 +1368,10 @@ Examples of widget\-specific state are:
 
 The state is wrapped in value holders and kept in instance variables\.
 For example, the code in 
-[5\.1](#ex_value_holder) shows how to wrap the state 
+[6\.1](#ex_value_holder) shows how to wrap the state 
 `0` in a value holder and keep it as an instance variable\.
 Value holders are needed because they are later used to propagate state changes and thus create the interaction flow of the user interface, as discussed in Section 
-[2](#sec_heart_of_spec)\.
+[3](#sec_heart_of_spec)\.
 
 
 
@@ -1147,8 +1388,8 @@ The first two should be classified in the protocol named
 *protocol* while the registration method should be in 
 *protocol\-events*\.
 For example, the code in 
-[5\.2](#ex_mutators) shows the methods for the example code in 
-[5\.1](#ex_value_holder)\. 
+[6\.2](#ex_mutators) shows the methods for the example code in 
+[6\.1](#ex_value_holder)\. 
 
 
 
@@ -1190,7 +1431,7 @@ Then each adapter can convert this
 By example, the method \#filterWith: send by 
 **TreeModel** via 
 `changed: with:` is then implemented as shown in 
-[5\.3](#ex_filter_with) in MorphicTreeAdapter
+[6\.3](#ex_filter_with) in MorphicTreeAdapter
 
 
 
@@ -1211,7 +1452,7 @@ By example, the method \#filterWith: send by
 
 
 
-###5\.3\.  The Adapter
+###6\.3\.  The Adapter
 
 
 An adapter must be a subclass of 
@@ -1226,7 +1467,7 @@ This method has the responsibility to instantiate the corresponding UI element\.
 
 
 The example 
-[5\.4](#ex_adapter_instanciation) shows how 
+[6\.4](#ex_adapter_instanciation) shows how 
 **MorphicButtonAdapter** instantiates its UI element\.
 
 
@@ -1271,7 +1512,7 @@ This method executes the block provided as argument, which will only happen afte
 
 
 The example 
-[5\.5](#ex_emphasis) shows how 
+[6\.5](#ex_emphasis) shows how 
 **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
 
 
@@ -1287,7 +1528,7 @@ The example
 
 
 
-###5\.4\.  The UI Framework binding
+###6\.4\.  The UI Framework binding
 
 
 The binding is an object that is used to resolve the name of the adapter at run time\.
@@ -1305,7 +1546,7 @@ It requires to update two methods:
 The method 
 `SpecAdapterBindings>>#initializeBindings` is present only to expose the whole set of adapters required\.
 It fills up a dictionary as shown in the code 
-[5\.6](#ex_adapter_init)\.
+[6\.6](#ex_adapter_init)\.
 
 
 
@@ -1353,7 +1594,7 @@ To implement a new binding, a subclass of
 This method will now binds 
 *Spec* adapter names with framework specific adapter class names\.
 The example 
-[5\.7](#ex_morphic_bindings) shows how the morphic binding implements the method 
+[6\.7](#ex_morphic_bindings) shows how the morphic binding implements the method 
 `initializeBindings`\.
 
 
@@ -1405,7 +1646,7 @@ The binding is managed by the
 
 
 The example 
-[5\.8](#ex_setting_bindings) shows how to do change the binding to use the 
+[6\.8](#ex_setting_bindings) shows how to do change the binding to use the 
 **MyOwnBindingClass** class\.
 
 
@@ -1422,7 +1663,7 @@ Note that the
 **SpecInterpreter** bindings are reset after each execution\.
 
 
-##6\.  The Spec interpreter
+##7\.  The Spec interpreter
 <a name="sec_spec_interpreter"></a>
 
 In order to create a framework specific UI element a 
@@ -1440,7 +1681,7 @@ The section will explain the different part of a model interpretation\.
 
 
 
-###6\.1\.  Collect the data
+###7\.1\.  Collect the data
 
 
 Before the interpreting loop itself, the interpreter starts by collecting the needed data from the model\.
@@ -1463,7 +1704,7 @@ The wrapper will at the end provide the result of the interpretation\.
 
 
 
-###6\.2\.  Interpretation loop
+###7\.2\.  Interpretation loop
 
 
 Once all the required data are collected, the interpretation loop can begin\.
