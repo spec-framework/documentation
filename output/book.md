@@ -780,10 +780,9 @@ Amongst others, this class adds the method
 `assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
 
 
-
-
-    Note: For Ben: explain when assign:to: is used.
-
+This method is used to assign an already instantiated model as sub widget while the method 
+`instantiateModels:` takes a class name as argument\.
+The fact the method is based on classes prevent to use a dynamically created model as sub widget\.
 
 
 When using 
@@ -1183,14 +1182,31 @@ The symbol should be composed of the basic concept of the widget, e\.g\. list or
 The communication from the UI model to the adapter is performed using the dependents mechanism\.
 This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.
 In fact the message 
-`change: with: ` is used to send the message 
+`changed: with: ` is used to send the message 
 *selector* with the arguments 
-*aCollection* to the adapter\.
+*aCollection* to the adapters\.
+Then each adapter can convert this 
+*Spec* message into a framework specific message\. 
+By example, the method \#filterWith: send by 
+**TreeModel** via 
+`changed: with:` is then implemented as shown in 
+[5\.3](#ex_filter_with) in MorphicTreeAdapter
 
 
 
 
-    Note: For Ben. I still don't understand it. Please explain to me.
+<a name="ex_filter_with"></a>**Implementation of MorphicTreeAdapter>>\#filterWith:**
+
+
+    filterWith: aFilter
+    	
+    	self widgetDo: [ :w || nodes |
+    		nodes := w model rootNodes.
+    		nodes do: [:r | r nodeModel updateAccordingTo: aFilter].
+    	
+    		self removeRootsSuchAs: [:n | (aFilter keepTreeNode: n) not and: [n isEmpty]].
+    
+    		self changed: #rootNodes ].
 
 
 
@@ -1210,7 +1226,7 @@ This method has the responsibility to instantiate the corresponding UI element\.
 
 
 The example 
-[5\.3](#ex_adapter_instanciation) shows how 
+[5\.4](#ex_adapter_instanciation) shows how 
 **MorphicButtonAdapter** instantiates its UI element\.
 
 
@@ -1222,20 +1238,20 @@ The example
     defaultSpec
     	<spec>
     	
-    	^ {#PluggableButtonMorph.
-    			#color:. Color white.
-    	    		#on:getState:action:label:menu:. 	#model. #state. #action. #label. nil.
-    			#getEnabledSelector:. 				#enabled.
-    			#getMenuSelector:.				#menu:.
-    			#hResizing:. 						#spaceFill.
-    			#vResizing:. 						#spaceFill.
-    			#borderWidth:.						#(model borderWidth).
-    			#borderColor:.						#(model borderColor).
-    			#askBeforeChanging:.				#(model askBeforeChanging).
-    			#setBalloonText:.					{ #model . #help}.
-    			#dragEnabled:.						#(model dragEnabled).
-    			#dropEnabled:.						#(model dropEnabled).	
-    			#eventHandler:.					{	#EventHandler. #on:send:to:. #keyStroke.	#keyStroke:fromMorph:. #model	}}
+    	^ #(PluggableButtonMorph
+    			#color:								#(model color)
+    	    	#on:getState:action:label:menu: 	#model #state #action #label nil
+    			#getEnabledSelector: 				#enabled
+    			#getMenuSelector:					#menu:
+    			#hResizing: 						#spaceFill
+    			#vResizing: 						#spaceFill
+    			#borderWidth:						#(model borderWidth)
+    			#borderColor:						#(model borderColor)
+    			#askBeforeChanging:					#(model askBeforeChanging)
+    			#setBalloonText:					#(model help)
+    			#dragEnabled:						#(model dragEnabled)
+    			#dropEnabled:						#(model dropEnabled)	
+    			#eventHandler:						#(EventHandler on:send:to: keyStroke keyStroke:fromMorph: model)}
 
 
 
@@ -1255,7 +1271,7 @@ This method executes the block provided as argument, which will only happen afte
 
 
 The example 
-[5\.4](#ex_emphasis) shows how 
+[5\.5](#ex_emphasis) shows how 
 **MorphicLabelAdapter** propagates the modification of the emphasis from the adapter to the UI element\.
 
 
@@ -1286,9 +1302,95 @@ It requires to update two methods:
 **MorphicAdapterBindings** for Morphic\.
 
 
+The method 
+`SpecAdapterBindings>>#initializeBindings` is present only to expose the whole set of adapters required\.
+It fills up a dictionary as shown in the code 
+[5\.6](#ex_adapter_init)\.
 
 
-    Note: For Ben: Give an example here.
+
+
+<a name="ex_adapter_init"></a>**Implementation of SpecAdapterBindings>>\#initializeBindings**
+
+
+    initializeBindings
+    	"This implementation is stupid, but it exposes all the container which need to be bound"
+    	
+    	bindings
+    		at: #ButtonAdapter				put: #ButtonAdapter;
+    		at: #CheckBoxAdapter			put: #CheckBoxAdapter;
+    		at: #ContainerAdapter			put: #ContainerAdapter;
+    		at: #DiffAdapter				put: #MorphicDiffAdapter;
+    		at: #ImageAdapter				put: #ImageAdapter;
+    		at: #LabelAdapter				put: #LabelAdapter;
+    		at: #ListAdapter				put: #ListAdapter;
+    		at: #IconListAdapter			put: #IconListAdapter;
+    		at: #DropListAdapter			put: #DropListAdapter;
+    		at: #MultiColumnListAdapter		put: #MultiColumnListAdapter;
+    		at: #MenuAdapter				put: #MenuAdapter;
+    		at: #MenuGroupAdapter			put: #MenuGroupAdapter;
+    		at: #MenuItemAdapter			put: #MenuItemAdapter;	
+    		at: #NewListAdapter				put: #NewListAdapter;
+    		at: #RadioButtonAdapter			put: #RadioButtonAdapter;
+    		at: #SliderAdapter				put: #SliderAdapter;
+    		at: #TabManagerAdapter			put: #TabManagerAdapter;
+    		at: #TabAdapter					put: #TabAdapter;
+    		at: #TextAdapter				put: #TextAdapter;
+    		at: #TextInputFieldAdapter		put: #TextInputFieldAdapter;
+    		at: #TreeAdapter				put: #TreeAdapter;
+    		at: #TreeColumnAdapter			put: #TreeColumnAdapter;
+    		at: #TreeNodeAdapter			put: #TreeNodeAdapter;		
+    		at: #WindowAdapter				put: #WindowAdapter;
+    		at: #DialogWindowAdapter		put: #DialogWindowAdapter;
+    		yourself
+
+
+
+Then each framework specific adapters set should define its own binding\.
+To implement a new binding, a subclass of 
+**SpecAdapterBindings** must be defined that overrides the method 
+`initializeBindings`\.
+This method will now binds 
+*Spec* adapter names with framework specific adapter class names\.
+The example 
+[5\.7](#ex_morphic_bindings) shows how the morphic binding implements the method 
+`initializeBindings`\.
+
+
+
+
+<a name="ex_morphic_bindings"></a>**Definition of Morphic specific bindings**
+
+
+    initializeBindings
+    	
+    	bindings
+    		at: #ButtonAdapter				put: #MorphicButtonAdapter;
+    		at: #CheckBoxAdapter			put: #MorphicCheckBoxAdapter;
+    		at: #ContainerAdapter			put: #MorphicContainerAdapter;
+    		at: #DiffAdapter				put: #MorphicDiffAdapter;
+    		at: #DropListAdapter			put: #MorphicDropListAdapter;
+    		at: #LabelAdapter				put: #MorphicLabelAdapter;
+    		at: #ListAdapter				put: #MorphicListAdapter;
+    		at: #IconListAdapter			put: #MorphicIconListAdapter;
+    		at: #ImageAdapter				put: #MorphicImageAdapter;
+    		at: #MultiColumnListAdapter		put: #MorphicMultiColumnListAdapter;
+    		at: #MenuAdapter				put: #MorphicMenuAdapter;
+    		at: #MenuGroupAdapter			put: #MorphicMenuGroupAdapter;
+    		at: #MenuItemAdapter			put: #MorphicMenuItemAdapter;
+    		at: #NewListAdapter				put: #MorphicNewListAdapter;
+    		at: #RadioButtonAdapter			put: #MorphicRadioButtonAdapter;
+    		at: #SliderAdapter				put: #MorphicSliderAdapter;
+    		at: #TabManagerAdapter			put: #MorphicTabManagerAdapter;
+    		at: #TabAdapter					put: #MorphicTabAdapter;
+    		at: #TextAdapter				put: #MorphicTextAdapter;
+    		at: #TextInputFieldAdapter		put: #MorphicTextInputFieldAdapter;
+    		at: #TreeAdapter				put: #MorphicTreeAdapter;
+    		at: #TreeColumnAdapter			put: #MorphicTreeColumnAdapter;
+    		at: #TreeNodeAdapter			put: #MorphicTreeNodeAdapter;
+    		at: #WindowAdapter				put: #MorphicWindowAdapter;
+    		at: #DialogWindowAdapter		put: #MorphicDialogWindowAdapter;
+    		yourself
 
 
 
@@ -1296,21 +1398,15 @@ Once this is done, the bindings should be re\-initialized by running the followi
 `SpecInterpreter hardResetBindings`\.
 
 
-For creating a specific binding, the class 
-**SpecAdapterBindings** needs to be overriden as well as its method 
-`initializeBindings`\.
-It can then be used during a spec interpretation by setting it as the bindings to use for the 
+Then during the process of computing a 
+*Spec* model and its layout into a framework specific UI element, the binding can be changed to change the output framework\.
+The binding is managed by the 
 **SpecInterpreter**\.
 
 
-
-
-    Note: For Ben: Explain "Spec interpretation"
-
-
-
 The example 
-[5\.5](#ex_setting_bindings) shows how to do so\.
+[5\.8](#ex_setting_bindings) shows how to do change the binding to use the 
+**MyOwnBindingClass** class\.
 
 
 

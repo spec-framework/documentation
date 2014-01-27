@@ -93,10 +93,9 @@ Amongst others, this class adds the method
 `assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
 
 
-
-
-    Note: For Ben: explain when assign:to: is used.
-
+This method is used to assign an already instantiated model as sub widget while the method 
+`instantiateModels:` takes a class name as argument\.
+The fact the method is based on classes prevent to use a dynamically created model as sub widget\.
 
 
 When using 
