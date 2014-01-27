@@ -109,7 +109,7 @@ defaultSpec
 			#setBalloonText:					#(model help)
 			#dragEnabled:						#(model dragEnabled)
 			#dropEnabled:						#(model dropEnabled)	
-			#eventHandler:						#(EventHandler on:send:to: keyStroke keyStroke:fromMorph: model)}
+			#eventHandler:						#(EventHandler on:send:to: keyStroke keyStroke:fromMorph: model))
 ]]]
 
 Since the adapter is bridging the gap between the element of the UI framework and the model, the adapter also needs to forward the queries from the UI element to the model.
