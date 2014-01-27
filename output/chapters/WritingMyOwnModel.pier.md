@@ -179,7 +179,7 @@ The example
     			#setBalloonText:					#(model help)
     			#dragEnabled:						#(model dragEnabled)
     			#dropEnabled:						#(model dropEnabled)	
-    			#eventHandler:						#(EventHandler on:send:to: keyStroke keyStroke:fromMorph: model)}
+    			#eventHandler:						#(EventHandler on:send:to: keyStroke keyStroke:fromMorph: model))
 
 
 
