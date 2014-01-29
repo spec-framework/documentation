@@ -89,13 +89,12 @@ To prevent this, the message
 If a user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.
 In this scenario, 
 `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+
+
 Amongst others, this class adds the method 
 `assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
-
-
-This method is used to assign an already instantiated model as sub widget while the method 
-`instantiateModels:` takes a class name as argument\.
-The fact the method is based on classes prevent to use a dynamically created model as sub widget\.
+This method is used to assign an already instantiated model as sub widget, instead of the method 
+`instantiateModels:` that takes a class name as argument and instantiates a new model\.
 
 
 When using 
@@ -307,7 +306,7 @@ The result can be seen in Figure
 [1\.1](#fig_popup)\.
 
 
-<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
+<a name="fig_popup"></a>![fig_popup](figures/Popup.png "Prototype of a popup")
 
 
 ####1\.3\.2\.  Composing dynamic models
@@ -383,4 +382,4 @@ The final result looks like the Figure
 [1\.2](#ex_browser)\.
 
 
-<a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
+<a name="ex_browser"></a>![ex_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")

@@ -15,7 +15,11 @@ The interpreter entry point is the method
 
 
 The section will explain the different part of a model interpretation\.
+The flow diagram 
+[1\.1](#fig_flow_diagram) shows a different steps of the interpretation of a model\.
 
+
+<a name="fig_flow_diagram"></a>![fig_flow_diagram](figures/Interpretation_Chart.png "Spec interpretation flow chart")
 
 
 ###1\.1\.  Collect the data
@@ -26,9 +30,58 @@ The first required data is the array to interpret\. Then second required data is
 
 
 The array to interpret is extracted to the layout provided with the model\.
+The code 
+[1\.1](#ex_extract_array) shows the convertion of a SpecLayout into an array of literals that the interpreter can iterate over\.
+
+
+
+
+<a name="ex_extract_array"></a>**Convertion of a SpecLayout into an Array of literals**
+
+
+    SpecLayout composed
+    	newRow: [ :row | row add: #theList ];
+    	asArray
+    	 
+    "returns"	 
+    
+    #(#ContainerModel 
+    	#add: #(
+    		#(#ContainerModel 
+    			#add: #(
+    				#(#model #theList) 
+    					#layout: #(
+    						#SpecLayoutFrame 
+    							#leftFraction: 0 
+    							#topFraction: 0 
+    							#rightFraction: 1 
+    							#bottomFraction: 1 
+    							#leftOffset: 0 
+    							#topOffset: 0 
+    							#rightOffset: 0 
+    							#bottomOffset: 0
+    					)
+    			)
+    		) #layout: #(
+    			#SpecLayoutFrame 
+    				#leftFraction: 0 
+    				#topFraction: 0 
+    				#rightFraction: 1 
+    				#bottomFraction: 1 
+    				#leftOffset: 0 
+    				#topOffset: 0 
+    				#rightOffset: 0 
+    				#bottomOffset: 0
+    		)
+    	)
+    )
+
+
+
 But during the recursive calls of the interpretation loop, the interpreter can be called with any kind of object\.
 So the first method is here to extract the data to interpret if any\.
-Otherwise it means the recursive calls reached a "primitive object", in other words an object which can not be interpreted\.
+Otherwise it means the recursive calls reached a "primitive object" \(like interger in the example 
+[1\.1](#ex_extract_array)\), in other words an object which can not be interpreted\.
 In this case the primitive object is directly returned\.
 
 
@@ -48,7 +101,7 @@ Once all the required data are collected, the interpretation loop can begin\.
 
 
 The loop is quite simple\. The first element of the array is popped out of the array to interpret\.
-This argument is the selector of the method to perform to the current receiver \(stored inside the wrapper\)\.
+This literal is the selector of the method to perform on the current receiver \(stored inside the wrapper\)\.
 According to the selector, an adequate number of arguments are popped from the array to interpret\.
 
 
