@@ -567,4 +567,4 @@ The result can be seen in figure
 [1\.1](#fig_protocol_browser)\.
 
 
-<a name="fig\_protocol\_browser"></a>![fig\_protocol\_browser](figures/Protocol_Browser.png "Protocol Browser")
+<a name="fig_protocol_browser"></a>![fig_protocol_browser](figures/Protocol_Browser.png "Protocol Browser")

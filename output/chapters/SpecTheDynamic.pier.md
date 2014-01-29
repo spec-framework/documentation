@@ -306,7 +306,7 @@ The result can be seen in Figure
 [1\.1](#fig_popup)\.
 
 
-<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
+<a name="fig_popup"></a>![fig_popup](figures/Popup.png "Prototype of a popup")
 
 
 ####1\.3\.2\.  Composing dynamic models
@@ -382,4 +382,4 @@ The final result looks like the Figure
 [1\.2](#ex_browser)\.
 
 
-<a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
+<a name="ex_browser"></a>![ex_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")

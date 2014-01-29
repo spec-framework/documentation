@@ -612,7 +612,7 @@ The result can be seen in figure
 [2\.1](#fig_protocol_browser)\.
 
 
-<a name="fig\_protocol\_browser"></a>![fig\_protocol\_browser](figures/Protocol_Browser.png "Protocol Browser")
+<a name="fig_protocol_browser"></a>![fig_protocol_browser](figures/Protocol_Browser.png "Protocol Browser")
 
 ##3\.  The heart of Spec
 <a name="sec_heart_of_spec"></a>
@@ -1562,7 +1562,7 @@ The result can be seen in Figure
 [5\.1](#fig_popup)\.
 
 
-<a name="fig\_popup"></a>![fig\_popup](figures/Popup.png "Prototype of a popup")
+<a name="fig_popup"></a>![fig_popup](figures/Popup.png "Prototype of a popup")
 
 
 ####5\.3\.2\.  Composing dynamic models
@@ -1638,7 +1638,7 @@ The final result looks like the Figure
 [5\.2](#ex_browser)\.
 
 
-<a name="ex\_browser"></a>![ex\_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
+<a name="ex_browser"></a>![ex_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
 
 ##6\.  Creating new basic widgets
 
@@ -1675,7 +1675,7 @@ Figure
 [6\.1](#model_adapter_uielement) shows the relationship between those objects\.
 
 
-<a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
+<a name="model_adapter_uielement"></a>![model_adapter_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
 
 
 ###6\.2\.  The Model
@@ -2006,7 +2006,11 @@ The interpreter entry point is the method
 
 
 The section will explain the different part of a model interpretation\.
+The flow diagram 
+[7\.1](#fig_flow_diagram) shows a different steps of the interpretation of a model\.
 
+
+<a name="fig_flow_diagram"></a>![fig_flow_diagram](figures/Interpretation_Chart.png "Spec interpretation flow chart")
 
 
 ###7\.1\.  Collect the data
@@ -2017,9 +2021,58 @@ The first required data is the array to interpret\. Then second required data is
 
 
 The array to interpret is extracted to the layout provided with the model\.
+The code 
+[7\.1](#ex_extract_array) shows the convertion of a SpecLayout into an array of literals that the interpreter can iterate over\.
+
+
+
+
+<a name="ex_extract_array"></a>**Convertion of a SpecLayout into an Array of literals**
+
+
+    SpecLayout composed
+    	newRow: [ :row | row add: #theList ];
+    	asArray
+    	 
+    "returns"	 
+    
+    #(#ContainerModel 
+    	#add: #(
+    		#(#ContainerModel 
+    			#add: #(
+    				#(#model #theList) 
+    					#layout: #(
+    						#SpecLayoutFrame 
+    							#leftFraction: 0 
+    							#topFraction: 0 
+    							#rightFraction: 1 
+    							#bottomFraction: 1 
+    							#leftOffset: 0 
+    							#topOffset: 0 
+    							#rightOffset: 0 
+    							#bottomOffset: 0
+    					)
+    			)
+    		) #layout: #(
+    			#SpecLayoutFrame 
+    				#leftFraction: 0 
+    				#topFraction: 0 
+    				#rightFraction: 1 
+    				#bottomFraction: 1 
+    				#leftOffset: 0 
+    				#topOffset: 0 
+    				#rightOffset: 0 
+    				#bottomOffset: 0
+    		)
+    	)
+    )
+
+
+
 But during the recursive calls of the interpretation loop, the interpreter can be called with any kind of object\.
 So the first method is here to extract the data to interpret if any\.
-Otherwise it means the recursive calls reached a "primitive object", in other words an object which can not be interpreted\.
+Otherwise it means the recursive calls reached a "primitive object" \(like interger in the example 
+[7\.1](#ex_extract_array)\), in other words an object which can not be interpreted\.
 In this case the primitive object is directly returned\.
 
 
@@ -2039,7 +2092,7 @@ Once all the required data are collected, the interpretation loop can begin\.
 
 
 The loop is quite simple\. The first element of the array is popped out of the array to interpret\.
-This argument is the selector of the method to perform to the current receiver \(stored inside the wrapper\)\.
+This literal is the selector of the method to perform on the current receiver \(stored inside the wrapper\)\.
 According to the selector, an adequate number of arguments are popped from the array to interpret\.
 
 

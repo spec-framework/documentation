@@ -35,7 +35,7 @@ Figure
 [1\.1](#model_adapter_uielement) shows the relationship between those objects\.
 
 
-<a name="model\_adapter\_uielement"></a>![model\_adapter\_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
+<a name="model_adapter_uielement"></a>![model_adapter_uielement](figures/Model-Adapter-UIElement.png "Relationship between the model, the adapter, and the UI element")
 
 
 ###1\.2\.  The Model
