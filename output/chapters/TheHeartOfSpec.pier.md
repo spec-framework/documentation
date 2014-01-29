@@ -29,7 +29,7 @@ In this section we describe the responsibility for each method, i\.e\. how these
 
 
 ###1\.1\.  the *initializeWidgets* method 
-
+<a name="subsec_initializeWidgets"></a>
 
 This method is used to instantiate the models for the different widgets that will be part of the UI and store them in their respective instance variables\.
 Instantiation of the models will in turn result in the instantiation and initialization of the different widgets that make up the UI\.
@@ -114,7 +114,7 @@ For example, to reuse a
 
 
 ###1\.2\.  The *initializePresenter* method
-
+<a name="subsec_initializePresenter"></a>
 
 This method takes care of the interactions between the different widgets\.
 By linking the behavior of the different widgets it specifies the overall presentation, i\.e\. how the overall UI responds to interactions by the user\.
@@ -210,6 +210,19 @@ The symbol
 `theList` refers to an instance side method returning a widget\.
 This is because instance variables are private, so the layout class needs to use an accessor to obtain it when building the UI\.
 Note that by default, a widget will take all the space available in its container\.
+
+
+This method is 
+*not* restricted to laying out sub widgets\.
+It can also refer to sub widgets contained in sub widgets, i\.e\. when
+reusing an existing UI, specify a new layout for the sub widgets that
+comprise this UI\.
+To do this, instead of giving a symbol, an array with 2 symbols must
+be given\.
+The first symbol identifies the UI being reused and the second the sub
+widget within this UI whose new layout position is being specified\.
+We have seen an example of this reuse in 
+[¿?](#subsec_protocol_editor)\.
 
 
 As said above, multiple layouts can be described for the same user interface\.
