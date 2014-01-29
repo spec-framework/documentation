@@ -382,4 +382,4 @@ The final result looks like the Figure
 [1\.2](#ex_browser)\.
 
 
-<a name="ex_browser"></a>![ex_browser](figures/Protocol_Browser.png "Prototype of Protocol Browser")
+<a name="ex_browser"></a>![ex_browser](figures/Dyn_Protocol_Browser.png "Prototype of Protocol Browser")
