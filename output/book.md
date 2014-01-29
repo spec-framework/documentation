@@ -1345,13 +1345,12 @@ To prevent this, the message
 If a user interface needs a varying number of subwidgets, the amount of which cannot be established at compilation time, then another approach is needed\.
 In this scenario, 
 `DynamicComposableModel` is the model that needs to be subclassed, as this class provides support for the required kind of dynamic behavior\.
+
+
 Amongst others, this class adds the method 
 `assign:to:`, which takes a model instance as a first argument, and a unique symbol as a second argument\.
-
-
-This method is used to assign an already instantiated model as sub widget while the method 
-`instantiateModels:` takes a class name as argument\.
-The fact the method is based on classes prevent to use a dynamically created model as sub widget\.
+This method is used to assign an already instantiated model as sub widget, instead of the method 
+`instantiateModels:` that takes a class name as argument and instantiates a new model\.
 
 
 When using 
@@ -1750,15 +1749,16 @@ The symbol should be composed of the basic concept of the widget, e\.g\. list or
 
 The communication from the UI model to the adapter is performed using the dependents mechanism\.
 This mechanism is used to to handle the fact that a same model can have multiple UI elements concurrently displayed\.
-In fact the message 
+The message 
 `changed: with: ` is used to send the message 
 *selector* with the arguments 
 *aCollection* to the adapters\.
-Then each adapter can convert this 
+Each adapter can then convert this 
 *Spec* message into a framework specific message\. 
-By example, the method \#filterWith: send by 
+For example, the method 
+`#filterWith:` sent by 
 **TreeModel** via 
-`changed: with:` is then implemented as shown in 
+`changed: with:` is implemented as shown in 
 [6\.3](#ex_filter_with) in MorphicTreeAdapter
 
 
@@ -1873,7 +1873,7 @@ It requires to update two methods:
 
 The method 
 `SpecAdapterBindings>>#initializeBindings` is present only to expose the whole set of adapters required\.
-It fills up a dictionary as shown in the code 
+It fills a dictionary, as shown in the code 
 [6\.6](#ex_adapter_init)\.
 
 
@@ -1883,7 +1883,7 @@ It fills up a dictionary as shown in the code
 
 
     initializeBindings
-    	"This implementation is stupid, but it exposes all the container which need to be bound"
+    	"This implementation is stupid, but it exposes all the containers which need to be bound"
     	
     	bindings
     		at: #ButtonAdapter				put: #ButtonAdapter;
@@ -1915,11 +1915,11 @@ It fills up a dictionary as shown in the code
 
 
 
-Then each framework specific adapters set should define its own binding\.
+Each UI framework\-specific adapter set should define its own bindings\.
 To implement a new binding, a subclass of 
 **SpecAdapterBindings** must be defined that overrides the method 
 `initializeBindings`\.
-This method will now binds 
+This method must bind 
 *Spec* adapter names with framework specific adapter class names\.
 The example 
 [6\.7](#ex_morphic_bindings) shows how the morphic binding implements the method 
