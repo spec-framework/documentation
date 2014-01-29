@@ -1,7 +1,7 @@
 !! Defining and Reuse UIs with ''Spec''
 @sec_reuse_spec
 
-This section introduces an exemple of how to define and reuse ''Spec'' user interfaces. The example UI that is built will serve to browse the public API of all the basic widgets offered by ''Spec''.
+This section introduces an example of how to define and reuse ''Spec'' user interfaces. The example UI that is built will serve to browse the public API of all the basic widgets offered by ''Spec''.
 This API is further documented in *sec_where_to_find_what_I_want*.
 In this section we do not detail the different parts of ''Spec'' yet, for a more in-depth discussion on the heart of ''Spec''  we refer to *sec_heart_of_spec*.
 

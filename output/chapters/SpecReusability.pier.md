@@ -3,7 +3,7 @@
 ##1\.  Defining and Reuse UIs with *Spec*
 <a name="sec_reuse_spec"></a>
 
-This section introduces an exemple of how to define and reuse 
+This section introduces an example of how to define and reuse 
 *Spec* user interfaces\. The example UI that is built will serve to browse the public API of all the basic widgets offered by 
 *Spec*\.
 This API is further documented in 
