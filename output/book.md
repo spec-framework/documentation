@@ -27,22 +27,20 @@ To avoid possible misunderstandings due to confusion in terminology, we first de
 </dt><dd>low level widgets like a list, a button, etc. They are not composed of other widgets.</dd></dl>
 
 The structure of this text is as follows:
-First the 3 pillars of 
-*Spec* will be explained\. 
-Second we expose how 
-*Spec* reuse subwidgets and how to customize widgets to make them fit the user needs\.
-Third the API of the 
+First we give a short tutorial on how to define and reuse UIs with 
+*Spec*\.
+Then the three axes that form the heart of 
+*Spec* are explained\. 
+In section four the API of the 
 *Spec* basic models is detailled as well as how to understand the meta information attached to this API\. 
-The fourth section covers the two dynamic aspects of 
+The next section presents the support for dynamic UIs in 
 *Spec*\. 
-The final section is dedicated to the creation of your own 
-*Spec* model\.
+The sixth section is dedicated to the creation of new 
+*Spec* basic widgets, and in section seven the core interpreter loop of 
+*Spec* is outlined\.
 
 
-
-
-    Note: JF: check structure.
-
+\(This documentation was written by Benjamin Van Ryseghem and Johan Fabry\. For corrections, comments and questions about this text please send a mail to either of them\.\)
 
 
 ##2\.  Defining and Reuse UIs with *Spec*
