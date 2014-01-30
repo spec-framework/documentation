@@ -43,7 +43,7 @@ The sixth section is dedicated to the creation of new
 \(This documentation was written by Benjamin Van Ryseghem and Johan Fabry\. For corrections, comments and questions about this text please send a mail to either of them\.\)
 
 
-##2\.  Defining and Reuse UIs with *Spec*
+##2\.  Defining and Reusing UIs with *Spec*
 <a name="sec_reuse_spec"></a>
 
 This section introduces an example of how to define and reuse 
@@ -58,21 +58,21 @@ In this section we do not detail the different parts of
 
 
 The example is structured in four parts\.
-First a list UI dedicated to render the subclasses of the 
-*AbstractWidgetModel* class is created and is called 
-**ModelList**\.
-Second a UI composed of a list and a label is defined and named 
+First, a list UI named  
+**ModelList** that is dedicated to render the subclasses of the 
+*AbstractWidgetModel* class is created\.
+Second, a UI composed of a list and a label is defined and named 
 **ProtocolList**\.
-Third a protocol viewer is defined by combining a 
+Third, a protocol viewer is defined by combining a 
 **ModelList** with two 
 **ProtocolList** to browse the 
 *protocol* and 
 *protocol\-events* methods\.
-Finally a protocol browser is made by reusing a protocol viewer with a text zone in addition\.
+Finally a protocol browser is made by reusing a protocol viewer and adding a text zone\.
 
 
 
-###2\.1\.  The MethodList
+###2\.1\.  The ModelList
 
 
 Creating a specific UI always starts with the subclassing of 
@@ -169,7 +169,7 @@ The code
 
 
 The first UI is now done\.
-The result can be seen by performing the following snippet: 
+The result can be seen by executing the following snippet of code: 
 `ModelList new openWithSpec`\.
 
 
@@ -196,7 +196,7 @@ The class definition is similar to the code above, as can be seen in
 
 
 The 
-`initializeWidgets` method for this UI is quite similar to the method in ModelList, as the code 
+`initializeWidgets` method for this UI is quite similar to the method in ModelList, as the code in 
 [2\.6](#ex_protocolList_init) shows\.
 
 
@@ -287,7 +287,7 @@ The code
 
 
 The 
-**ProtocolList** UI can be seen by evaluating the snippet 
+**ProtocolList** UI can be seen by evaluating 
 `ProtocolList new openWithSpec`\.
 
 
@@ -332,8 +332,8 @@ The code in
 
 The 
 `initializeWidgets` method now uses a different way to initialize the sub\-widgets of the UI\. 
-This is because it does not use basic widgets but instead reuses the user interfaces we defines previously as sub widgets\.
-The remainder of the method is quite similar to the previous implementation, as shown in the code 
+This is because it does not use basic widgets but instead reuses the user interfaces we defines previously\.
+The remainder of the method is quite similar to the previous implementation, as shown in the code in 
 [2\.10](#ex_viewer_initializeWidgets)\.
 
 
@@ -359,7 +359,7 @@ The remainder of the method is quite similar to the previous implementation, as 
 
 
 The layout puts the sub widgets in one column, with all sub widgets taking the same amount of space\.
-The code 
+The code in 
 [2\.11](#ex_viewer_layout) shows the implementation of this layout\.
 
 
@@ -416,7 +416,7 @@ More details on the
 
 
 The remaining methods are getters, methods to delegate to sub widgets, one method to compute the methods in a specific class for a specific protocol, and methods to register to sub widget events\.
-Those methods are summed up in the code in 
+Those methods are given in the code in 
 [2\.13](#ex_viewer_others)\.
 
 
@@ -475,7 +475,7 @@ Those methods are summed up in the code in
 
 
 
-As previously the result can be seen by executing the following snippet: 
+As previously, the result can be seen by executing the following snippet of code: 
 `ProtocolViewer new openWithSpec`\.
 
 
@@ -525,7 +525,8 @@ The
 
 
 The layout is more complex than the previous layouts\.
-Now the user interface mainly lays out sub widgets of its sub widgets\.
+Now the user interface mainly lays out widgets that are contained in its 
+`viewer` sub widget \(the list of models and the two protocol browsers\)\.
 The layout is based on a column whose first row is divided in columns\.
 The implementation of this method is shown in code in 
 [2\.16](#ex_browser_layout)\.
