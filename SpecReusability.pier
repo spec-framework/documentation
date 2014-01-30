@@ -1,4 +1,4 @@
-!! Defining and Reuse UIs with ''Spec''
+!! Defining and Reusing UIs with ''Spec''
 @sec_reuse_spec
 
 This section introduces an example of how to define and reuse ''Spec'' user interfaces. The example UI that is built will serve to browse the public API of all the basic widgets offered by ''Spec''.
@@ -6,12 +6,12 @@ This API is further documented in *sec_where_to_find_what_I_want*.
 In this section we do not detail the different parts of ''Spec'' yet, for a more in-depth discussion on the heart of ''Spec''  we refer to *sec_heart_of_spec*.
 
 The example is structured in four parts.
-First a list UI dedicated to render the subclasses of the ''AbstractWidgetModel'' class is created and is called ""ModelList"".
-Second a UI composed of a list and a label is defined and named ""ProtocolList"".
-Third a protocol viewer is defined by combining a ""ModelList"" with two ""ProtocolList"" to browse the ''protocol'' and ''protocol-events'' methods.
-Finally a protocol browser is made by reusing a protocol viewer with a text zone in addition.
+First, a list UI named  ""ModelList"" that is dedicated to render the subclasses of the ''AbstractWidgetModel'' class is created.
+Second, a UI composed of a list and a label is defined and named ""ProtocolList"".
+Third, a protocol viewer is defined by combining a ""ModelList"" with two ""ProtocolList"" to browse the ''protocol'' and ''protocol-events'' methods.
+Finally a protocol browser is made by reusing a protocol viewer and adding a text zone.
 
-!!! The MethodList
+!!! The ModelList
 
 Creating a specific UI always starts with the subclassing of ""ComposableModel"".
 Each sub widget is stored into an instance variable of the newly created class.
@@ -74,7 +74,7 @@ whenSelectedItemChanged: aBlock
 
 
 The first UI is now done.
-The result can be seen by performing the following snippet: ==ModelList new openWithSpec==.
+The result can be seen by executing the following snippet of code: ==ModelList new openWithSpec==.
 
 !!! The ProtocolList
 
@@ -89,7 +89,7 @@ ComposableModel subclass: #ProtocolList
 	category: 'Spec-Examples'
 ]]]
 
-The ==initializeWidgets== method for this UI is quite similar to the method in ModelList, as the code *ex_protocolList_init* shows.
+The ==initializeWidgets== method for this UI is quite similar to the method in ModelList, as the code in *ex_protocolList_init* shows.
 
 [[[label=ex_protocolList_init|caption=ProtocolList implementation of initializeWidgets|language=Smalltalk 
 initializeWidgets
@@ -158,7 +158,7 @@ whenSelectedItemChanged: aBlock
 	protocols whenSelectedItemChanged: aBlock
 ]]]
 
-The ""ProtocolList"" UI can be seen by evaluating the snippet ==ProtocolList new openWithSpec==.
+The ""ProtocolList"" UI can be seen by evaluating ==ProtocolList new openWithSpec==.
 
 !!! The ProtocolViewer
 
@@ -177,8 +177,8 @@ ComposableModel subclass: #ProtocolViewer
 ]]]
 
 The ==initializeWidgets== method now uses a different way to initialize the sub-widgets of the UI. 
-This is because it does not use basic widgets but instead reuses the user interfaces we defines previously as sub widgets.
-The remainder of the method is quite similar to the previous implementation, as shown in the code *ex_viewer_initializeWidgets*.
+This is because it does not use basic widgets but instead reuses the user interfaces we defines previously.
+The remainder of the method is quite similar to the previous implementation, as shown in the code in *ex_viewer_initializeWidgets*.
 
 [[[label=ex_viewer_initializeWidgets|caption=Implementation of ProtocolViewer>>#initializeWidgets|language=Smalltalk 
 initializeWidgets
@@ -197,7 +197,7 @@ initializeWidgets
 ]]]
 
 The layout puts the sub widgets in one column, with all sub widgets taking the same amount of space.
-The code *ex_viewer_layout* shows the implementation of this layout.
+The code in *ex_viewer_layout* shows the implementation of this layout.
 
 [[[label=ex_viewer_layout|caption=ProtocolViewer column layout|language=Smalltalk 
 defaultSpec
@@ -237,7 +237,7 @@ initializePresenter
 ]]]
 
 The remaining methods are getters, methods to delegate to sub widgets, one method to compute the methods in a specific class for a specific protocol, and methods to register to sub widget events.
-Those methods are summed up in the code in *ex_viewer_others*.
+Those methods are given in the code in *ex_viewer_others*.
 
 [[[label=ex_viewer_others|caption=ProtocolViewer other methods|language=Smalltalk 
 "accessing"
@@ -289,7 +289,7 @@ whenProtocolChangedDo: aBlock
 	protocols whenSelectedItemChanged: aBlock
 ]]]
 
-As previously the result can be seen by executing the following snippet: ==ProtocolViewer new openWithSpec==.
+As previously, the result can be seen by executing the following snippet of code: ==ProtocolViewer new openWithSpec==.
 
 !!! Protocol Editor
 @subsec_protocol_editor
@@ -320,7 +320,7 @@ initializeWidgets
 ]]]
 
 The layout is more complex than the previous layouts.
-Now the user interface mainly lays out sub widgets of its sub widgets.
+Now the user interface mainly lays out widgets that are contained in its ==viewer== sub widget (the list of models and the two protocol browsers).
 The layout is based on a column whose first row is divided in columns.
 The implementation of this method is shown in code in *ex_browser_layout*.
 
