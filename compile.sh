@@ -50,11 +50,10 @@ function compile() {
     pier_file="$2"
     pier_source="$PWD/${dir}/${pier_file}"
     generate_html "$pier_source"
+	generate_md "$pier_source"
 
     generate_latex "$pier_source"
     produce_pdf "${dir}" "${pier_file}"
-
-    generate_md "$pier_source"
 }
 
 function compile_chapters() {
