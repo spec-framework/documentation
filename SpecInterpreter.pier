@@ -62,7 +62,7 @@ SpecLayout composed
 
 During the recursive calls of the interpretation loop, the interpreter can be called with any kind of object.
 So the first step is the extraction of the data to interpret, if any.
-If there is no data to interpret, it means that the recursive calls reached a ''primitive object" (like the integer in the example *ex_extract_array*), i.e. an object which can not be interpreted.
+If there is no data to interpret, it means that the recursive calls reached a ''primitive object'' (like the integer in the example *ex_extract_array*), i.e. an object which can not be interpreted.
 In this case the primitive object is directly returned.
 
 The second item to collect, if the first step succeeded, is the spec wrapper that will be used throughout the interpretation.
@@ -71,7 +71,6 @@ If not, the currently existing UI element is directly returned.
 Otherwise this step results in the creation of a wrapper object that keeps the current model as well as the receiver of messages that will be performed in the interpretation loop.
 The result of the interpretation is this wrapper object, and the type of the wrapper is determined by the first element of the array.
 For example, the type of the wrapper that results from the interpretation of the example *ex_extract_array* is determined by the very first ==#ContainerModel== element.
-
 
 !!! Interpretation loop
 
