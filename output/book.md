@@ -40,7 +40,9 @@ The sixth section is dedicated to the creation of new
 *Spec* is outlined\.
 
 
-\(This documentation was written by Benjamin Van Ryseghem and Johan Fabry\. For corrections, comments and questions about this text please send a mail to either of them\.\)
+\(This documentation was written by Benjamin Van Ryseghem and Johan Fabry, with the suprising help of Sean P\. DeNigris\.
+For corrections, comments and questions about this text please use 
+[Github](https://github.com/SpecForPharo/documentation)\.\)
 
 
 ##2\.  Defining and Reusing UIs with *Spec*
