@@ -1,0 +1,201 @@
+!!Parties, a dynamic example
+In an address book we find addresses of both people and organizations. 
+The generalization of both is called a party ('Analysis Patterns', Martin Fowler). 
+In this example we'll make an address book where we can add both persons and companies.
+They will have different attributes.
+We show how to do add them with a dynamic user interface, and minimize duplication.
+
+!!! The party model
+Create the abstract superclass ==Party==
+[[[
+Object subclass: #DOParty
+	instanceVariableNames: ''
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]
+
+A party responds to the ==fullName== message. 
+
+[[[
+fullName
+	^'Full name'
+]]]
+
+The subclasses are going to override this message.
+Create a subclass for persons:
+
+[[[
+DOParty subclass: #DOPerson
+	instanceVariableNames: 'firstName lastName'
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]]
+
+Create accessors for ==firstName== and ==lastName==. We don't want to need to handle ==nil==
+as a special case, so return the empty string if the instVars are nil.
+
+[[[
+firstName
+	^firstName ifNil: [ '' ]
+	
+firstName: aString
+	firstName := aString
+
+lastName
+	^lastName ifNil: [ '' ]
+
+lastName: aString
+	lastName := aString
+]]]
+
+We can now override the ==fullName==.
+
+[[[
+fullName
+	^self firstName, ' ', self lastName
+]]]
+
+Create a subclass for companies
+
+[[[
+DOParty subclass: #DOCompany
+	instanceVariableNames: 'companyName'
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]]
+
+And its accessors and the overridden method
+
+[[[
+companyName
+	^ companyName ifNil: ['']
+	
+companyName: anObject
+	companyName := anObject
+	
+fullName
+	^ self companyName 
+]]]
+
+In this example we will simply keep all parties in the image.
+We create a class to hold parties
+
+[[[
+Object subclass: #DOPartiesModel
+	instanceVariableNames: 'parties'
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]]
+
+And lazily initialize  with a collection
+
+[[[
+parties
+	^parties ifNil: [ parties := OrderedCollection new ]
+	
+parties: aCollection
+	parties := aCollection
+]]]
+
+On the class side we add an instanceVariable ==default== as the singleton
+and two methods to access and reset it.
+
+[[[
+DOPartiesModel class
+	instanceVariableNames: 'default'
+	
+default
+	^default ifNil: [ default := self new ]
+	
+reset
+	default := nil
+]]]
+
+!!! A dynamic editor
+To edit a single party, we create a subclass of ==DynamicComposableModel==
+
+[[[
+DynamicComposableModel subclass: #DOPartyEditor
+	instanceVariableNames: 'partyClass'
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]]
+When we instantiate this editor, we'll tell it on what kind of party it operates and store that in the
+==partyClass==. On the instance side we add a setter and on the class side we use that in a constructor.
+A ==DynamicComposableModel== has a complex initialization proces, so we use a separate ==basicNew==
+and ==initialize== to set the ==partyClass== early enough.
+[[[
+partyClass: aPartyClass
+	partyClass := aPartyClass
+	
+on: aPartyClass
+	^self basicNew
+		partyClass: aPartyClass;
+		initialize;
+		yourself
+]]]
+This class has no ==defaultSpec==, as it is only created with a dynamic spec.
+The editor is going to be a separate window. The window title is dependent of the class.
+Party and subclasses define it at the class side.
+
+[[[
+DOParty>>title
+	"override in subclasses"
+	^'Party'
+
+DOCompany>>title
+	^'Company'
+	
+DOPerson>>title
+	^'Person'
+
+DOPartyEditor>title
+	^ partyClass title
+]]]
+
+The editor needs to know what fields need to be created. On the class side of the Party subclasses
+we return an array of symbols representing the fields. This will do for the example, for a real
+application with differnt kinds of fields Magritte descriptions are much more suitable.
+
+[[[
+DOParty>>fields
+	^self subclassResponsibility 
+	
+DOCompany>>fields
+	^#(#companyName)
+	
+DOPerson>>fields
+	^#(#firstName #lastName)	
+]]]
+
+Now we can initialize the widgets. ==instantiateModels== expects pairs of field names and field types
+and adds them to the widgets dictionary.
+They are then laid out in one column, given some default values and added in focus order.
+
+[[[
+DOPartyEditor>initializeWidgets
+	|models|
+	models := OrderedCollection new.
+	partyClass fields do: [ :field | models add: field; add: #TextInputFieldModel  ].
+	self instantiateModels: models.
+	
+	layout := SpecLayout composed
+		newColumn: [ :col |
+			partyClass fields do: [ :field | 
+				col add: field height: self class inputTextHeight]];
+		yourself .
+		
+	 self widgets keysAndValuesDo:  [ :key :value |
+		value autoAccept: true;
+			entryCompletion:nil;
+			ghostText: key.
+		self focusOrder add: value] .
+
+]]]
+
+The last thing needed is to calculate how large the window should be
+
+[[[
+DOPartyEditor>initialExtent
+	^ 300@(self class inputTextHeight*(3+partyClass fields size))
+]]]
