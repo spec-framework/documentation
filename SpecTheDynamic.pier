@@ -59,7 +59,7 @@ Amongst others, this class adds the method ==assign:to:==, which takes a model i
 This method is used to assign an already instantiated model as sub widget, instead of the method ==instantiateModels:== that takes a class name as argument and instantiates a new model.
 
 When using ==DynamicComposableModel==, the instantiation of the sub widgets is a bit different from normal use.
-In the ==instantiateWidgets== method, instead of instantiating each widget separately, ==instantiateModels:== should be used to instantiate them.
+In the ==initializeWidgets== method, instead of instantiating each widget separately, ==instantiateModels:== should be used to instantiate them.
 This method takes as argument an array of pairs, where each pair is composed of the unique name of the widget as key, and the name of the widget class as value.
 This allows for a widget to be accessed by sending a message whose selector is the widget name to the model.
 
