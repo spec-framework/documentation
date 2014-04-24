@@ -17,7 +17,7 @@ Object subclass: #DOParty
 A party responds to the ==fullName== message. 
 
 [[[
-fullName
+DOParty>fullName
 	^'Full name'
 ]]]
 
@@ -35,23 +35,23 @@ Create accessors for ==firstName== and ==lastName==. We don't want to need to ha
 as a special case, so return the empty string if the instVars are nil.
 
 [[[
-firstName
+DOPerson>firstName
 	^firstName ifNil: [ '' ]
 	
-firstName: aString
+DOPerson>firstName: aString
 	firstName := aString
 
-lastName
+DOPerson>lastName
 	^lastName ifNil: [ '' ]
 
-lastName: aString
+DOPerson>lastName: aString
 	lastName := aString
 ]]]
 
 We can now override the ==fullName==.
 
 [[[
-fullName
+DOPerson>fullName
 	^self firstName, ' ', self lastName
 ]]]
 
@@ -67,13 +67,13 @@ DOParty subclass: #DOCompany
 And its accessors and the overridden method
 
 [[[
-companyName
+DOCompany>companyName
 	^ companyName ifNil: ['']
 	
-companyName: anObject
+DOCompany>companyName: anObject
 	companyName := anObject
 	
-fullName
+DOCompany>fullName
 	^ self companyName 
 ]]]
 
@@ -90,10 +90,10 @@ Object subclass: #DOPartiesModel
 And lazily initialize  with a collection
 
 [[[
-parties
+DOPartiesModel>parties
 	^parties ifNil: [ parties := OrderedCollection new ]
 	
-parties: aCollection
+DOPartiesModel>parties: aCollection
 	parties := aCollection
 ]]]
 
@@ -104,10 +104,10 @@ and two methods to access and reset it.
 DOPartiesModel class
 	instanceVariableNames: 'default'
 	
-default
+DOPartiesModel>>default
 	^default ifNil: [ default := self new ]
 	
-reset
+DOPartiesModel>>reset
 	default := nil
 ]]]
 
@@ -125,10 +125,10 @@ When we instantiate this editor, we'll tell it on what kind of party it operates
 A ==DynamicComposableModel== has a complex initialization proces, so we use a separate ==basicNew==
 and ==initialize== to set the ==partyClass== early enough.
 [[[
-partyClass: aPartyClass
+DOPartyEditor>partyClass: aPartyClass
 	partyClass := aPartyClass
 	
-on: aPartyClass
+DOPartyEditor>>on: aPartyClass
 	^self basicNew
 		partyClass: aPartyClass;
 		initialize;
@@ -314,10 +314,10 @@ DOPartyList>search
 ]]]
 protocol
 [[[
-DOPartyListresetSelection
+DOPartyList>resetSelection
 	list resetSelection 
 	
-DOPartyListtitle
+DOPartyList>title
 	^ 'Parties'
 ]]]
 and protocol-events
@@ -332,3 +332,4 @@ DOPartyList>whenSelectedItemChanged: aBlock
 	list whenSelectedItemChanged: aBlock
 
 ]]]
+This can be tested with ==DOPartiesList new openWithSpec==
