@@ -193,9 +193,142 @@ DOPartyEditor>initializeWidgets
 
 ]]]
 
-The last thing needed is to calculate how large the window should be
+The last thing needed is to calculate how large the window should be. It is going to be used 
+as a dialog with ok and cancel that take up a height of about three input fields. 
 
 [[[
 DOPartyEditor>initialExtent
 	^ 300@(self class inputTextHeight*(3+partyClass fields size))
+]]]
+
+Now we can test the editor with ==(DOPartyEditor on: DOCompany) openDialogWithSpec== and
+==(DOPartyEditor on: DOPerson) openDialogWithSpec==
+
+!!! The adres book
+
+We can now make the address book with a search field and buttons to add persons and companies.
+Add a class
+
+[[[
+ComposableModel subclass: #DOPartiesList
+	instanceVariableNames: 'search addPerson addCompany list'
+	classVariableNames: ''
+	category: 'Domain-Parties'
+]]]
+
+As soon as something is typed in the search field, the list should show the list of parties 
+having a fullName containing the search term, ignoring case. 
+
+[[[
+DOPartiesList>refreshItems
+	|searchString|
+	searchString := search text asLowercase.
+	list 
+		items: (DOPartiesModel default parties select: [: each | 
+			searchString isEmpty or: [each fullName asLowercase includesSubstring: searchString]]);
+		displayBlock: [ :each |  each fullName].
+]]]
+
+We can now create the widgets and the default layout (class side)
+
+[[[
+DOPartiesList>initializeWidgets
+	search := self newTextInput.
+	search autoAccept: true;
+		entryCompletion:nil;
+		ghostText: 'Search'.
+	addPerson := self newButton.
+	addPerson label: '+Person'.
+	addCompany := self newButton.
+	addCompany label: '+Company'.
+	list := self newList.
+	
+	self refreshItems.
+	self focusOrder 
+		add: search;
+		add: addPerson;
+		add: addCompany;
+		add: list.
+		
+DOPartiesList>>defaultSpec
+	<spec: #default>
+		
+	^SpecLayout composed
+		newColumn: [ :col |
+				col newRow: [:row |
+					row add: #search;
+						add: #addPerson;
+						add: #addCompany]
+					height: ComposableModel toolbarHeight;  
+					add: #list];
+		yourself
+]]]
+		
+]]]
+
+When the user clicks on the ok button of the party editor, we need to create an instance of the right
+subclass, read the field values out of the editor and assign them to the attributes of the new instance.
+We do that using meta-programming (==perform:== and ==perform:with:==). 
+Then we add the instance to the model and need to refresh the list. Add a method setting the okAction
+block of the editor. 
+
+[[[
+DOPartyList>addPartyBlockIn: anEditor
+	anEditor okAction: [ |party|
+		party := anEditor partyClass new.
+		anEditor partyClass fields do: [ :field |
+			party perform: (field asMutator) with: (anEditor model perform: field) text ].
+		DOPartiesModel default parties add: party.
+		self refreshItems ].
+]]]
+
+Now we can initialize the presenter
+
+[[[
+DOPartyList>initializePresenter
+	search whenTextChanged: [ :class | self refreshItems  ].
+	
+	addPerson action: [  |edit|
+		edit := (DOPartyEditor on:DOPerson) openDialogWithSpec.
+		self addPartyBlockIn: edit].
+	addCompany action: [  |edit|
+		edit := (DOPartyEditor on: DOCompany) openDialogWithSpec.
+		self addPartyBlockIn: edit ].
+]]]
+Don't forget the accessors
+[[[
+DOPartyList>addCompany
+	^addCompany
+	
+DOPartyList>addPerson
+	^addPerson
+	
+DOPartyList>items: aCollection
+	list items: aCollection
+	
+DOPartyList>list 
+	^list
+
+DOPartyList>search
+	^search
+]]]
+protocol
+[[[
+DOPartyListresetSelection
+	list resetSelection 
+	
+DOPartyListtitle
+	^ 'Parties'
+]]]
+and protocol-events
+[[[
+DOPartyList>whenAddCompanyClicked: aBlock 
+	addCompany whenActionPerformedDo: aBlock
+	
+DOPartyList>whenAddPersonClicked: aBlock 
+	addPerson whenActionPerformedDo: aBlock
+	
+DOPartyList>whenSelectedItemChanged: aBlock 
+	list whenSelectedItemChanged: aBlock
+
 ]]]
