@@ -121,12 +121,15 @@ DynamicComposableModel subclass: #DOPartyEditor
 	category: 'Domain-Parties'
 ]]]
 When we instantiate this editor, we'll tell it on what kind of party it operates and store that in the
-==partyClass==. On the instance side we add a setter and on the class side we use that in a constructor.
+==partyClass==. On the instance side we add accessors and on the class side we use that in a constructor.
 A ==DynamicComposableModel== has a complex initialization proces, so we use a separate ==basicNew==
 and ==initialize== to set the ==partyClass== early enough.
 [[[
 DOPartyEditor>partyClass: aPartyClass
 	partyClass := aPartyClass
+	
+DOPartyEditor>partyClass
+	^partyClass
 	
 DOPartyEditor>>on: aPartyClass
 	^self basicNew
@@ -275,11 +278,11 @@ block of the editor.
 [[[
 DOPartyList>addPartyBlockIn: anEditor
 	anEditor okAction: [ |party|
-		party := anEditor partyClass new.
-		anEditor partyClass fields do: [ :field |
+		party := anEditor model partyClass new.
+		anEditor model partyClass fields do: [ :field |
 			party perform: (field asMutator) with: (anEditor model perform: field) text ].
 		DOPartiesModel default parties add: party.
-		self refreshItems ].
+		self refreshItems ]
 ]]]
 
 Now we can initialize the presenter
