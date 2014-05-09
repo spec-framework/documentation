@@ -6,17 +6,19 @@ They will have different attributes.
 We show how to do add them with a dynamic user interface, and minimize duplication.
 
 !!! The party model
+In the party model, party is a superclass of person and company. 
 Create the abstract superclass ==Party==
-[[[
+[[[label=createParty|caption=Create the party class|language=Smalltalk 
 Object subclass: #DOParty
 	instanceVariableNames: ''
 	classVariableNames: ''
 	category: 'Domain-Parties'
-]]
+]]]
 
+We should be able to select parties from a list. 
 A party responds to the ==fullName== message. 
 
-[[[
+[[[label=partyName|caption=Select a party by its full name|language=Smalltalk 
 DOParty>fullName
 	^'Full name'
 ]]]
@@ -24,7 +26,7 @@ DOParty>fullName
 The subclasses are going to override this message.
 Create a subclass for persons:
 
-[[[
+[[[label=createPerson|caption=Create person as a subclass of party|language=Smalltalk 
 DOParty subclass: #DOPerson
 	instanceVariableNames: 'firstName lastName'
 	classVariableNames: ''
@@ -34,7 +36,7 @@ DOParty subclass: #DOPerson
 Create accessors for ==firstName== and ==lastName==. We don't want to need to handle ==nil==
 as a special case, so return the empty string if the instVars are nil.
 
-[[[
+[[[label=personAccessors|caption=Accessors for person|language=Smalltalk 
 DOPerson>firstName
 	^firstName ifNil: [ '' ]
 	
@@ -50,14 +52,14 @@ DOPerson>lastName: aString
 
 We can now override the ==fullName==.
 
-[[[
+[[[label=overrideFullname|caption=Override the full name|language=Smalltalk 
 DOPerson>fullName
 	^self firstName, ' ', self lastName
 ]]]
 
 Create a subclass for companies
 
-[[[
+[[[label=createCompany|caption=Create company as subclass of party|language=Smalltalk 
 DOParty subclass: #DOCompany
 	instanceVariableNames: 'companyName'
 	classVariableNames: ''
@@ -66,7 +68,7 @@ DOParty subclass: #DOCompany
 
 And its accessors and the overridden method
 
-[[[
+[[[label=companyAccessors|caption=Accessors and override for company|language=Smalltalk 
 DOCompany>companyName
 	^ companyName ifNil: ['']
 	
@@ -80,7 +82,7 @@ DOCompany>fullName
 In this example we will simply keep all parties in the image.
 We create a class to hold parties
 
-[[[
+[[[label=partyHolder|caption=Domain model for parties|language=Smalltalk 
 Object subclass: #DOPartiesModel
 	instanceVariableNames: 'parties'
 	classVariableNames: ''
@@ -89,7 +91,7 @@ Object subclass: #DOPartiesModel
 
 And lazily initialize  with a collection
 
-[[[
+[[[label=lazyInstantiation|caption=Accessors, lazily initialized|language=Smalltalk 
 DOPartiesModel>parties
 	^parties ifNil: [ parties := OrderedCollection new ]
 	
@@ -100,7 +102,7 @@ DOPartiesModel>parties: aCollection
 On the class side we add an instanceVariable ==default== as the singleton
 and two methods to access and reset it.
 
-[[[
+[[[label=partiesSingleton|caption=A singleton to hold all parties|language=Smalltalk 
 DOPartiesModel class
 	instanceVariableNames: 'default'
 	
@@ -114,7 +116,7 @@ DOPartiesModel>>reset
 !!! A dynamic editor
 To edit a single party, we create a subclass of ==DynamicComposableModel==
 
-[[[
+[[[label=partyEditor|caption=A class to edit one party|language=Smalltalk 
 DynamicComposableModel subclass: #DOPartyEditor
 	instanceVariableNames: 'partyClass'
 	classVariableNames: ''
@@ -124,7 +126,7 @@ When we instantiate this editor, we'll tell it on what kind of party it operates
 ==partyClass==. On the instance side we add accessors and on the class side we use that in a constructor.
 A ==DynamicComposableModel== has a complex initialization proces, so we use a separate ==basicNew==
 and ==initialize== to set the ==partyClass== early enough.
-[[[
+[[[label=kindOfParty|caption=The class needs to know what kind of party to edit|language=Smalltalk 
 DOPartyEditor>partyClass: aPartyClass
 	partyClass := aPartyClass
 	
@@ -141,7 +143,7 @@ This class has no ==defaultSpec==, as it is only created with a dynamic spec.
 The editor is going to be a separate window. The window title is dependent of the class.
 Party and subclasses define it at the class side.
 
-[[[
+[[[label=kindOfParty|caption=Party editor wants to show the kind of party|language=Smalltalk 
 DOParty>>title
 	"override in subclasses"
 	^'Party'
@@ -160,7 +162,7 @@ The editor needs to know what fields need to be created. On the class side of th
 we return an array of symbols representing the fields. This will do for the example, for a real
 application with differnt kinds of fields Magritte descriptions are much more suitable.
 
-[[[
+[[[label=partyFields|caption=Array of feilds|language=Smalltalk 
 DOParty>>fields
 	^self subclassResponsibility 
 	
@@ -175,7 +177,7 @@ Now we can initialize the widgets. ==instantiateModels== expects pairs of field 
 and adds them to the widgets dictionary.
 They are then laid out in one column, given some default values and added in focus order.
 
-[[[
+[[[label=editorWidgets|caption=Use the fields to build the widgets needed|language=Smalltalk 
 DOPartyEditor>initializeWidgets
 	|models|
 	models := OrderedCollection new.
@@ -199,7 +201,7 @@ DOPartyEditor>initializeWidgets
 The last thing needed is to calculate how large the window should be. It is going to be used 
 as a dialog with ok and cancel that take up a height of about three input fields. 
 
-[[[
+[[[label=editorExtent|caption=Different kinds of party have different number of fieldse|language=Smalltalk 
 DOPartyEditor>initialExtent
 	^ 300@(self class inputTextHeight*(3+partyClass fields size))
 ]]]
@@ -207,12 +209,12 @@ DOPartyEditor>initialExtent
 Now we can test the editor with ==(DOPartyEditor on: DOCompany) openDialogWithSpec== and
 ==(DOPartyEditor on: DOPerson) openDialogWithSpec==
 
-!!! The adres book
+!!! The address book
 
 We can now make the address book with a search field and buttons to add persons and companies.
 Add a class
 
-[[[
+[[[label=partiesList|caption=Create a class to show th elist of parties|language=Smalltalk 
 ComposableModel subclass: #DOPartiesList
 	instanceVariableNames: 'search addPerson addCompany list'
 	classVariableNames: ''
@@ -222,7 +224,7 @@ ComposableModel subclass: #DOPartiesList
 As soon as something is typed in the search field, the list should show the list of parties 
 having a fullName containing the search term, ignoring case. 
 
-[[[
+[[[label=refreshList|caption=Show only the items matching the search|language=Smalltalk 
 DOPartiesList>refreshItems
 	|searchString|
 	searchString := search text asLowercase.
@@ -234,7 +236,7 @@ DOPartiesList>refreshItems
 
 We can now create the widgets and the default layout (class side)
 
-[[[
+[[[label=partiesListWidgets|caption=The widgets for the parties list|language=Smalltalk 
 DOPartiesList>initializeWidgets
 	search := self newTextInput.
 	search autoAccept: true;
@@ -266,8 +268,6 @@ DOPartiesList>>defaultSpec
 					add: #list];
 		yourself
 ]]]
-		
-]]]
 
 When the user clicks on the ok button of the party editor, we need to create an instance of the right
 subclass, read the field values out of the editor and assign them to the attributes of the new instance.
@@ -275,7 +275,7 @@ We do that using meta-programming (==perform:== and ==perform:with:==).
 Then we add the instance to the model and need to refresh the list. Add a method setting the okAction
 block of the editor. 
 
-[[[
+[[[label=addAParty|caption=Adding a party|language=Smalltalk 
 DOPartyList>addPartyBlockIn: anEditor
 	anEditor okAction: [ |party|
 		party := anEditor model partyClass new.
@@ -287,7 +287,7 @@ DOPartyList>addPartyBlockIn: anEditor
 
 Now we can initialize the presenter
 
-[[[
+[[[label=partiesListPresenter|caption=Behaviour of the parties list|language=Smalltalk 
 DOPartyList>initializePresenter
 	search whenTextChanged: [ :class | self refreshItems  ].
 	
@@ -299,7 +299,7 @@ DOPartyList>initializePresenter
 		self addPartyBlockIn: edit ].
 ]]]
 Don't forget the accessors
-[[[
+[[[label=partiesListAccessors|caption=Accessors|language=Smalltalk 
 DOPartyList>addCompany
 	^addCompany
 	
@@ -316,7 +316,7 @@ DOPartyList>search
 	^search
 ]]]
 protocol
-[[[
+[[[label=partiesListProtocol|caption=Protocol|language=Smalltalk 
 DOPartyList>resetSelection
 	list resetSelection 
 	
@@ -324,7 +324,7 @@ DOPartyList>title
 	^ 'Parties'
 ]]]
 and protocol-events
-[[[
+[[[label=partiesListProtocolEvents|caption=Protocol events|language=Smalltalk 
 DOPartyList>whenAddCompanyClicked: aBlock 
 	addCompany whenActionPerformedDo: aBlock
 	
@@ -336,3 +336,42 @@ DOPartyList>whenSelectedItemChanged: aBlock
 
 ]]]
 This can be tested with ==DOPartiesList new openWithSpec==
+
+!!! Editing Parties
+A next step is the editing of existing instances. 
+In the DOPartiesList, we need to use a NewListModel instead of the ListModel, 
+as that understands doubleClick actions. 
+
+[[[label=editingChanges|caption=Replace list by newlist|language=Smalltalk 
+DOPartiesList>initializeWidgets 
+-	list := self newList. 
++	list := self instantiate: NewListModel. 
+]]]
+
+To edit a party, we modify addPartyBlockIn: anEditor to create editParty:in:. 
+We set the data values and the title. In the okAction we don't have to add the party. 
+
+[[[label=editAParty|caption=Edit instead of add|language=Smalltalk 
+DOPartiesList>editParty: aParty in: anEditor 
+        aParty class fields do: [ :field | 
+                (anEditor model perform: field) text: (aParty perform: field) ]. 
+
+        anEditor title: 'Edit ',aParty fullName. 
+
+        anEditor okAction: [ 
+                anEditor model partyClass fields do: [ :field | 
+                        aParty perform: (field asMutator) with: (anEditor model perform: field) text ]. 
+                self refreshItems ]. 
+]]]
+
+In initializePresenter, we can then add an edit action. The list currently needs 
+to know that it should handle doubleClicks, and then call a partyeditor 
+
+[[[label=editingBehaviour|caption=Add a doubleclick action |language=Smalltalk 
+DOPartiesList>initializePresenter 
++	list handlesDoubleClick: true. 
++	list doubleClickAction: [ |party edit| 
++	 party := list selectedItem. 
++	 edit := (DOPartyEditor on:  party class) openDialogWithSpec. 
++	 self editParty: party in: edit] 
+]]]
