@@ -34,7 +34,7 @@ Indeed, without this final step keyboard navigation will not work at all.
 
 The code in figure *pattern* shows an example of an ==initializeWidgets== method.
 It first instantiates a button and a list widget, storing each in an instance variable.
-It second configures the button it by setting its label.
+It second configures the button by setting its label.
 Third it specifies the focus order of all the widgets: first the button and then the list.
 
 [[[label=pattern|caption=Example of initializeWidgets|
